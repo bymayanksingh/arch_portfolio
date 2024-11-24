@@ -1,22 +1,56 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, Calendar, MapPin } from 'lucide-react';
 import { projectsData } from '../data/projects';
+
+const categories = [
+  { id: 'all', name: 'All Projects' },
+  { id: 'site-layout', name: 'Site Layout' },
+  { id: 'interior-design', name: 'Interior Design' },
+  { id: '3d-rendering', name: '3D Rendering' },
+  { id: 'construction', name: 'Construction Docs' },
+  { id: 'model-making', name: 'Model Making' }
+];
 
 export function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('all');
 
-  const filteredProjects = projectsData.filter(project =>
-    project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProjects = projectsData.filter(project => {
+    const matchesSearch = 
+      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = 
+      activeCategory === 'all' || 
+      project.category.toLowerCase().replace(/\s+/g, '-') === activeCategory;
+
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold mb-8">Our Projects</h1>
         
+        {/* Categories */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setActiveCategory(category.id)}
+              className={`px-4 py-2 rounded-full transition-colors ${
+                activeCategory === category.id
+                  ? 'bg-black text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+
         {/* Search Bar */}
         <div className="relative mb-12">
           <input
@@ -44,14 +78,31 @@ export function ProjectsPage() {
                   className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                  <div className="bg-black/40 px-3 py-1 rounded-full text-white text-sm inline-block mb-2 self-start">
+                    {project.category}
+                  </div>
                   <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
-                  <p className="text-white/80">{project.location}</p>
-                  <p className="text-white/60 mt-2">{project.category}</p>
+                  <div className="flex items-center text-white/80 space-x-4">
+                    <div className="flex items-center">
+                      <MapPin className="w-4 h-4 mr-1" />
+                      <span>{project.location}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      <span>{project.date}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Link>
           ))}
         </div>
+
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No projects found matching your criteria.</p>
+          </div>
+        )}
       </div>
     </div>
   );

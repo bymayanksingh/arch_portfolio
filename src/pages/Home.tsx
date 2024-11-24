@@ -11,8 +11,8 @@ export function Home() {
     <>
       <Hero />
       <About />
-      <Projects />
       <Timeline />
+      <Projects />
       <Testimonials />
       <Contact />
     </>
