@@ -33,7 +33,10 @@ export function ProjectsPage() {
   return (
     <div className="pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold mb-8">Our Projects</h1>
+        <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">Our Projects</h1>
+        <p className="text-gray-600 text-lg mb-8 max-w-2xl">
+          Explore our portfolio of innovative architectural designs and sustainable solutions
+        </p>
         
         {/* Categories */}
         <div className="flex flex-wrap gap-4 mb-8">
@@ -82,7 +85,7 @@ export function ProjectsPage() {
                   <div className="bg-black/40 px-3 py-1 rounded-full text-white text-sm inline-block mb-2 self-start">
                     {project.category}
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">{project.title}</h3>
+                  <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>
                   <div className="flex items-center text-white/80 space-x-4">
                     <div className="flex items-center">
                       <MapPin className="w-4 h-4 mr-1" />

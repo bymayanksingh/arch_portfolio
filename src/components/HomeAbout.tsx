@@ -13,14 +13,12 @@ export function HomeAbout() {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Image */}
           <div className="relative">
             <img 
               src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000"
               alt="Pragya Singh"
               className="rounded-2xl shadow-2xl"
             />
-            {/* Stats Overlay */}
             <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm rounded-b-2xl p-6">
               <div className="grid grid-cols-3 gap-4">
                 {stats.map((stat, index) => {
@@ -28,7 +26,7 @@ export function HomeAbout() {
                   return (
                     <div key={index} className="text-center text-white">
                       <Icon className="w-6 h-6 mx-auto mb-2" />
-                      <div className="text-2xl font-bold">{stat.value}</div>
+                      <div className="font-playfair text-2xl font-bold">{stat.value}</div>
                       <div className="text-sm text-white/80">{stat.label}</div>
                     </div>
                   );
@@ -37,9 +35,8 @@ export function HomeAbout() {
             </div>
           </div>
 
-          {/* Content */}
           <div className="space-y-6">
-            <h2 className="text-4xl font-bold">About Me</h2>
+            <h2 className="font-playfair text-4xl font-bold">About Me</h2>
             <p className="text-xl text-gray-600">
               Transforming spaces with innovative architectural solutions
             </p>
@@ -56,7 +53,6 @@ export function HomeAbout() {
                 Learn More
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
-              <div className="flex flex-wrap gap-4">
               <a 
                 href="/cv.pdf" 
                 className="px-6 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-2"
@@ -64,7 +60,6 @@ export function HomeAbout() {
                 <Download size={18} />
                 Download CV
               </a>
-            </div>
             </div>
           </div>
         </div>

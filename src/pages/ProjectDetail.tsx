@@ -21,7 +21,7 @@ export function ProjectDetail() {
 
         {/* Project Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">{project.title}</h1>
+          <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">{project.title}</h1>
           <div className="flex flex-wrap gap-4 text-gray-600">
             <span>{project.location}</span>
             <span>•</span>
@@ -43,7 +43,7 @@ export function ProjectDetail() {
         {/* Project Description */}
         <div className="grid lg:grid-cols-3 gap-12 mb-16">
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold mb-4">About the Project</h2>
+            <h2 className="font-playfair text-2xl font-bold mb-4">About the Project</h2>
             <p className="text-gray-600 mb-6">{project.description}</p>
             <div className="space-y-4">
               {project.details.map((detail, index) => (
@@ -52,7 +52,7 @@ export function ProjectDetail() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold mb-4">Project Details</h2>
+            <h2 className="font-playfair text-2xl font-bold mb-4">Project Details</h2>
             <dl className="space-y-4">
               <div>
                 <dt className="font-semibold">Client</dt>
@@ -67,33 +67,12 @@ export function ProjectDetail() {
                 <dd className="text-gray-600">{project.status}</dd>
               </div>
             </dl>
-
-            {/* External Links */}
-            {project.externalLinks && (
-              <div className="mt-8">
-                <h3 className="font-semibold mb-4">Featured On</h3>
-                <div className="space-y-3">
-                  {project.externalLinks.map((link, index) => (
-                    <a
-                      key={index}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center text-gray-600 hover:text-black"
-                    >
-                      <ExternalLink size={16} className="mr-2" />
-                      {link.platform}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
         {/* Image Gallery */}
         <div>
-          <h2 className="text-2xl font-bold mb-6">Project Gallery</h2>
+          <h2 className="font-playfair text-2xl font-bold mb-6">Project Gallery</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {project.gallery.map((image, index) => (
               <div key={index} className="relative aspect-square">

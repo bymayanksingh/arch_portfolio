@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Pragya Singh</h3>
+            <h3 className="font-playfair text-xl font-bold mb-4">Pragya Singh</h3>
             <p className="text-gray-400 mb-4">Creating innovative architectural solutions for a sustainable future.</p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors"><Github /></a>
@@ -19,7 +19,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-playfair text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
               <li><Link to="/projects" className="text-gray-400 hover:text-white transition-colors">Projects</Link></li>
@@ -30,7 +30,7 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Services</h4>
+            <h4 className="font-playfair text-lg font-semibold mb-4">Services</h4>
             <ul className="space-y-2">
               <li className="text-gray-400">Site Layouts</li>
               <li className="text-gray-400">Interior Design</li>
@@ -41,7 +41,7 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
+            <h4 className="font-playfair text-lg font-semibold mb-4">Contact Us</h4>
             <div className="space-y-3">
               <a href="mailto:contact@architect.com" className="flex items-center text-gray-400 hover:text-white transition-colors">
                 <Mail className="w-5 h-5 mr-2" />
