@@ -1,30 +1,83 @@
 import React from 'react';
+import { Calendar, Award, Building2, Briefcase, GraduationCap } from 'lucide-react';
 
 const timeline = [
-  { year: 2023, event: "Lead Architect, Urban Harmony Center" },
-  { year: 2021, event: "International Architecture Award" },
-  { year: 2019, event: "Founded Studio Arc" },
-  { year: 2017, event: "Senior Architect, Foster & Partners" },
-  { year: 2013, event: "Started Professional Journey" }
+  {
+    year: 2023,
+    event: "Lead Architect, Urban Harmony Center",
+    description: "Leading innovative sustainable architecture projects",
+    icon: Building2,
+    color: "bg-emerald-100 text-emerald-600"
+  },
+  {
+    year: 2021,
+    event: "International Architecture Award",
+    description: "Recognized for excellence in sustainable design",
+    icon: Award,
+    color: "bg-blue-100 text-blue-600"
+  },
+  {
+    year: 2019,
+    event: "Founded Studio Arc",
+    description: "Established independent architectural practice",
+    icon: Briefcase,
+    color: "bg-purple-100 text-purple-600"
+  },
+  {
+    year: 2017,
+    event: "Senior Architect, Foster & Partners",
+    description: "Led major international projects",
+    icon: Building2,
+    color: "bg-rose-100 text-rose-600"
+  },
+  {
+    year: 2013,
+    event: "Started Professional Journey",
+    description: "Graduated with honors in Architecture",
+    icon: GraduationCap,
+    color: "bg-amber-100 text-amber-600"
+  }
 ];
 
 export function Timeline() {
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl font-bold mb-12 text-center">Professional Journey</h2>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-4">Professional Journey</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            A decade of architectural excellence, innovation, and sustainable design
+          </p>
+        </div>
+
         <div className="relative">
-          {timeline.map((item, index) => (
-            <div key={index} className="mb-8 flex">
-              <div className="flex-none w-24 text-right pr-4 pt-1">
-                <span className="font-bold">{item.year}</span>
+          {/* Vertical Line */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-200"></div>
+
+          {timeline.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div key={index} className="relative mb-12">
+                <div className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
+                  {/* Content */}
+                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-12 text-right' : 'pl-12'}`}>
+                    <div className="bg-white p-6 rounded-xl shadow-lg transform transition-transform hover:scale-105 duration-300">
+                      <span className="text-sm font-bold text-gray-400">{item.year}</span>
+                      <h3 className="text-xl font-bold mt-1">{item.event}</h3>
+                      <p className="text-gray-600 mt-2">{item.description}</p>
+                    </div>
+                  </div>
+
+                  {/* Icon */}
+                  <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/4">
+                    <div className={`w-12 h-12 rounded-full ${item.color} flex items-center justify-center shadow-lg border-4 border-white`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="relative flex-grow pl-8 border-l-2 border-gray-300">
-                <div className="absolute w-4 h-4 bg-white border-2 border-gray-300 rounded-full -left-[9px] top-1"></div>
-                <p className="text-lg">{item.event}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

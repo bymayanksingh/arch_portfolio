@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4">ARCH.STUDIO</h3>
+            <h3 className="text-xl font-bold mb-4">Pragya Singh</h3>
             <p className="text-gray-400 mb-4">Creating innovative architectural solutions for a sustainable future.</p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors"><Github /></a>
@@ -61,7 +61,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">© 2024 ARCH.STUDIO. All rights reserved.</p>
+            <p className="text-gray-400 text-sm">© 2024 Pragya Singh, All rights reserved.</p>
             <div className="mt-4 md:mt-0">
               <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
               <span className="mx-2 text-gray-600">|</span>

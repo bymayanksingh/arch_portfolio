@@ -5,6 +5,7 @@ import { projectsData } from '../data/projects';
 
 const categories = [
   { id: 'all', name: 'All Projects' },
+  { id: 'dissertation', name: 'Dissertation' },
   { id: 'site-layout', name: 'Site Layout' },
   { id: 'interior-design', name: 'Interior Design' },
   { id: '3d-rendering', name: '3D Rendering' },

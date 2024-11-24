@@ -14,7 +14,7 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
     <nav className="fixed w-full bg-white/90 backdrop-blur-sm z-50 border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="text-2xl font-bold">ARCH.STUDIO</Link>
+          <Link to="/" className="text-2xl font-bold">Pragya Singh</Link>
           <div className="hidden md:flex space-x-8">
             <Link 
               to="/" 
@@ -28,8 +28,18 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
             >
               Projects
             </Link>
-            <a href="/#about" className="hover:text-gray-600 text-gray-500">About</a>
-            <a href="/#contact" className="hover:text-gray-600 text-gray-500">Contact</a>
+            <Link 
+              to="/about"
+              className={`hover:text-gray-600 ${location.pathname === '/about' ? 'text-black' : 'text-gray-500'}`}
+            >
+              About
+            </Link>
+            <Link 
+              to="/contact"
+              className={`hover:text-gray-600 ${location.pathname === '/contact' ? 'text-black' : 'text-gray-500'}`}
+            >
+              Contact
+            </Link>
           </div>
           <button 
             className="md:hidden"
@@ -57,20 +67,20 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
             >
               Projects
             </Link>
-            <a 
-              href="/#about" 
+            <Link 
+              to="/about"
               className="block px-3 py-2 hover:bg-gray-50"
               onClick={() => setIsMenuOpen(false)}
             >
               About
-            </a>
-            <a 
-              href="/#contact" 
+            </Link>
+            <Link 
+              to="/contact"
               className="block px-3 py-2 hover:bg-gray-50"
               onClick={() => setIsMenuOpen(false)}
             >
               Contact
-            </a>
+            </Link>
           </div>
         </div>
       )}
