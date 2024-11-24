@@ -23,7 +23,7 @@ export function Contact() {
               </a>
               <div className="flex items-center space-x-3 text-white/80">
                 <Building2 />
-                <span>New York, NY</span>
+                <span>Manchester, UK</span>
               </div>
             </div>
           </div>

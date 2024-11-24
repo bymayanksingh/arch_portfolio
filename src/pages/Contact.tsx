@@ -95,7 +95,7 @@ export function Contact() {
                 <div className="flex items-start">
                   <MapPin className="w-6 h-6 text-gray-600 mr-4 mt-1" />
                   <div>
-                    <h3 className="font-semibold mb-1">Office Location</h3>
+                    <h3 className="font-semibold mb-1">Location</h3>
                     <p className="text-gray-600">
                       123 Architecture Street<br />
                       Manchester, UK M1 1AB
@@ -118,16 +118,6 @@ export function Contact() {
                     <a href="tel:+1234567890" className="text-gray-600 hover:text-black">
                       +1 (234) 567-890
                     </a>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <Clock className="w-6 h-6 text-gray-600 mr-4 mt-1" />
-                  <div>
-                    <h3 className="font-semibold mb-1">Working Hours</h3>
-                    <p className="text-gray-600">
-                      Monday - Friday: 9:00 AM - 6:00 PM<br />
-                      Saturday: By appointment only
-                    </p>
                   </div>
                 </div>
               </div>

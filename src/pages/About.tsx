@@ -1,5 +1,6 @@
-import React from 'react';
-import { Download, Mail, Phone, Linkedin, Award, Building2, Users, Lightbulb } from 'lucide-react';
+import React, { useState } from 'react';
+import { Download, Mail, Phone, Linkedin, Award, Building2, Users, Lightbulb, CheckCircle2 } from 'lucide-react';
+import { ImageModal } from '../components/ImageModal';
 
 const skills = [
   "Architecture",
@@ -19,7 +20,40 @@ const stats = [
   { icon: Lightbulb, label: "Creative Solutions", value: "200+" }
 ];
 
+const certificates = [
+  {
+    title: "LEED Accredited Professional",
+    organization: "U.S. Green Building Council",
+    year: "2023",
+    description: "Certification in sustainable building practices and green architecture",
+    image: "https://images.unsplash.com/photo-1617994452722-4145e196248b?auto=format&fit=crop&q=80&w=600"
+  },
+  {
+    title: "Architectural License",
+    organization: "Royal Institute of British Architects",
+    year: "2022",
+    description: "Professional architectural practice license",
+    image: "https://images.unsplash.com/photo-1485627941502-d2e6429a8af0?auto=format&fit=crop&q=80&w=600"
+  },
+  {
+    title: "BIM Management Certificate",
+    organization: "Autodesk Certified Professional",
+    year: "2021",
+    description: "Advanced certification in Building Information Modeling",
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
+  },
+  {
+    title: "Sustainable Design Excellence",
+    organization: "International Green Building Institute",
+    year: "2020",
+    description: "Recognition for excellence in sustainable architectural design",
+    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
+  }
+];
+
 export function About() {
+  const [selectedCertificate, setSelectedCertificate] = useState<typeof certificates[0] | null>(null);
+
   return (
     <div className="pt-24 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -78,6 +112,45 @@ export function About() {
           })}
         </div>
 
+        {/* Certificates Section */}
+        <div className="mb-20">
+          <h2 className="text-3xl font-bold mb-8 text-center">Professional Certifications</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {certificates.map((cert, index) => (
+              <div 
+                key={index}
+                onClick={() => setSelectedCertificate(cert)}
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+              >
+                <div className="absolute inset-0">
+                  <img 
+                    src={cert.image}
+                    alt={cert.title}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+                </div>
+                <div className="relative p-6 h-full flex flex-col justify-end min-h-[320px]">
+                  <div className="flex items-start mb-4">
+                    <CheckCircle2 className="w-6 h-6 text-green-400 mr-2 flex-shrink-0 mt-1" />
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2">{cert.title}</h3>
+                      <p className="text-white/80 text-sm">{cert.organization}</p>
+                    </div>
+                  </div>
+                  <p className="text-white/70 text-sm mb-3">{cert.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white/60 text-sm">{cert.year}</span>
+                    <span className="px-3 py-1 bg-white/10 rounded-full text-white/90 text-sm backdrop-blur-sm">
+                      Verified
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Skills Section */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8">Skills & Expertise</h2>
@@ -133,6 +206,13 @@ export function About() {
           </div>
         </div>
       </div>
+
+      <ImageModal
+        isOpen={!!selectedCertificate}
+        onClose={() => setSelectedCertificate(null)}
+        image={selectedCertificate?.image || ''}
+        title={selectedCertificate?.title || ''}
+      />
     </div>
   );
 }

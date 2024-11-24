@@ -27,9 +27,9 @@ export function Testimonials() {
     <section id="testimonials" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">What Clients Say</h2>
+          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">Testimonials</h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Hear from our valued clients about their experiences and the impact of our architectural solutions
+            Hear from my valued employers about their experiences with me and the impact of my architectural solutions
           </p>
         </div>
         

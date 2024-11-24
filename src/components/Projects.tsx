@@ -36,7 +36,7 @@ export function Projects() {
         <div className="text-center mb-16">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">Featured Projects</h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Discover our most innovative and impactful architectural designs
+            Discover my most innovative and impactful architectural designs
           </p>
         </div>
         
