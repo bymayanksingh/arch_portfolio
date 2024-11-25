@@ -17,17 +17,21 @@ export const projectsData = [
       "The cultural spaces include an art gallery, performance venues, and workshop areas, creating a vibrant community hub."
     ],
     gallery: [
-      {
-        url: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&q=80&w=2000",
-        caption: "Main entrance and plaza"
+       {
+        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
+        caption: "Cultural center interior"
       },
       {
         url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
         caption: "Cultural center interior"
       },
-      {
-        url: "https://images.unsplash.com/photo-1600607687166-48ad73805ab5?auto=format&fit=crop&q=80&w=2000",
-        caption: "Residential tower"
+       {
+        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
+        caption: "Cultural center interior"
+      },
+       {
+        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
+        caption: "Cultural center interior"
       }
     ]
   },
@@ -142,7 +146,7 @@ export const projectsData = [
     location: "Dubai",
     date: "November 2023",
     year: 2023,
-    coverImage: "https://images.unsplash.com/photo-1600607687166-48ad73805ab5?auto=format&fit=crop&q=80&w=2000",
+    coverImage: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=2000",
     description: "Physical scale model of a luxury residential complex.",
     client: "Dubai Properties",
     area: "25,000 sq.m",
