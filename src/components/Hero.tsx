@@ -88,7 +88,7 @@ export function Hero() {
 
       {/* Scroll Indicator - Fixed centering for all screen sizes */}
       <div className="absolute left-1/2 -translate-x-1/2 bottom-8 flex flex-col items-center animate">
-        <div className="w-1 h-16 rounded-full bg-white/20 relative overflow-hidden">
+        <div className="w-1 h-10 rounded-full bg-white/20 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full bg-white/60 transform -translate-y-1/2 animate-scroll"></div>
         </div>
         <span className="text-white/60 text-sm mt-4">Scroll Down</span>
