@@ -36,13 +36,10 @@ export function Hero() {
           <div className="max-w-3xl space-y-8">
             {/* Intro Text */}
             <div className="space-y-4">
-              <h2 className="text-white/80 text-xl md:text-2xl font-light tracking-wider">
-                Welcome to My Portfolio
-              </h2>
               <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-bold text-white">
                 Hello, I'm{' '}
                 <span className="relative inline-block">
-                  Pragya
+                  Pragya.
                   <span className="absolute -bottom-2 left-0 w-full h-1 bg-white/30"></span>
                 </span>
               </h1>
