@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Download, Mail, Phone, Linkedin, Award, Building2, Users, Lightbulb, CheckCircle2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Download, Mail, Phone, Linkedin, Award, Building2, Users, Lightbulb, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ImageModal } from '../components/ImageModal';
 
 const skills = [
@@ -48,11 +48,36 @@ const certificates = [
     year: "2020",
     description: "Recognition for excellence in sustainable architectural design",
     image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
+  },
+  {
+    title: "Urban Planning Certification",
+    organization: "American Planning Association",
+    year: "2019",
+    description: "Specialized certification in urban planning and development",
+    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
+  },
+  {
+    title: "Historic Preservation Certificate",
+    organization: "National Trust for Historic Preservation",
+    year: "2018",
+    description: "Advanced training in historical building preservation",
+    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
   }
 ];
 
 export function About() {
   const [selectedCertificate, setSelectedCertificate] = useState<typeof certificates[0] | null>(null);
+  const certificatesRef = useRef<HTMLDivElement>(null);
+
+  const scrollCertificates = (direction: 'left' | 'right') => {
+    if (certificatesRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      certificatesRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div className="pt-24 pb-20">
@@ -115,39 +140,61 @@ export function About() {
         {/* Certificates Section */}
         <div className="mb-20">
           <h2 className="text-3xl font-bold mb-8 text-center">Professional Certifications</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {certificates.map((cert, index) => (
-              <div 
-                key={index}
-                onClick={() => setSelectedCertificate(cert)}
-                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-              >
-                <div className="absolute inset-0">
-                  <img 
-                    src={cert.image}
-                    alt={cert.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                </div>
-                <div className="relative p-6 h-full flex flex-col justify-end min-h-[320px]">
-                  <div className="flex items-start mb-4">
-                    <CheckCircle2 className="w-6 h-6 text-green-400 mr-2 flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-2">{cert.title}</h3>
-                      <p className="text-white/80 text-sm">{cert.organization}</p>
+          <div className="relative">
+            {certificates.length > 4 && (
+              <>
+                <button
+                  onClick={() => scrollCertificates('left')}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => scrollCertificates('right')}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+            <div 
+              ref={certificatesRef}
+              className="flex overflow-x-auto gap-8 pb-4 snap-x snap-mandatory scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {certificates.map((cert, index) => (
+                <div 
+                  key={index}
+                  onClick={() => setSelectedCertificate(cert)}
+                  className="flex-none w-[300px] group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer snap-start"
+                >
+                  <div className="absolute inset-0">
+                    <img 
+                      src={cert.image}
+                      alt={cert.title}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+                  </div>
+                  <div className="relative p-6 h-full flex flex-col justify-end min-h-[320px]">
+                    <div className="flex items-start mb-4">
+                      <CheckCircle2 className="w-6 h-6 text-green-400 mr-2 flex-shrink-0 mt-1" />
+                      <div>
+                        <h3 className="text-xl font-bold text-white mb-2">{cert.title}</h3>
+                        <p className="text-white/80 text-sm">{cert.organization}</p>
+                      </div>
+                    </div>
+                    <p className="text-white/70 text-sm mb-3">{cert.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/60 text-sm">{cert.year}</span>
+                      <span className="px-3 py-1 bg-white/10 rounded-full text-white/90 text-sm backdrop-blur-sm">
+                        Verified
+                      </span>
                     </div>
                   </div>
-                  <p className="text-white/70 text-sm mb-3">{cert.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/60 text-sm">{cert.year}</span>
-                    <span className="px-3 py-1 bg-white/10 rounded-full text-white/90 text-sm backdrop-blur-sm">
-                      Verified
-                    </span>
-                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
