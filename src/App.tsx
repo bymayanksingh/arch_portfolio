@@ -7,12 +7,14 @@ import { ProjectDetail } from './pages/ProjectDetail';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 import { Footer } from './components/Footer';
+import { ScrollToTop } from './components/ScrollToTop';
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className="min-h-screen flex flex-col">
         <Navigation isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
         <main className="flex-grow">

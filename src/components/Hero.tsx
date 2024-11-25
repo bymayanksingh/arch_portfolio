@@ -21,7 +21,7 @@ export function Hero() {
         
         {/* Animated Pattern Overlay */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" 
+          <div className="absolute inset-0 pattern-animate" 
                style={{
                  backgroundImage: 'linear-gradient(90deg, #ffffff 1px, transparent 1px), linear-gradient(0deg, #ffffff 1px, transparent 1px)',
                  backgroundSize: '50px 50px'
@@ -35,15 +35,15 @@ export function Hero() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-3xl space-y-8">
             {/* Intro Text */}
-            <div className="space-y-4">
-              <h1 className="font-playfair text-6xl md:text-7xl lg:text-8xl font-bold text-white">
+            <div className="space-y-6">
+              <h1 className="font-cormorant text-6xl md:text-7xl lg:text-8xl font-light text-white leading-tight">
                 Hello, I'm{' '}
                 <span className="relative inline-block">
-                  Pragya.
-                  <span className="absolute -bottom-2 left-0 w-full h-1 bg-white/30"></span>
+                  <span className="relative z-10 font-semibold">Pragya</span>
+                  <span className="absolute bottom-0 left-0 w-full h-1 bg-white/30 transform origin-left transition-transform duration-500 group-hover:scale-x-100"></span>
                 </span>
               </h1>
-              <p className="text-xl md:text-2xl text-white/80 font-light max-w-2xl leading-relaxed">
+              <p className="font-cormorant text-2xl md:text-3xl text-white/90 font-light max-w-2xl leading-relaxed tracking-wide">
                 Licensed architect in Manchester, specializing in sustainable design 
                 and innovative architectural solutions.
               </p>
@@ -70,28 +70,28 @@ export function Hero() {
             {/* Stats */}
             <div className="pt-12 grid grid-cols-3 gap-8 max-w-lg">
               <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">50+</div>
-                <div className="text-white/60 text-sm">Projects</div>
+                <div className="font-cormorant text-4xl font-semibold text-white mb-2">50+</div>
+                <div className="text-white/60 text-sm tracking-wider uppercase">Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">12</div>
-                <div className="text-white/60 text-sm">Awards</div>
+                <div className="font-cormorant text-4xl font-semibold text-white mb-2">12</div>
+                <div className="text-white/60 text-sm tracking-wider uppercase">Awards</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-white mb-2">10+</div>
-                <div className="text-white/60 text-sm">Years</div>
+                <div className="font-cormorant text-4xl font-semibold text-white mb-2">10+</div>
+                <div className="text-white/60 text-sm tracking-wider uppercase">Years</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scroll Indicator - Fixed centering for all screen sizes */}
+      {/* Scroll Indicator */}
       <div className="absolute left-1/2 -translate-x-1/2 bottom-8 flex flex-col items-center animate">
         <div className="w-1 h-10 rounded-full bg-white/20 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-full bg-white/60 transform -translate-y-1/2 animate-scroll"></div>
         </div>
-        <span className="text-white/60 text-sm mt-4">Scroll Down</span>
+        <span className="text-white/60 text-sm mt-4 tracking-wider uppercase">Scroll Down</span>
       </div>
     </section>
   );

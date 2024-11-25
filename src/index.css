@@ -14,6 +14,30 @@ body {
   font-family: 'Playfair Display', serif;
 }
 
+.font-cormorant {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+/* Elegant text underline animation */
+.text-gradient {
+  background: linear-gradient(to right, #000 0%, #333 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-heading {
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.hero-name {
+  background: linear-gradient(to right, #000, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 @keyframes scroll {
   0% {
     transform: translateY(-100%);
