@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { Linkedin, Mail, MapPin, Phone, Instagram, Paintbrush } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function Footer() {
@@ -12,8 +12,9 @@ export function Footer() {
             <h3 className="font-playfair text-xl font-bold mb-4">Pragya Singh</h3>
             <p className="text-gray-400 mb-4">Creating innovative architectural solutions for a sustainable future.</p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors"><Github /></a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram /></a>
               <a href="#" className="text-gray-400 hover:text-white transition-colors"><Linkedin /></a>
+              <a href="#" className="text-gray-400 hover:text-white transition-colors"><Paintbrush /></a>
             </div>
           </div>
 
@@ -60,13 +61,8 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="text-center">
             <p className="text-gray-400 text-sm">© 2024 Pragya Singh, All rights reserved.</p>
-            <div className="mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
-              <span className="mx-2 text-gray-600">|</span>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
-            </div>
           </div>
         </div>
       </div>
