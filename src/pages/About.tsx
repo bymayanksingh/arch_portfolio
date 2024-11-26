@@ -29,13 +29,6 @@ const certificates = [
     image: "https://images.unsplash.com/photo-1617994452722-4145e196248b?auto=format&fit=crop&q=80&w=600"
   },
   {
-    title: "Architectural License",
-    organization: "Royal Institute of British Architects",
-    year: "2022",
-    description: "Professional architectural practice license",
-    image: "https://images.unsplash.com/photo-1485627941502-d2e6429a8af0?auto=format&fit=crop&q=80&w=600"
-  },
-  {
     title: "BIM Management Certificate",
     organization: "Autodesk Certified Professional",
     year: "2021",
@@ -67,6 +60,7 @@ const certificates = [
 
 export function About() {
   const [selectedCertificate, setSelectedCertificate] = useState<typeof certificates[0] | null>(null);
+  const [currentCertificateIndex, setCurrentCertificateIndex] = useState(0);
   const certificatesRef = useRef<HTMLDivElement>(null);
 
   const scrollCertificates = (direction: 'left' | 'right') => {
@@ -77,6 +71,24 @@ export function About() {
         behavior: 'smooth'
       });
     }
+  };
+
+  const handlePrevCertificate = () => {
+    setCurrentCertificateIndex((prev) => 
+      prev === 0 ? certificates.length - 1 : prev - 1
+    );
+    setSelectedCertificate(certificates[
+      currentCertificateIndex === 0 ? certificates.length - 1 : currentCertificateIndex - 1
+    ]);
+  };
+
+  const handleNextCertificate = () => {
+    setCurrentCertificateIndex((prev) => 
+      prev === certificates.length - 1 ? 0 : prev + 1
+    );
+    setSelectedCertificate(certificates[
+      currentCertificateIndex === certificates.length - 1 ? 0 : currentCertificateIndex + 1
+    ]);
   };
 
   return (
@@ -165,7 +177,10 @@ export function About() {
               {certificates.map((cert, index) => (
                 <div 
                   key={index}
-                  onClick={() => setSelectedCertificate(cert)}
+                  onClick={() => {
+                    setSelectedCertificate(cert);
+                    setCurrentCertificateIndex(index);
+                  }}
                   className="flex-none w-[300px] group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer snap-start"
                 >
                   <div className="absolute inset-0">
@@ -259,6 +274,11 @@ export function About() {
         onClose={() => setSelectedCertificate(null)}
         image={selectedCertificate?.image || ''}
         title={selectedCertificate?.title || ''}
+        onPrevious={handlePrevCertificate}
+        onNext={handleNextCertificate}
+        showNavigation={true}
+        currentIndex={currentCertificateIndex}
+        totalItems={certificates.length}
       />
     </div>
   );
