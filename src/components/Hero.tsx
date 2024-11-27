@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ScrollText } from 'lucide-react';
 import { getHero } from '../services/firebaseService';
 import type { Hero as HeroType } from '../services/firebaseService';
+import { getStats } from '../services/dataService';
+import { ArrowRight, ScrollText, Award, Building2, Users } from 'lucide-react';
+
+const iconMap = {
+  Building2,
+  Award,
+  Users
+};
 
 export function Hero() {
   const [heroData, setHeroData] = useState<HeroType | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,6 +29,20 @@ export function Hero() {
         setLoading(false);
       }
     }
+
+    const fetchStats = async () => {
+      try {
+        const data = await getStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        setError('Failed to load stats');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
     fetchHeroData();
   }, []);
 
@@ -104,25 +126,25 @@ export function Hero() {
             </div>
 
             {/* Stats */}
-            <div className="pt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-lg">
-              <div className="text-center">
-                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">
-                  {heroData?.stats.projects}+
-                </div>
-                <div className="text-white/60 text-sm tracking-wider uppercase">Projects</div>
-              </div>
-              <div className="text-center">
-                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">
-                  {heroData?.stats.awards}
-                </div>
-                <div className="text-white/60 text-sm tracking-wider uppercase">Awards</div>
-              </div>
-              <div className="text-center">
-                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">
-                  {heroData?.stats.experience}+
-                </div>
-                <div className="text-white/60 text-sm tracking-wider uppercase">Years</div>
-              </div>
+            <div className="pt-12 grid grid-cols-3 gap-8 sm:gap-12 max-w-lg">
+              {stats?.items ? (
+                stats.items.map((stat, index) => {
+                  const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;
+                  return (
+                    <div key={index} className="text-center group">
+                      <Icon className="w-6 h-6 mx-auto mb-3 text-white/60 group-hover:text-white transition-colors duration-300" />
+                      <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-1">
+                        {stat.value}
+                      </div>
+                      <div className="text-white/60 text-sm tracking-wider uppercase group-hover:text-white/80 transition-colors duration-300">
+                        {stat.label}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : error ? (
+                <p className="text-red-500">{error}</p>
+              ) : null}
             </div>
           </div>
         </div>

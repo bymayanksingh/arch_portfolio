@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getProjects } from '../services/firebaseService';
 import type { Project } from '../services/firebaseService';
 import { ArrowRight } from 'lucide-react';
@@ -50,7 +50,7 @@ export function Projects() {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold font-playfair mb-4">Featured Projects</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore our portfolio of innovative architectural designs and successful projects
+            Explore my portfolio of innovative architectural designs and successful projects
           </p>
         </div>
 

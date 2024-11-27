@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Download, ArrowRight, Award, Building2, Users } from 'lucide-react';
-import { About, getAbout } from '../services/firebaseService';
+import { About, getAbout, Stats } from '../services/firebaseService';
+import { getStats } from '../services/dataService';
 
-const stats = [
-  { icon: Building2, label: "Projects", value: "50+" },
-  { icon: Award, label: "Awards", value: "12" },
-  { icon: Users, label: "Clients", value: "100+" },
-];
+const iconMap = {
+  Building2,
+  Award,
+  Users
+};
 
 export function HomeAbout() {
   const [about, setAbout] = useState<About | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAbout = async () => {
@@ -20,12 +23,23 @@ export function HomeAbout() {
         setAbout(aboutData);
       } catch (error) {
         console.error('Error fetching about data:', error);
+      }
+    };
+
+    const fetchStats = async () => {
+      try {
+        const data = await getStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        setError('Failed to load stats');
       } finally {
         setLoading(false);
       }
     };
 
     fetchAbout();
+    fetchStats();
   }, []);
 
   if (loading) {
@@ -50,16 +64,20 @@ export function HomeAbout() {
             />
             <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm rounded-b-2xl p-6">
               <div className="grid grid-cols-3 gap-4">
-                {stats.map((stat, index) => {
-                  const Icon = stat.icon;
-                  return (
-                    <div key={index} className="text-center text-white">
-                      <Icon className="w-6 h-6 mx-auto mb-2" />
-                      <div className="font-playfair text-2xl font-bold">{stat.value}</div>
-                      <div className="text-sm text-white/80">{stat.label}</div>
-                    </div>
-                  );
-                })}
+                {stats?.items ? (
+                  stats.items.map((stat, index) => {
+                    const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;
+                    return (
+                      <div key={index} className="text-center text-white">
+                        <Icon className="w-6 h-6 mx-auto mb-2" />
+                        <div className="font-playfair text-2xl font-bold">{stat.value}</div>
+                        <div className="text-sm text-white/80">{stat.label}</div>
+                      </div>
+                    );
+                  })
+                ) : error ? (
+                  <p className="text-red-500">{error}</p>
+                ) : null}
               </div>
             </div>
           </div>

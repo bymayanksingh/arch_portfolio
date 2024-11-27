@@ -92,12 +92,7 @@ export const hero = {
   name: "Pragya",
   title: "Architect & Urban Designer",
   subtitle: "Licensed architect in Manchester, specializing in sustainable design and innovative architectural solutions.",
-  backgroundImage: "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3?q=80&w=1470&auto=format&fit=crop",
-  stats: {
-    projects: 50,
-    awards: 12,
-    experience: 10
-  }
+  backgroundImage: "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3?q=80&w=1470&auto=format&fit=crop"
 };
 
 export const contact = {

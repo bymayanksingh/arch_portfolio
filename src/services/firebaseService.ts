@@ -56,11 +56,16 @@ export interface About {
   name: string;
   title: string;
   description: string;
+  shortDescription: string;
   image: string;
   email: string;
+  city: string;
+  country: string;
   phone: string;
   linkedin: string;
+  instagram: string;
   resume: string;
+  services: string[];
 }
 
 export interface Contact {
@@ -81,6 +86,25 @@ export interface Message {
   projectType: string;
   message: string;
   createdAt: Date;
+}
+
+export interface Stats {
+  id: string;
+  items: Array<{
+    icon: string;
+    label: string;
+    value: string;
+  }>;
+}
+
+export interface Certificate {
+  id?: string;
+  title: string;
+  organization: string;
+  year: string;
+  description: string;
+  image: string;
+  verified: boolean;
 }
 
 // Hero
@@ -108,9 +132,20 @@ export const getProjects = async (): Promise<Project[]> => {
 
 export const getProject = async (id: string): Promise<Project | null> => {
   try {
-    const docRef = doc(db, 'projects', id);
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as Project : null;
+    console.log('Fetching project with ID:', id);
+    const projectsRef = collection(db, 'projects');
+    const q = query(projectsRef, where('id', '==', id));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      const data = { id: doc.id, ...doc.data() } as Project;
+      console.log('Found project:', data);
+      return data;
+    }
+    
+    console.log('No project found with ID:', id);
+    return null;
   } catch (error) {
     console.error('Error fetching project:', error);
     return null;
@@ -192,10 +227,37 @@ export const getContact = async (): Promise<Contact | null> => {
   }
 };
 
+// Stats
+export const getStats = async (): Promise<Stats | null> => {
+  try {
+    const docRef = doc(db, 'stats', 'stats');
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return docSnap.data() as Stats;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching stats:', error);
+    return null;
+  }
+};
+
+// Certificates
+export const getCertificates = async (): Promise<Certificate[]> => {
+  try {
+    const snapshot = await getDocs(collection(db, 'certificates'));
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Certificate);
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+    return [];
+  }
+};
+
 // Messages
 export const submitMessage = async (messageData: Omit<Message, 'id' | 'createdAt'>): Promise<{ success: boolean; error?: string }> => {
   try {
-    const messagesCollection = collection(db, 'messages');
+    const messagesCollection = collection(db, 'contact');
     const messageWithTimestamp = {
       ...messageData,
       createdAt: new Date()

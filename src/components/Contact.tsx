@@ -1,13 +1,24 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, Linkedin, Instagram } from 'lucide-react';
-import { submitMessage } from '../services/firebaseService';
+import { submitMessage, getAbout } from '../services/firebaseService';
+import type { About } from '../services/firebaseService';
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  projectType: string;
+  customProjectType: string;
+  message: string;
+}
 
 export function Contact() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
     projectType: '',
+    customProjectType: '',
     message: ''
   });
 
@@ -15,6 +26,16 @@ export function Contact() {
     type: 'idle' | 'loading' | 'success' | 'error';
     message?: string;
   }>({ type: 'idle' });
+
+  const [about, setAbout] = useState<About | null>(null);
+
+  useEffect(() => {
+    async function fetchAboutData() {
+      const data = await getAbout();
+      setAbout(data);
+    }
+    fetchAboutData();
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -31,7 +52,13 @@ export function Contact() {
     setStatus({ type: 'loading' });
 
     try {
-      const result = await submitMessage(formData);
+      const result = await submitMessage({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        projectType: formData.projectType === 'Other' ? formData.customProjectType : formData.projectType,
+        message: formData.message
+      });
       
       if (result.success) {
         setStatus({
@@ -43,6 +70,7 @@ export function Contact() {
           lastName: '',
           email: '',
           projectType: '',
+          customProjectType: '',
           message: ''
         });
       } else {
@@ -69,12 +97,12 @@ export function Contact() {
 
   return (
     <div className="pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6">Get in Touch</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Let's discuss your project and create something extraordinary together
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold font-playfair mb-4">Let's Talk</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Have a project in mind? I'd love to hear about it. Let's discuss how we can work together to bring your vision to life.
           </p>
         </div>
 
@@ -102,7 +130,7 @@ export function Contact() {
                     value={formData.firstName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                    placeholder="John"
+                    placeholder="Jane"
                     required
                   />
                 </div>
@@ -116,7 +144,7 @@ export function Contact() {
                     value={formData.lastName}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                    placeholder="Doe"
+                    placeholder="Smith"
                   />
                 </div>
               </div>
@@ -131,7 +159,7 @@ export function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                  placeholder="john@example.com"
+                  placeholder="jane@example.com"
                   required
                 />
               </div>
@@ -145,16 +173,34 @@ export function Contact() {
                   value={formData.projectType}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
+                  required
                 >
                   <option value="">Select a project type</option>
-                  <option value="employment">Employment Opportunity</option>
-                  <option value="residential">Residential</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="interior">Interior Design</option>
-                  <option value="renovation">Renovation</option>
-                  <option value="consultation">Consultation</option>
+                  <option value="Residential">Residential</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Interior">Interior Design</option>
+                  <option value="Landscape">Landscape</option>
+                  <option value="Employment">Employment</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
+
+              {formData.projectType === 'Other' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Specify Project Type
+                  </label>
+                  <input
+                    type="text"
+                    name="customProjectType"
+                    value={formData.customProjectType}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
+                    placeholder="Please specify your project type"
+                    required
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -197,52 +243,64 @@ export function Contact() {
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-12">
-            {/* Contact Details */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <MapPin className="w-6 h-6 text-gray-600 mr-4 mt-1" />
+          <div className="bg-gray-50 p-8 rounded-xl">
+            <h3 className="text-xl font-playfair font-bold mb-8">Contact Information</h3>
+            
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-medium mb-4">Location</h4>
+                <div className="flex items-start space-x-3 text-gray-600">
+                  <MapPin className="w-5 h-5 mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold mb-1">Location</h3>
-                    <p className="text-gray-600">
-                      123 Architecture Street<br />
-                      Manchester, UK M1 1AB
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <Mail className="w-6 h-6 text-gray-600 mr-4 mt-1" />
-                  <div>
-                    <h3 className="font-semibold mb-1">Email Address</h3>
-                    <a href="mailto:contact@architect.com" className="text-gray-600 hover:text-black">
-                      contact@architect.com
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <Phone className="w-6 h-6 text-gray-600 mr-4 mt-1" />
-                  <div>
-                    <h3 className="font-semibold mb-1">Phone Number</h3>
-                    <a href="tel:+1234567890" className="text-gray-600 hover:text-black">
-                      +1 (234) 567-890
-                    </a>
+                    <p>{about?.city}, {about?.country}</p>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Social Links */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Follow Me</h2>
-              <div className="flex space-x-4">
-                <a href="#" className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
-                  <Linkedin className="w-6 h-6" />
+              <div>
+                <h4 className="font-medium mb-4">Email Address</h4>
+                <a 
+                  href={`mailto:${about?.email}`}
+                  className="flex items-center space-x-3 text-gray-600 hover:text-black transition-colors"
+                >
+                  <Mail className="w-5 h-5 flex-shrink-0" />
+                  <span>{about?.email}</span>
                 </a>
-                <a href="#" className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
-                  <Instagram className="w-6 h-6" />
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-4">Phone Number</h4>
+                <a 
+                  href={`tel:${about?.phone}`}
+                  className="flex items-center space-x-3 text-gray-600 hover:text-black transition-colors"
+                >
+                  <Phone className="w-5 h-5 flex-shrink-0" />
+                  <span>{about?.phone}</span>
                 </a>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-4">Follow Me</h4>
+                <div className="flex items-center space-x-4">
+                  <a
+                    href={about?.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-black transition-colors"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin className="w-5 h-5" />
+                  </a>
+                  <a
+                    href={about?.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-black transition-colors"
+                    aria-label="Instagram"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>

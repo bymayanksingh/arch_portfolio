@@ -1,23 +1,51 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Calendar, MapPin } from 'lucide-react';
-import { projectsData } from '../data/projects';
+import { Search, Calendar, MapPin, Loader2 } from 'lucide-react';
+import { getProjects } from '../services/firebaseService';
+import type { Project } from '../services/firebaseService';
 
-const categories = [
-  { id: 'all', name: 'All Projects' },
-  { id: 'dissertation', name: 'Dissertation' },
-  { id: 'site-layout', name: 'Site Layout' },
-  { id: 'interior-design', name: 'Interior Design' },
-  { id: '3d-rendering', name: '3D Rendering' },
-  { id: 'construction', name: 'Construction Docs' },
-  { id: 'model-making', name: 'Model Making' }
-];
+interface Category {
+  id: string;
+  name: string;
+}
 
 export function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<Category[]>([
+    { id: 'all', name: 'All Projects' }
+  ]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredProjects = projectsData.filter(project => {
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const data = await getProjects();
+        setProjects(data);
+        
+        // Generate unique categories from projects
+        const uniqueCategories = new Set(data.map(project => project.category));
+        const formattedCategories: Category[] = [
+          { id: 'all', name: 'All Projects' },
+          ...Array.from(uniqueCategories).map(category => ({
+            id: category.toLowerCase().replace(/\s+/g, '-'),
+            name: category
+          }))
+        ];
+        setCategories(formattedCategories);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setError('Failed to load projects');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProjects();
+  }, []);
+
+  const filteredProjects = projects.filter(project => {
     const matchesSearch = 
       project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -29,6 +57,33 @@ export function ProjectsPage() {
 
     return matchesSearch && matchesCategory;
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-700" />
+          <p className="text-gray-600">Loading projects...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-black/80 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-20">
@@ -69,44 +124,48 @@ export function ProjectsPage() {
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
-            <Link 
-              key={project.id} 
-              to={`/projects/${project.id}`}
-              className="group block"
-            >
-              <div className="relative overflow-hidden rounded-lg shadow-lg">
-                <img 
-                  src={project.coverImage}
-                  alt={project.title}
-                  className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-                  <div className="bg-black/40 px-3 py-1 rounded-full text-white text-sm inline-block mb-2 self-start">
-                    {project.category}
-                  </div>
-                  <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>
-                  <div className="flex items-center text-white/80 space-x-4">
-                    <div className="flex items-center">
-                      <MapPin className="w-4 h-4 mr-1" />
-                      <span>{project.location}</span>
+          {filteredProjects.length > 0 ? (
+            filteredProjects.map((project) => (
+              <Link 
+                key={project.id} 
+                to={`/projects/${project.id}`}
+                className="group block"
+              >
+                <div className="relative overflow-hidden rounded-lg shadow-lg">
+                  <img 
+                    src={project.coverImage}
+                    alt={project.title}
+                    className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://via.placeholder.com/800x600?text=Project+Image';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+                    <div className="bg-black/40 px-3 py-1 rounded-full text-white text-sm inline-block mb-2 self-start">
+                      {project.category}
                     </div>
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      <span>{project.date}</span>
+                    <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>
+                    <div className="flex items-center text-white/80 space-x-4">
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-1" />
+                        <span>{project.location}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        <span>{project.date}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <p className="text-gray-500 text-lg">No projects found matching your criteria</p>
+            </div>
+          )}
         </div>
-
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No projects found matching your criteria.</p>
-          </div>
-        )}
       </div>
     </div>
   );

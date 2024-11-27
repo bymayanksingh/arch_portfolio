@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getTestimonials } from '../services/firebaseService';
 import type { Testimonial } from '../services/firebaseService';
+import { Quote } from 'lucide-react';
 
 export function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -49,12 +50,12 @@ export function Testimonials() {
   }
 
   return (
-    <section id="testimonials" className="py-20 bg-gray-50">
+    <section id="testimonials" className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <h2 className="text-4xl font-bold font-playfair mb-4">Client Testimonials</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Hear what our clients have to say about their experience working with us
+            Hear what my clients have to say about their experience working with me
           </p>
         </div>
 
@@ -62,31 +63,68 @@ export function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id || index}
-              className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+              className="group relative bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] 
+                       hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 
+                       hover:-translate-y-1 overflow-hidden"
             >
-              <div className="flex items-center mb-6">
-                {testimonial.image ? (
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-16 h-16 rounded-full object-cover mr-4"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://via.placeholder.com/150';
-                      console.warn(`Failed to load image for testimonial: ${testimonial.id}`);
-                    }}
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-gray-200 mr-4" />
-                )}
-                <div>
-                  <h3 className="font-bold text-lg">{testimonial.name}</h3>
-                  <p className="text-gray-600">{testimonial.role}</p>
+              {/* Background Quote */}
+              <div className="absolute -right-6 -top-6 pointer-events-none opacity-5 group-hover:opacity-10 transition-opacity">
+                <Quote className="w-32 h-32 transform rotate-12" />
+              </div>
+
+              {/* Quote Icon */}
+              <div className="absolute -top-4 right-8 z-10">
+                <div className="bg-primary w-8 h-8 rounded-lg flex items-center justify-center
+                            transform -rotate-6 group-hover:rotate-0 transition-transform duration-300
+                            shadow-lg">
+                  <Quote className="w-5 h-5 text-white" />
                 </div>
               </div>
-              <p className="text-gray-700 leading-relaxed">
-                "{testimonial.content}"
-              </p>
+
+              {/* Content */}
+              <div className="relative">
+                <div className="relative mb-8">
+                  {/* Small decorative quote */}
+                  <span className="absolute -left-2 -top-2 text-4xl text-primary opacity-20 font-serif">"</span>
+                  <p className="text-gray-700 leading-relaxed font-light italic pl-4 relative z-10">
+                    {testimonial.content}
+                  </p>
+                  <span className="absolute -bottom-4 -right-1 text-4xl text-primary opacity-20 font-serif rotate-180">"</span>
+                </div>
+
+                {/* Profile */}
+                <div className="flex items-center mt-8 pt-6 border-t border-gray-100">
+                  <div className="relative">
+                    {testimonial.image ? (
+                      <div className="relative">
+                        <img
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          className="w-14 h-14 rounded-full object-cover ring-4 ring-gray-50
+                                   group-hover:ring-primary/10 transition-all duration-300"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'https://via.placeholder.com/150';
+                            console.warn(`Failed to load image for testimonial: ${testimonial.id}`);
+                          }}
+                        />
+                        <div className="absolute inset-0 rounded-full ring-1 ring-black/5"></div>
+                      </div>
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-gray-200 ring-4 ring-gray-50
+                                    group-hover:ring-primary/10 transition-all duration-300" />
+                    )}
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors">
+                      {testimonial.name}
+                    </h3>
+                    <p className="text-gray-500 text-sm group-hover:text-gray-600 transition-colors">
+                      {testimonial.role}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>

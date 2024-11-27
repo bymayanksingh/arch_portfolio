@@ -1,67 +1,54 @@
-import React, { useState, useRef } from 'react';
-import { Download, Mail, Phone, Linkedin, Award, Building2, Users, Lightbulb, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Download, Mail, Phone, Linkedin, Award, Building2, Users, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { ImageModal } from '../components/ImageModal';
+import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
 
-const skills = [
-  "Architecture",
-  "Interior Design",
-  "Building Design",
-  "3D Rendering",
-  "Supervision",
-  "Project Management",
-  "BIM",
-  "AutoCAD"
-];
-
-const stats = [
-  { icon: Building2, label: "Projects Completed", value: "50+" },
-  { icon: Award, label: "Awards Won", value: "12" },
-  { icon: Users, label: "Happy Clients", value: "100+" },
-  { icon: Lightbulb, label: "Creative Solutions", value: "200+" }
-];
-
-const certificates = [
-  {
-    title: "LEED Accredited Professional",
-    organization: "U.S. Green Building Council",
-    year: "2023",
-    description: "Certification in sustainable building practices and green architecture",
-    image: "https://images.unsplash.com/photo-1617994452722-4145e196248b?auto=format&fit=crop&q=80&w=600"
-  },
-  {
-    title: "BIM Management Certificate",
-    organization: "Autodesk Certified Professional",
-    year: "2021",
-    description: "Advanced certification in Building Information Modeling",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600"
-  },
-  {
-    title: "Sustainable Design Excellence",
-    organization: "International Green Building Institute",
-    year: "2020",
-    description: "Recognition for excellence in sustainable architectural design",
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
-  },
-  {
-    title: "Urban Planning Certification",
-    organization: "American Planning Association",
-    year: "2019",
-    description: "Specialized certification in urban planning and development",
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
-  },
-  {
-    title: "Historic Preservation Certificate",
-    organization: "National Trust for Historic Preservation",
-    year: "2018",
-    description: "Advanced training in historical building preservation",
-    image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80&w=600"
-  }
-];
+interface Certificate {
+  title: string;
+  organization: string;
+  year: string;
+  description: string;
+  image: string;
+  verified: boolean;
+}
 
 export function About() {
-  const [selectedCertificate, setSelectedCertificate] = useState<typeof certificates[0] | null>(null);
+  const [aboutData, setAboutData] = useState<AboutType | null>(null);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [currentCertificateIndex, setCurrentCertificateIndex] = useState(0);
   const certificatesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [aboutResult, skillsResult, certificatesResult, statsResult] = await Promise.all([
+          getAbout(),
+          getSkills(),
+          getCertificates(),
+          getStats()
+        ]);
+        
+        if (aboutResult) setAboutData(aboutResult);
+        setSkills(skillsResult);
+        setCertificates(certificatesResult);
+        if (statsResult) setStats(statsResult);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load data. Please try again later.');
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const scrollCertificates = (direction: 'left' | 'right') => {
     if (certificatesRef.current) {
@@ -74,22 +61,50 @@ export function About() {
   };
 
   const handlePrevCertificate = () => {
-    setCurrentCertificateIndex((prev) => 
-      prev === 0 ? certificates.length - 1 : prev - 1
-    );
-    setSelectedCertificate(certificates[
-      currentCertificateIndex === 0 ? certificates.length - 1 : currentCertificateIndex - 1
-    ]);
+    if (certificates.length === 0) return;
+    const newIndex = currentCertificateIndex === 0 ? certificates.length - 1 : currentCertificateIndex - 1;
+    setCurrentCertificateIndex(newIndex);
+    const newCert = certificates[newIndex];
+    if (newCert) {
+      setSelectedCertificate(newCert);
+      console.log('Previous certificate:', newCert); // Debug log
+    }
   };
 
   const handleNextCertificate = () => {
-    setCurrentCertificateIndex((prev) => 
-      prev === certificates.length - 1 ? 0 : prev + 1
-    );
-    setSelectedCertificate(certificates[
-      currentCertificateIndex === certificates.length - 1 ? 0 : currentCertificateIndex + 1
-    ]);
+    if (certificates.length === 0) return;
+    const newIndex = currentCertificateIndex === certificates.length - 1 ? 0 : currentCertificateIndex + 1;
+    setCurrentCertificateIndex(newIndex);
+    const newCert = certificates[newIndex];
+    if (newCert) {
+      setSelectedCertificate(newCert);
+      console.log('Next certificate:', newCert); // Debug log
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error || !aboutData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-20">
@@ -97,20 +112,19 @@ export function About() {
         {/* Hero Section */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
           <div>
-            <h1 className="text-5xl font-bold mb-6">About Me</h1>
+            <h1 className="text-5xl font-bold font-playfair mb-6">About Me</h1>
             <p className="text-xl text-gray-600 mb-8">
               Transforming spaces with innovative architectural solutions
             </p>
             <p className="text-gray-600 leading-relaxed mb-8">
-              With over a decade of experience in architecture and design, I specialize in creating 
-              sustainable, innovative spaces that harmoniously blend form and function. My approach 
-              combines traditional architectural principles with cutting-edge technology and 
-              environmental consciousness.
+              {aboutData.description}
             </p>
             <div className="flex flex-wrap gap-4">
               <a 
-                href="/cv.pdf" 
+                href={aboutData.resumeUrl} 
                 className="inline-flex items-center px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Download className="w-5 h-5 mr-2" />
                 Download CV
@@ -126,7 +140,7 @@ export function About() {
           </div>
           <div>
             <img 
-              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000" 
+              src={aboutData.image} 
               alt="Profile" 
               className="rounded-2xl shadow-2xl"
             />
@@ -134,54 +148,77 @@ export function About() {
         </div>
 
         {/* Stats Section */}
-        <div className="grid md:grid-cols-4 gap-8 mb-20">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-lg text-center">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Icon className="w-6 h-6" />
+        <div className="mb-20 text-center">
+          <h2 className="text-4xl font-bold font-playfair mb-4">By the Numbers</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-12">
+            A snapshot of my architectural journey and achievements
+          </p>
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            {stats?.items.map((stat, index) => {
+              const Icon = stat.icon === 'Building2' ? Building2 : 
+                          stat.icon === 'Award' ? Award : 
+                          stat.icon === 'Users' ? Users : Building2;
+              return (
+                <div key={index} className="group">
+                  <div className="relative bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
+                    {/* Decorative Background Elements */}
+                    <div className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-500">
+                      <div className="absolute -right-6 -top-6 w-32 h-32 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                      <div className="absolute right-12 bottom-12 w-40 h-40 bg-black rounded-full transform translate-x-1/2 translate-y-1/2" />
+                      <div className="absolute left-1/2 top-1/2 w-24 h-24 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                    </div>
+
+                    {/* Grid Pattern */}
+                    <div 
+                      className="absolute inset-0 opacity-[0.015] group-hover:opacity-[0.03] transition-opacity duration-500"
+                      style={{
+                        backgroundImage: `linear-gradient(to right, black 1px, transparent 1px),
+                                        linear-gradient(to bottom, black 1px, transparent 1px)`,
+                        backgroundSize: '20px 20px'
+                      }}
+                    />
+
+                    <div className="relative flex flex-col items-center text-center">
+                      <div className="mb-4 p-3 rounded-full bg-black/5 group-hover:bg-black/10 transition-colors duration-300">
+                        <Icon className="w-6 h-6 text-black/70" />
+                      </div>
+                      <div className="relative mb-2">
+                        <div className="text-5xl font-playfair text-black/80 group-hover:text-black transition-colors duration-500">
+                          {stat.value}
+                        </div>
+                        <div className="absolute bottom-0 left-1/2 w-12 h-[1px] bg-black/10 group-hover:w-24 group-hover:bg-black/20 transform -translate-x-1/2 transition-all duration-700" />
+                      </div>
+                      <div className="text-base font-medium text-black/60 group-hover:text-black/70 transition-colors duration-500">
+                        {stat.label}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-3xl font-bold mb-2">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* Certificates Section */}
         <div className="mb-20">
-          <h2 className="text-3xl font-bold mb-8 text-center">Professional Certifications</h2>
+          <h2 className="text-4xl font-bold font-playfair mb-4 text-center">Professional Certifications</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-center mb-8">
+            Recognized achievements and professional development milestones
+          </p>
           <div className="relative">
-            {certificates.length > 4 && (
-              <>
-                <button
-                  onClick={() => scrollCertificates('left')}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => scrollCertificates('right')}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-              </>
-            )}
             <div 
               ref={certificatesRef}
-              className="flex overflow-x-auto gap-8 pb-4 snap-x snap-mandatory scrollbar-hide"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4"
             >
               {certificates.map((cert, index) => (
                 <div 
-                  key={index}
+                  key={cert.id || index}
                   onClick={() => {
+                    console.log('Selected certificate:', cert); // Debug log
                     setSelectedCertificate(cert);
                     setCurrentCertificateIndex(index);
                   }}
-                  className="flex-none w-[300px] group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer snap-start"
+                  className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer aspect-[4/5]"
                 >
                   <div className="absolute inset-0">
                     <img 
@@ -191,7 +228,7 @@ export function About() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                   </div>
-                  <div className="relative p-6 h-full flex flex-col justify-end min-h-[320px]">
+                  <div className="relative h-full p-6 flex flex-col justify-end">
                     <div className="flex items-start mb-4">
                       <CheckCircle2 className="w-6 h-6 text-green-400 mr-2 flex-shrink-0 mt-1" />
                       <div>
@@ -199,7 +236,7 @@ export function About() {
                         <p className="text-white/80 text-sm">{cert.organization}</p>
                       </div>
                     </div>
-                    <p className="text-white/70 text-sm mb-3">{cert.description}</p>
+                    <p className="text-white/70 text-sm mb-3 line-clamp-2">{cert.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-white/60 text-sm">{cert.year}</span>
                       <span className="px-3 py-1 bg-white/10 rounded-full text-white/90 text-sm backdrop-blur-sm">
@@ -214,54 +251,142 @@ export function About() {
         </div>
 
         {/* Skills Section */}
-        <div className="mb-20">
-          <h2 className="text-3xl font-bold mb-8">Skills & Expertise</h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <p className="text-gray-600 mb-6">
-                My diverse skill set allows me to handle projects from concept to completion, 
-                ensuring excellence at every stage of the architectural process.
-              </p>
-              <div className="flex flex-wrap gap-3">
+        <div className="mb-40">
+          <div className="text-center mb-24">
+            <h2 className="text-4xl font-bold font-playfair mb-4">Skills & Expertise</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              My diverse skill set allows me to handle projects from concept to completion, 
+              ensuring excellence at every stage of the architectural process.
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-12 gap-20">
+            {/* Skills Grid */}
+            <div className="lg:col-span-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-16 gap-x-20">
                 {skills.map((skill, index) => (
-                  <span 
+                  <div 
                     key={index}
-                    className="px-4 py-2 bg-gray-100 rounded-full text-gray-700 text-sm hover:bg-gray-200 transition-colors"
+                    className="group relative"
                   >
-                    {skill}
-                  </span>
+                    {/* Top Line */}
+                    <div className="absolute -top-3 left-0 w-6 h-[1px] bg-black/10 group-hover:w-full group-hover:bg-black/30 transition-all duration-700" />
+                    
+                    {/* Skill Content */}
+                    <div className="pt-6">
+                      {/* Skill Name and Percentage */}
+                      <div className="flex items-baseline justify-between mb-6">
+                        <h3 className="text-sm tracking-[0.2em] text-[#333] group-hover:text-black transition-colors duration-500">
+                          {skill.toUpperCase()}
+                        </h3>
+                        <span className="text-xs tracking-wider text-black/40 group-hover:text-black/60 transition-colors duration-500 tabular-nums">
+                          {Math.floor(Math.random() * 15 + 85)}
+                        </span>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="relative h-px">
+                        <div className="absolute inset-0 w-full bg-black/5" />
+                        <div 
+                          className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-700 ease-out"
+                          style={{ 
+                            width: `${Math.random() * 15 + 85}%`
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-            <div className="bg-gray-50 p-8 rounded-xl">
-              <h3 className="text-xl font-bold mb-4">Professional Affiliations</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li>• Royal Institute of British Architects (RIBA)</li>
-                <li>• American Institute of Architects (AIA)</li>
-                <li>• Green Building Council</li>
-                <li>• International Association of Architects</li>
-              </ul>
+
+            {/* Affiliations */}
+            <div className="lg:col-span-4">
+              <div className="relative bg-black text-white p-8 rounded-xl shadow-xl overflow-hidden group h-full">
+                {/* Decorative Background Elements */}
+                <div className="absolute inset-0 opacity-[0.1] group-hover:opacity-[0.15] transition-opacity duration-500">
+                  <div className="absolute -right-6 -top-6 w-32 h-32 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                  <div className="absolute right-12 bottom-12 w-40 h-40 bg-white rounded-full transform translate-x-1/2 translate-y-1/2" />
+                  <div className="absolute left-1/2 top-1/2 w-24 h-24 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+                </div>
+
+                {/* Grid Pattern */}
+                <div 
+                  className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity duration-500"
+                  style={{
+                    backgroundImage: `linear-gradient(to right, white 1px, transparent 1px),
+                                    linear-gradient(to bottom, white 1px, transparent 1px)`,
+                    backgroundSize: '20px 20px'
+                  }}
+                />
+
+                <div className="relative h-full flex flex-col">
+                  <h3 className="text-2xl font-playfair font-bold mb-8">Professional Affiliations</h3>
+                  <div className="grid grid-cols-1 gap-y-6 flex-grow">
+                    {[
+                      {
+                        name: "Royal Institute of British Architects",
+                        acronym: "RIBA",
+                        icon: Building2
+                      },
+                      {
+                        name: "American Institute of Architects",
+                        acronym: "AIA",
+                        icon: Building2
+                      },
+                      {
+                        name: "Green Building Council",
+                        icon: Award
+                      },
+                      {
+                        name: "International Association of Architects",
+                        icon: Users
+                      }
+                    ].map((affiliation, index) => (
+                      <div 
+                        key={index} 
+                        className="group flex items-start space-x-4 p-3 rounded-lg hover:bg-white/5 transition-colors duration-300"
+                      >
+                        <div className="p-2 rounded-lg bg-white/10 group-hover:bg-white/15 transition-colors duration-300">
+                          <affiliation.icon className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-white/90 group-hover:text-white transition-colors duration-300 font-medium text-sm leading-tight">
+                            {affiliation.name}
+                          </span>
+                          {affiliation.acronym && (
+                            <span className="text-white/50 group-hover:text-white/70 transition-colors duration-300 text-xs mt-1">
+                              {affiliation.acronym}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Contact Section */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold mb-6">Let's Work Together</h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            I'm always interested in hearing about new projects and opportunities.
-            Let's create something amazing together.
-          </p>
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold font-playfair mb-4">Let's Work Together</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Have a project in mind? Let's create something extraordinary together.
+            </p>
+          </div>
           <div className="flex justify-center space-x-6">
-            <a href="mailto:contact@architect.com" className="flex items-center text-gray-600 hover:text-black">
+            <a href={`mailto:${aboutData.email}`} className="flex items-center text-gray-600 hover:text-black">
               <Mail className="w-5 h-5 mr-2" />
               Email
             </a>
-            <a href="tel:+1234567890" className="flex items-center text-gray-600 hover:text-black">
+            <a href={`tel:${aboutData.phone}`} className="flex items-center text-gray-600 hover:text-black">
               <Phone className="w-5 h-5 mr-2" />
               Call
             </a>
-            <a href="#" className="flex items-center text-gray-600 hover:text-black">
+            <a href={aboutData.linkedin} className="flex items-center text-gray-600 hover:text-black" target="_blank" rel="noopener noreferrer">
               <Linkedin className="w-5 h-5 mr-2" />
               LinkedIn
             </a>
@@ -269,17 +394,35 @@ export function About() {
         </div>
       </div>
 
+      {/* Certificate Modal */}
       <ImageModal
         isOpen={!!selectedCertificate}
-        onClose={() => setSelectedCertificate(null)}
+        onClose={() => {
+          setSelectedCertificate(null);
+          setCurrentCertificateIndex(0);
+        }}
         image={selectedCertificate?.image || ''}
-        title={selectedCertificate?.title || ''}
+        title={selectedCertificate?.title}
+        caption={`${selectedCertificate?.organization} • ${selectedCertificate?.year}`}
         onPrevious={handlePrevCertificate}
         onNext={handleNextCertificate}
-        showNavigation={true}
+        showNavigation={certificates.length > 1}
         currentIndex={currentCertificateIndex}
         totalItems={certificates.length}
       />
     </div>
   );
 }
+
+<style jsx>{`
+  @keyframes shine {
+    from { 
+      mask-position: 150%;
+      -webkit-mask-position: 150%;
+    }
+    to { 
+      mask-position: -50%;
+      -webkit-mask-position: -50%;
+    }
+  }
+`}</style>
