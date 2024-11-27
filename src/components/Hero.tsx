@@ -1,19 +1,56 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ScrollText } from 'lucide-react';
+import { getHero } from '../services/firebaseService';
+import type { Hero as HeroType } from '../services/firebaseService';
 
 export function Hero() {
+  const [heroData, setHeroData] = useState<HeroType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchHeroData() {
+      try {
+        const data = await getHero();
+        setHeroData(data);
+      } catch (error) {
+        console.error('Error fetching hero data:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load hero data');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchHeroData();
+  }, []);
+
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
     projectsSection?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  if (loading) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center">
+        <div className="text-white text-2xl">Loading...</div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center">
+        <div className="text-red-500 text-2xl">Error: {error}</div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative min-h-screen">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={heroData?.backgroundImage || "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3"}
           alt="Abstract Architecture"
           className="w-full h-full object-cover"
         />
@@ -39,13 +76,12 @@ export function Hero() {
               <h1 className="font-cormorant text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-white leading-tight">
                 Hello, I'm{' '}
                 <span className="relative inline-block">
-                  <span className="relative z-10 font-semibold">Pragya</span>
+                  <span className="relative z-10 font-semibold">{heroData?.name || 'Pragya'}</span>
                   <span className="absolute bottom-0 left-0 w-full h-1 bg-white/30 transform origin-left transition-transform duration-500 group-hover:scale-x-100"></span>
                 </span>
               </h1>
               <p className="font-cormorant text-2xl sm:text-2xl md:text-3xl text-white/90 font-light max-w-2xl leading-relaxed tracking-wide">
-                Licensed architect in Manchester, specializing in sustainable design 
-                and innovative architectural solutions.
+                {heroData?.subtitle || 'Licensed architect in Manchester, specializing in sustainable design and innovative architectural solutions.'}
               </p>
             </div>
 
@@ -70,15 +106,21 @@ export function Hero() {
             {/* Stats */}
             <div className="pt-12 grid grid-cols-3 gap-4 sm:gap-8 max-w-lg">
               <div className="text-center">
-                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">50+</div>
+                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">
+                  {heroData?.stats.projects}+
+                </div>
                 <div className="text-white/60 text-sm tracking-wider uppercase">Projects</div>
               </div>
               <div className="text-center">
-                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">12</div>
+                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">
+                  {heroData?.stats.awards}
+                </div>
                 <div className="text-white/60 text-sm tracking-wider uppercase">Awards</div>
               </div>
               <div className="text-center">
-                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">10+</div>
+                <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-2">
+                  {heroData?.stats.experience}+
+                </div>
                 <div className="text-white/60 text-sm tracking-wider uppercase">Years</div>
               </div>
             </div>

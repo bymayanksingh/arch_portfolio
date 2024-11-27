@@ -1,5 +1,14 @@
-import React from 'react';
-import { Calendar, Award, Building2, Briefcase, GraduationCap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { getTimeline } from '../services/firebaseService';
+import type { TimelineItem } from '../services/firebaseService';
+import { Building, Award, Briefcase, Building2 } from 'lucide-react';
+
+const iconMap = {
+  Building,
+  Award,
+  Briefcase,
+  Building2
+};
 
 const timeline = [
   {
@@ -38,79 +47,89 @@ const timeline = [
     year: 2013,
     event: "Started Professional Journey",
     description: "Graduated with honors in Architecture",
-    icon: GraduationCap,
+    icon: Building,
     color: "bg-amber-100 text-amber-600",
     details: "Graduated summa cum laude with a Master's in Architecture from the University of Manchester"
   }
 ];
 
 export function Timeline() {
+  const [timelineData, setTimelineData] = useState<TimelineItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchTimelineData() {
+      try {
+        const data = await getTimeline();
+        setTimelineData(data);
+      } catch (error) {
+        console.error('Error fetching timeline data:', error);
+        setError('Failed to load timeline data');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTimelineData();
+  }, []);
+
+  if (loading) {
+    return <div className="py-20 text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="py-20 text-center">{error}</div>;
+  }
+
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="timeline" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">Professional Journey</h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            A decade of architectural excellence, innovation, and sustainable design
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold font-playfair mb-4">Professional Journey</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            A timeline of my architectural career and key milestones
           </p>
         </div>
 
-        {/* Mobile Timeline */}
-        <div className="md:hidden space-y-8">
-          {timeline.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div 
-                key={index}
-                className="relative pl-8 before:absolute before:left-[9px] before:top-0 before:h-full before:w-0.5 before:bg-gray-200"
-              >
-                <div className={`absolute left-0 top-1 w-4 h-4 rounded-full ${item.color} flex items-center justify-center`}>
-                  <div className="w-2 h-2 rounded-full bg-current"></div>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                  <div className={`w-12 h-12 ${item.color} rounded-full flex items-center justify-center mb-4`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <span className="text-sm font-bold text-gray-400">{item.year}</span>
-                  <h3 className="font-playfair text-xl font-bold mt-2 mb-2">{item.event}</h3>
-                  <p className="text-gray-600">{item.description}</p>
-                  <p className="text-gray-500 text-sm mt-2 italic">{item.details}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Desktop Timeline */}
-        <div className="hidden md:block relative">
+        <div className="relative">
+          {/* Vertical line */}
           <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-200"></div>
 
-          {timeline.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div key={index} className="relative mb-16 last:mb-0">
-                <div className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-12 text-right' : 'pl-12'}`}>
-                    <div className="bg-white p-8 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                      <div className={`w-16 h-16 ${item.color} rounded-full flex items-center justify-center mb-4 ${index % 2 === 0 ? 'ml-auto' : ''}`}>
-                        <Icon className="w-8 h-8" />
-                      </div>
-                      <span className="text-sm font-bold text-gray-400">{item.year}</span>
-                      <h3 className="font-playfair text-2xl font-bold mt-2 mb-2">{item.event}</h3>
-                      <p className="text-gray-600 mb-2">{item.description}</p>
-                      <p className="text-gray-500 text-sm italic">{item.details}</p>
-                    </div>
-                  </div>
-
-                  <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/4">
-                    <div className={`w-12 h-12 ${item.color} rounded-full flex items-center justify-center shadow-lg border-4 border-white`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
+          {/* Timeline items */}
+          <div className="space-y-12">
+            {timelineData.map((item, index) => (
+              <div
+                key={index}
+                className={`relative flex items-center ${
+                  index % 2 === 0 ? 'justify-start' : 'justify-end'
+                }`}
+              >
+                {/* Content */}
+                <div
+                  className={`w-5/12 ${
+                    index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'
+                  }`}
+                >
+                  <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <span
+                      className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-2"
+                      style={{ backgroundColor: item.color + '20', color: item.color }}
+                    >
+                      {item.year}
+                    </span>
+                    <h3 className="text-xl font-bold mb-2">{item.event}</h3>
+                    <p className="text-gray-600">{item.description}</p>
+                    {item.details && (
+                      <p className="text-sm text-gray-500 mt-2">{item.details}</p>
+                    )}
                   </div>
                 </div>
+
+                {/* Circle */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-gray-200 border-4 border-white"></div>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </div>
     </section>

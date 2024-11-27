@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Download, ArrowRight, Award, Building2, Users } from 'lucide-react';
+import { About, getAbout } from '../services/firebaseService';
 
 const stats = [
   { icon: Building2, label: "Projects", value: "50+" },
@@ -9,14 +10,42 @@ const stats = [
 ];
 
 export function HomeAbout() {
+  const [about, setAbout] = useState<About | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      try {
+        const aboutData = await getAbout();
+        setAbout(aboutData);
+      } catch (error) {
+        console.error('Error fetching about data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAbout();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="relative">
             <img 
-              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000"
-              alt="Pragya Singh"
+              src={about?.image || "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000"}
+              alt={about?.name || "Profile"}
               className="rounded-2xl shadow-2xl"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm rounded-b-2xl p-6">
@@ -38,12 +67,10 @@ export function HomeAbout() {
           <div className="space-y-6">
             <h2 className="font-playfair text-4xl font-bold">About Me</h2>
             <p className="text-xl text-gray-600">
-              Transforming spaces with innovative architectural solutions
+              {about?.title || "Transforming spaces with innovative architectural solutions"}
             </p>
             <p className="text-gray-600 leading-relaxed">
-              As a licensed architect with over a decade of experience, I specialize in creating 
-              sustainable, innovative spaces that harmoniously blend form and function. My approach 
-              combines traditional architectural principles with cutting-edge technology.
+              {about?.description || "As a licensed architect with over a decade of experience, I specialize in creating sustainable, innovative spaces that harmoniously blend form and function. My approach combines traditional architectural principles with cutting-edge technology."}
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <Link 
@@ -54,7 +81,7 @@ export function HomeAbout() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
               <a 
-                href="/cv.pdf" 
+                href={about?.resume || "/cv.pdf"}
                 className="px-6 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-2"
               >
                 <Download size={18} />

@@ -1,18 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { getAbout, getSkills } from '../services/firebaseService';
+import type { About as AboutType } from '../services/firebaseService';
 import { Download, Mail, Phone, Linkedin } from 'lucide-react';
 
-const skills = [
-  "Architecture",
-  "Interior Design",
-  "Building Design",
-  "3D Rendering",
-  "Supervision",
-  "Project Management",
-  "BIM",
-  "AutoCAD"
-];
-
 export function About() {
+  const [aboutData, setAboutData] = useState<AboutType | null>(null);
+  const [skills, setSkills] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [aboutResult, skillsResult] = await Promise.all([
+          getAbout(),
+          getSkills()
+        ]);
+        setAboutData(aboutResult);
+        setSkills(skillsResult);
+      } catch (error) {
+        setError('Error fetching about data');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div className="py-20 text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="py-20 text-center">{error}</div>;
+  }
+
+  if (!aboutData) {
+    return <div className="py-20 text-center">Error loading about information</div>;
+  }
+
   return (
     <section id="about" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,8 +47,8 @@ export function About() {
           {/* Image Column */}
           <div className="relative">
             <img 
-              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000"
-              alt="Modern Architecture"
+              src={aboutData.image}
+              alt={aboutData.name}
               className="rounded-lg shadow-2xl w-full h-[600px] object-cover"
             />
           </div>
@@ -29,24 +56,19 @@ export function About() {
           {/* Content Column */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-5xl font-bold mb-6">About Me</h2>
-              <p className="text-xl text-gray-600 mb-6">
-                Architecture driven by innovations —
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                I'm a licensed architect in India and interior designer located in Manchester 
-                and working all over the USA.
-              </p>
+              <h2 className="font-playfair text-4xl font-bold mb-4">{aboutData.name}</h2>
+              <p className="text-xl text-gray-600 mb-6">{aboutData.title}</p>
+              <p className="text-gray-600">{aboutData.description}</p>
             </div>
 
-            {/* Skills Section */}
+            {/* Skills */}
             <div>
-              <p className="text-lg font-semibold mb-4">I'm good at:</p>
-              <div className="flex flex-wrap gap-3">
+              <h3 className="font-playfair text-2xl font-bold mb-4">Skills & Expertise</h3>
+              <div className="flex flex-wrap gap-2">
                 {skills.map((skill, index) => (
-                  <span 
+                  <span
                     key={index}
-                    className="px-4 py-2 bg-gray-100 rounded-full text-gray-700 text-sm hover:bg-gray-200 transition-colors"
+                    className="px-4 py-2 bg-gray-100 text-gray-800 rounded-full text-sm"
                   >
                     {skill}
                   </span>
@@ -54,37 +76,43 @@ export function About() {
               </div>
             </div>
 
-            <p className="text-gray-600 leading-relaxed">
-              I specialize as a design and full-service architect for new residences, 
-              home additions, and commercial buildings. I also provide additional services 
-              like obtaining permits, due diligence, and architectural supervision. 
-              If you like what I do, contact me to discuss our next great project!
-            </p>
-
-            {/* Action Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <a 
-                href="/cv.pdf" 
-                className="px-6 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-2"
-              >
-                <Download size={18} />
-                Download CV
-              </a>
+            {/* Contact Info */}
+            <div className="space-y-4">
+              <h3 className="font-playfair text-2xl font-bold mb-4">Contact Information</h3>
+              <div className="flex items-center space-x-2">
+                <Mail className="w-5 h-5 text-gray-600" />
+                <a href={`mailto:${aboutData.email}`} className="text-gray-600 hover:text-gray-900">
+                  {aboutData.email}
+                </a>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Phone className="w-5 h-5 text-gray-600" />
+                <a href={`tel:${aboutData.phone}`} className="text-gray-600 hover:text-gray-900">
+                  {aboutData.phone}
+                </a>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Linkedin className="w-5 h-5 text-gray-600" />
+                <a
+                  href={aboutData.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  LinkedIn Profile
+                </a>
+              </div>
             </div>
 
-            {/* Contact Links */}
-            <div className="flex space-x-6 pt-4">
-              <a href="mailto:contact@architect.com" className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors">
-                <Mail size={20} />
-                <span>Email</span>
-              </a>
-              <a href="tel:+1234567890" className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors">
-                <Phone size={20} />
-                <span>Call</span>
-              </a>
-              <a href="#" className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors">
-                <Linkedin size={20} />
-                <span>LinkedIn</span>
+            {/* Resume Download */}
+            <div>
+              <a
+                href={aboutData.resume}
+                download
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <Download className="w-5 h-5" />
+                <span>Download Resume</span>
               </a>
             </div>
           </div>

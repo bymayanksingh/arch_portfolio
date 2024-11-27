@@ -1,123 +1,87 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { getProjects } from '../services/firebaseService';
+import type { Project } from '../services/firebaseService';
 import { ArrowRight } from 'lucide-react';
-
-const projects = [
-  {
-    id: "urban-harmony-center",
-    title: "Urban Harmony Center",
-    category: "Site Layout",
-    location: "Singapore",
-    date: "March 2024",
-    year: 2024,
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000",
-    description: "A groundbreaking mixed-use development that seamlessly integrates cultural spaces with sustainable living environments.",
-    client: "Singapore Development Corporation",
-    area: "45,000 sq.m",
-    status: "Completed",
-    details: [
-      "The Urban Harmony Center represents a new paradigm in mixed-use development, where cultural spaces and residential units coexist in perfect balance.",
-      "The project features innovative sustainable technologies, including solar panels, rainwater harvesting, and natural ventilation systems.",
-      "The cultural spaces include an art gallery, performance venues, and workshop areas, creating a vibrant community hub."
-    ],
-    gallery: [
-       {
-        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
-        caption: "Cultural center interior"
-      },
-      {
-        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
-        caption: "Cultural center interior"
-      },
-       {
-        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
-        caption: "Cultural center interior"
-      },
-       {
-        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
-        caption: "Cultural center interior"
-      }
-    ]
-  },
-  {
-    id: "urban-harmony-dissertation",
-    title: "Urban Harmony Dissertation",
-    category: "Dissertation",
-    location: "Singapore",
-    date: "March 2024",
-    year: 2024,
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000",
-    description: "A groundbreaking mixed-use development that seamlessly integrates cultural spaces with sustainable living environments.",
-    client: "Singapore Development Corporation",
-    area: "45,000 sq.m",
-    status: "Completed",
-    details: [
-      "The Urban Harmony Center represents a new paradigm in mixed-use development, where cultural spaces and residential units coexist in perfect balance.",
-      "The project features innovative sustainable technologies, including solar panels, rainwater harvesting, and natural ventilation systems.",
-      "The cultural spaces include an art gallery, performance venues, and workshop areas, creating a vibrant community hub."
-    ],
-    gallery: [
-      {
-        url: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&q=80&w=2000",
-        caption: "Main entrance and plaza"
-      },
-      {
-        url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000",
-        caption: "Cultural center interior"
-      },
-      {
-        url: "https://images.unsplash.com/photo-1600607687166-48ad73805ab5?auto=format&fit=crop&q=80&w=2000",
-        caption: "Residential tower"
-      }
-    ]
-  },
-  {
-    id: "modern-loft-conversion",
-    title: "Modern Loft Conversion",
-    category: "Interior Design",
-    location: "New York",
-    date: "February 2024",
-    year: 2024,
-    image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=2000",
-    description: "A sophisticated loft conversion that transforms an industrial space into a luxury living area.",
-    client: "Private Client",
-    area: "280 sq.m",
-    status: "Completed",
-    details: [
-      "Complete transformation of an industrial loft space into a modern living area",
-      "Custom-designed furniture and lighting solutions",
-      "Integration of smart home technology throughout the space"
-    ],
-    gallery: [
-      {
-        url: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&q=80&w=2000",
-        caption: "Living area"
-      }
-    ]
-  },
-];
+import { Link } from 'react-router-dom';
 
 export function Projects() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const allProjects = await getProjects();
+        setProjects(allProjects);
+        
+        // Extract unique categories
+        const uniqueCategories = Array.from(
+          new Set(allProjects.map(project => project.category))
+        );
+        setCategories(['all', ...uniqueCategories]);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        setError('Failed to load projects');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProjects();
+  }, []);
+
+  const filteredProjects = selectedCategory === 'all'
+    ? projects
+    : projects.filter(project => project.category === selectedCategory);
+
+  if (loading) {
+    return <div className="py-20 text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="py-20 text-center">{error}</div>;
+  }
+
   return (
-    <section id="projects" className="py-20">
+    <section id="projects" className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">Featured Projects</h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Discover my most innovative and impactful architectural designs
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold font-playfair mb-4">Featured Projects</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Explore our portfolio of innovative architectural designs and successful projects
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projects.map((project, index) => (
+
+        {/* Category Filter */}
+        <div className="flex justify-center gap-4 mb-12 flex-wrap">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === category
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-white text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProjects.map((project) => (
             <Link 
-              key={index} 
+              key={project.id} 
               to={`/projects/${project.id}`}
               className="group block"
             >
               <div className="relative overflow-hidden rounded-xl shadow-lg">
                 <img 
-                  src={project.image}
+                  src={project.coverImage}
                   alt={project.title}
                   className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
