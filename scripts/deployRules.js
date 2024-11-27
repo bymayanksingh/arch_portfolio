@@ -25,13 +25,13 @@ async function deployRules() {
       ignoreUndefinedProperties: true
     });
 
-    console.log('Deploying Firestore rules...');
+    //console.log('Deploying Firestore rules...');
     await db._settings.firestore.client.updateSecurityRules({
       name: `projects/${serviceAccount.project_id}/databases/(default)/documents`,
       rules: rules
     });
     
-    console.log('Successfully deployed Firestore rules!');
+    //console.log('Successfully deployed Firestore rules!');
   } catch (error) {
     console.error('Error deploying rules:', error);
   }
@@ -39,7 +39,7 @@ async function deployRules() {
 
 // Run the deployment
 deployRules().then(() => {
-  console.log('Finished deploying rules');
+  //console.log('Finished deploying rules');
   process.exit(0);
 }).catch((error) => {
   console.error('Failed to deploy rules:', error);

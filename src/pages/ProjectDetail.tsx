@@ -16,25 +16,25 @@ export function ProjectDetail() {
   useEffect(() => {
     async function fetchProject() {
       if (!id) {
-        console.log('No ID provided, redirecting to projects page');
+        //console.log('No ID provided, redirecting to projects page');
         navigate('/projects');
         return;
       }
 
-      console.log('Attempting to fetch project with ID:', id);
+      //console.log('Attempting to fetch project with ID:', id);
       setLoading(true);
       setError(null);
       
       try {
         // Use the exact ID from your Firebase document
         const projectId = id.toLowerCase(); // Convert to lowercase to match Firebase ID format
-        console.log('Fetching project with normalized ID:', projectId);
+        //console.log('Fetching project with normalized ID:', projectId);
         
         const projectData = await getProject(projectId);
-        console.log('Received project data:', projectData);
+        //console.log('Received project data:', projectData);
         
         if (!projectData) {
-          console.log('No project found for ID:', projectId);
+          //console.log('No project found for ID:', projectId);
           setError('Project not found');
           return;
         }

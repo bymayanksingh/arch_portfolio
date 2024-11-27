@@ -12,7 +12,7 @@ const updateSW = registerSW({
     }
   },
   onOfflineReady() {
-    console.log('App ready to work offline');
+    //console.log('App ready to work offline');
   },
 });
 

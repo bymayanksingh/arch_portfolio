@@ -132,7 +132,7 @@ export const getProjects = async (): Promise<Project[]> => {
 
 export const getProject = async (id: string): Promise<Project | null> => {
   try {
-    console.log('Fetching project with ID:', id);
+    //console.log('Fetching project with ID:', id);
     const projectsRef = collection(db, 'projects');
     const q = query(projectsRef, where('id', '==', id));
     const querySnapshot = await getDocs(q);
@@ -140,11 +140,11 @@ export const getProject = async (id: string): Promise<Project | null> => {
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
       const data = { id: doc.id, ...doc.data() } as Project;
-      console.log('Found project:', data);
+      //console.log('Found project:', data);
       return data;
     }
     
-    console.log('No project found with ID:', id);
+    //console.log('No project found with ID:', id);
     return null;
   } catch (error) {
     console.error('Error fetching project:', error);

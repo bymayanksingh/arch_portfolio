@@ -67,7 +67,7 @@ export function About() {
     const newCert = certificates[newIndex];
     if (newCert) {
       setSelectedCertificate(newCert);
-      console.log('Previous certificate:', newCert); // Debug log
+      //console.log('Previous certificate:', newCert); // Debug log
     }
   };
 
@@ -78,7 +78,7 @@ export function About() {
     const newCert = certificates[newIndex];
     if (newCert) {
       setSelectedCertificate(newCert);
-      console.log('Next certificate:', newCert); // Debug log
+      //console.log('Next certificate:', newCert); // Debug log
     }
   };
 
@@ -214,7 +214,7 @@ export function About() {
                 <div 
                   key={cert.id || index}
                   onClick={() => {
-                    console.log('Selected certificate:', cert); // Debug log
+                    //console.log('Selected certificate:', cert); // Debug log
                     setSelectedCertificate(cert);
                     setCurrentCertificateIndex(index);
                   }}

@@ -36,7 +36,7 @@ async function populateStats() {
 
   try {
     await batch.commit();
-    console.log('Successfully populated stats data!');
+    //console.log('Successfully populated stats data!');
   } catch (error) {
     console.error('Error populating stats data:', error);
   }
@@ -53,7 +53,7 @@ async function populateProjects() {
 
   try {
     await batch.commit();
-    console.log('Successfully populated projects data!');
+    //console.log('Successfully populated projects data!');
   } catch (error) {
     console.error('Error populating data:', error);
   }
@@ -63,7 +63,7 @@ async function populateProjects() {
 async function populateAllData() {
   await populateProjects();
   await populateStats();
-  console.log('Finished populating all data');
+  //console.log('Finished populating all data');
 }
 
 populateAllData().catch((error) => {
