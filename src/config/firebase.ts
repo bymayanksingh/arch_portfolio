@@ -15,15 +15,15 @@ const requiredEnvVars = {
 
 // Log environment variables in development
 if (import.meta.env.DEV) {
-  //console.log('Firebase Config:', {
-    apiKey: requiredEnvVars.apiKey ? '✓' : '✗',
-    authDomain: requiredEnvVars.authDomain ? '✓' : '✗',
-    projectId: requiredEnvVars.projectId ? '✓' : '✗',
-    storageBucket: requiredEnvVars.storageBucket ? '✓' : '✗',
-    messagingSenderId: requiredEnvVars.messagingSenderId ? '✓' : '✗',
-    appId: requiredEnvVars.appId ? '✓' : '✗',
-    measurementId: requiredEnvVars.measurementId ? '✓' : '✗'
-  });
+  // console.log('Firebase Config:', {
+  //   apiKey: requiredEnvVars.apiKey ? '✓' : '✗',
+  //   authDomain: requiredEnvVars.authDomain ? '✓' : '✗',
+  //   projectId: requiredEnvVars.projectId ? '✓' : '✗',
+  //   storageBucket: requiredEnvVars.storageBucket ? '✓' : '✗',
+  //   messagingSenderId: requiredEnvVars.messagingSenderId ? '✓' : '✗',
+  //   appId: requiredEnvVars.appId ? '✓' : '✗',
+  //   measurementId: requiredEnvVars.measurementId ? '✓' : '✗'
+  // });
 }
 
 // Check for missing required variables
