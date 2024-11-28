@@ -15,35 +15,67 @@ export function SEO({
   type = 'website'
 }: SEOProps) {
   const location = useLocation();
-  const domain = 'https://singhpragya.netlify.app/';
-  const url = `${domain}${location.pathname}`;
+  const domain = 'https://singhpragya.netlify.app';
+  const url = `${domain}${location.pathname}`.replace(/\/+/g, '/').replace('http:/', 'http://').replace('https:/', 'https://');
 
   useEffect(() => {
     // Update meta tags
     document.title = title;
     
-    // Primary Meta Tags
-    updateMetaTag('description', description);
-    
-    // Open Graph
-    updateMetaTag('og:title', title, 'property');
-    updateMetaTag('og:description', description, 'property');
-    updateMetaTag('og:image', image, 'property');
-    updateMetaTag('og:url', url, 'property');
-    updateMetaTag('og:type', type, 'property');
-    
-    // Twitter
-    updateMetaTag('twitter:title', title, 'property');
-    updateMetaTag('twitter:description', description, 'property');
-    updateMetaTag('twitter:image', image, 'property');
-    updateMetaTag('twitter:url', url, 'property');
-    
-    // Canonical
+    // Update meta descriptions
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', description);
+    }
+
+    // Update Open Graph tags
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', url);
+    }
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', title);
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', description);
+    }
+
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    if (ogImage) {
+      ogImage.setAttribute('content', `${domain}${image}`);
+    }
+
+    // Update Twitter tags
+    const twitterUrl = document.querySelector('meta[property="twitter:url"]');
+    if (twitterUrl) {
+      twitterUrl.setAttribute('content', url);
+    }
+
+    const twitterTitle = document.querySelector('meta[property="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', title);
+    }
+
+    const twitterDescription = document.querySelector('meta[property="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', description);
+    }
+
+    const twitterImage = document.querySelector('meta[property="twitter:image"]');
+    if (twitterImage) {
+      twitterImage.setAttribute('content', `${domain}${image}`);
+    }
+
+    // Update canonical URL
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
       canonical.setAttribute('href', url);
     }
-  }, [title, description, image, type, url]);
+  }, [title, description, image, url, domain]);
 
   return null;
 }

@@ -10,9 +10,9 @@ interface NavigationProps {
 }
 
 const navItems = [
-  { path: '/', label: 'Home' },
-  { path: '/projects', label: 'Projects' },
-  { path: '/about', label: 'About' }
+  { path: '/', label: 'Home', ariaLabel: 'Go to Home page' },
+  { path: '/projects', label: 'Projects', ariaLabel: 'View Architecture Projects' },
+  { path: '/about', label: 'About', ariaLabel: 'Learn more about the Architect' }
 ];
 
 export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
@@ -39,6 +39,7 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
           <Link 
             to="/" 
             className="font-playfair text-xl font-bold relative group"
+            aria-label="Return to Homepage"
           >
             <span className="relative z-10">{about?.name}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
@@ -50,6 +51,7 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
               <Link
                 key={item.path}
                 to={item.path}
+                aria-label={item.ariaLabel}
                 className={`px-3 py-1.5 rounded-full transition-all duration-300 relative group ${
                   location.pathname === item.path
                     ? 'text-black'
@@ -65,6 +67,7 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
             ))}
             <Link
               to="/contact"
+              aria-label="Contact the Architect"
               className="ml-4 px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-300"
             >
               Let's Talk

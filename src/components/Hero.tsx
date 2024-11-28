@@ -120,17 +120,19 @@ export function Hero() {
             <div className="flex flex-wrap gap-4">
               <Link 
                 to="/contact"
+                aria-label="Contact me for architectural projects"
                 className="group inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1"
               >
                 Contact Me
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
               <button
                 onClick={scrollToProjects}
+                aria-label="Scroll to view architecture projects"
                 className="group inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-transparent text-white border-2 border-white/30 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1"
               >
                 View Projects
-                <ScrollText className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" />
+                <ScrollText className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" aria-hidden="true" />
               </button>
             </div>
 
