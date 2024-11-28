@@ -62,27 +62,37 @@ export function Projects() {
         {/* Category Filter Container */}
         <div className="relative mb-10 sm:mb-12">
           {/* Gradient Fade Effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none sm:hidden"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none sm:hidden"></div>
+          <div className="absolute left-0 top-1 bottom-1 w-8 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none sm:hidden"></div>
+          <div className="absolute right-0 top-1 bottom-1 w-8 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none sm:hidden"></div>
 
           {/* Scrollable Categories */}
-          <div className="flex items-center -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center">
-            <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="relative flex items-center -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center">
+            <div className="flex gap-3 py-1 overflow-x-auto scrollbar-hide">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
                   className={`
-                    px-4 sm:px-5 py-2 rounded-full text-sm font-medium transition-all
-                    whitespace-nowrap flex-shrink-0
+                    category-btn
+                    relative px-5 h-10 rounded-full text-sm font-medium
+                    transition-all duration-200 ease-in-out
+                    flex items-center justify-center
+                    min-w-[80px] select-none
                     ${selectedCategory === category
-                      ? 'bg-gray-900 text-white shadow-md'
-                      : 'bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-black text-white'
+                      : 'bg-white hover:bg-gray-100 text-gray-600 hover:text-gray-900'
                     }
-                    ${selectedCategory === category ? 'ring-2 ring-gray-900 ring-offset-2' : ''}
+                    ${selectedCategory === category 
+                      ? 'shadow-md transform scale-105' 
+                      : 'hover:shadow-sm'
+                    }
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black
+                    active:scale-95
                   `}
                 >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                  <span className="block whitespace-nowrap">
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </span>
                 </button>
               ))}
             </div>
