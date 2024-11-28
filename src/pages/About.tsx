@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Download, Mail, Phone, Linkedin, Award, Building2, Users, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { ImageModal } from '../components/ImageModal';
 import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
+import { getAffiliations, type Affiliation } from '../services/firebaseService';
+import * as Icons from 'lucide-react';
 
 interface Certificate {
   title: string;
@@ -22,22 +24,25 @@ export function About() {
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [currentCertificateIndex, setCurrentCertificateIndex] = useState(0);
   const certificatesRef = useRef<HTMLDivElement>(null);
+  const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [aboutResult, skillsResult, certificatesResult, statsResult] = await Promise.all([
+        const [aboutResult, skillsResult, certificatesResult, statsResult, affiliationsResult] = await Promise.all([
           getAbout(),
           getSkills(),
           getCertificates(),
-          getStats()
+          getStats(),
+          getAffiliations()
         ]);
         
         if (aboutResult) setAboutData(aboutResult);
         setSkills(skillsResult);
         setCertificates(certificatesResult);
         if (statsResult) setStats(statsResult);
+        setAffiliations(affiliationsResult);
         setError(null);
       } catch (err) {
         setError('Failed to load data. Please try again later.');
@@ -249,6 +254,43 @@ export function About() {
             </div>
           </div>
         </div>
+
+        {/* Affiliations Section */}
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold font-playfair mb-4">Professional Affiliations</h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Proud member of prestigious architectural organizations and institutions
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {affiliations.map((affiliation, index) => {
+                // Dynamically get the icon component
+                const IconComponent = Icons[affiliation.icon as keyof typeof Icons] || Icons.Building2;
+                
+                return (
+                  <div
+                    key={index}
+                    className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">
+                        <IconComponent className="w-8 h-8 text-gray-700" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900">{affiliation.acronym}</h3>
+                        <p className="text-sm text-gray-500">{affiliation.role}</p>
+                      </div>
+                    </div>
+                    <p className="mt-4 text-gray-600 text-sm">{affiliation.name}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         {/* Skills Section */}
         <div className="mb-40">
