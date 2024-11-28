@@ -74,33 +74,44 @@ export function Projects() {
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {filteredProjects.map((project) => (
             <Link 
               key={project.id} 
               to={`/projects/${project.id}`}
-              className="group block"
+              className="group block bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="relative overflow-hidden rounded-xl shadow-lg aspect-[4/3]">
-                <img 
-                  src={project.coverImage}
-                  alt={project.title}
-                  loading="lazy"
-                  width={800}
-                  height={600}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = '/placeholder-project.jpg';
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
-                  <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>
-                  <p className="text-white/80 mb-3">{project.location}, {project.year}</p>
-                  <p className="text-white/90 mb-4">{project.description}</p>
-                  <div className="flex items-center text-white group-hover:translate-x-2 transition-transform duration-300">
-                    <span className="mr-2">View Project</span>
-                    <ArrowRight className="w-4 h-4" />
+              <div className="flex flex-col h-full">
+                {/* Image Container */}
+                <div className="relative overflow-hidden rounded-t-xl aspect-[4/3]">
+                  <img 
+                    src={project.coverImage}
+                    alt={project.title}
+                    loading="lazy"
+                    width={800}
+                    height={600}
+                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder-project.jpg';
+                    }}
+                  />
+                </div>
+                
+                {/* Content Container */}
+                <div className="flex flex-col flex-grow p-4 sm:p-5 bg-gradient-to-t from-black/80 to-black/60">
+                  <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white mb-2 line-clamp-2">
+                    {project.title}
+                  </h3>
+                  <p className="text-white/80 text-sm sm:text-base mb-2">
+                    {project.location}, {project.year}
+                  </p>
+                  <p className="text-white/90 text-sm sm:text-base mb-4 line-clamp-3">
+                    {project.description}
+                  </p>
+                  <div className="flex items-center text-white mt-auto group-hover:translate-x-2 transition-transform duration-300">
+                    <span className="text-sm sm:text-base">View Project</span>
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   </div>
                 </div>
               </div>
