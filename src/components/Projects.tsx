@@ -74,35 +74,31 @@ export function Projects() {
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-          <div className={`w-full col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 
-            ${filteredProjects.length === 1 ? 'md:grid-cols-1 lg:grid-cols-1 max-w-lg' : 
-              filteredProjects.length === 2 ? 'md:grid-cols-2 lg:grid-cols-2 max-w-3xl' : 'max-w-7xl'}`}>
-            {filteredProjects.map((project) => (
-              <Link 
-                key={project.id} 
-                to={`/projects/${project.id}`}
-                className="group block w-full"
-              >
-                <div className="relative overflow-hidden rounded-xl shadow-lg">
-                  <img 
-                    src={project.coverImage}
-                    alt={project.title}
-                    className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
-                    <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>
-                    <p className="text-white/80 mb-3">{project.location}, {project.year}</p>
-                    <p className="text-white/90 mb-4">{project.description}</p>
-                    <div className="flex items-center text-white group-hover:translate-x-2 transition-transform duration-300">
-                      <span className="mr-2">View Project</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProjects.map((project) => (
+            <Link 
+              key={project.id} 
+              to={`/projects/${project.id}`}
+              className="group block"
+            >
+              <div className="relative overflow-hidden rounded-xl shadow-lg">
+                <img 
+                  src={project.coverImage}
+                  alt={project.title}
+                  className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                  <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>
+                  <p className="text-white/80 mb-3">{project.location}, {project.year}</p>
+                  <p className="text-white/90 mb-4">{project.description}</p>
+                  <div className="flex items-center text-white group-hover:translate-x-2 transition-transform duration-300">
+                    <span className="mr-2">View Project</span>
+                    <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
         
         <div className="text-center mt-12">
