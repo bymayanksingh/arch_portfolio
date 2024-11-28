@@ -31,6 +31,17 @@ body {
   line-height: 1.1;
 }
 
+/* Add responsive spacing for hero section */
+@media (max-width: 768px) {
+  .space-y-6 {
+    margin-bottom: 2rem;
+  }
+  
+  .space-y-8 {
+    gap: 2.5rem;
+  }
+}
+
 .hero-name {
   background: linear-gradient(to right, #000, #333);
   -webkit-background-clip: text;
