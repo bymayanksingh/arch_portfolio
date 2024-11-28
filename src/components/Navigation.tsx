@@ -19,11 +19,11 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
   return (
     <nav className="fixed w-full bg-white/90 backdrop-blur-sm z-50 border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
+        <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link 
             to="/" 
-            className="font-playfair text-2xl font-bold relative group"
+            className="font-playfair text-xl font-bold relative group"
           >
             <span className="relative z-10">Pragya Singh</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
@@ -35,7 +35,7 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-4 py-2 rounded-full transition-all duration-300 relative group ${
+                className={`px-3 py-1.5 rounded-full transition-all duration-300 relative group ${
                   location.pathname === item.path
                     ? 'text-black'
                     : 'text-gray-500 hover:text-black'
