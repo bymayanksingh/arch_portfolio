@@ -71,13 +71,21 @@ export function Hero() {
     <section className="relative min-h-screen">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
-        <img 
-          src={heroData?.backgroundImage || "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3"}
-          alt="Abstract Architecture"
-          loading="lazy"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent"></div>
+        <div className="relative w-full h-full">
+          <img 
+            src={heroData?.backgroundImage || "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3"}
+            alt="Abstract Architecture"
+            loading="eager"
+            width={1920}
+            height={1080}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = '/placeholder-hero.jpg';
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent"></div>
+        </div>
         
         {/* Animated Pattern Overlay */}
         <div className="absolute inset-0 opacity-10">

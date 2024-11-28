@@ -81,12 +81,18 @@ export function Projects() {
               to={`/projects/${project.id}`}
               className="group block"
             >
-              <div className="relative overflow-hidden rounded-xl shadow-lg">
+              <div className="relative overflow-hidden rounded-xl shadow-lg aspect-[4/3]">
                 <img 
                   src={project.coverImage}
                   alt={project.title}
                   loading="lazy"
-                  className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-700"
+                  width={800}
+                  height={600}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder-project.jpg';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
                   <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>

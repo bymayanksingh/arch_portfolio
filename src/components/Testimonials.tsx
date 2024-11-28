@@ -101,11 +101,13 @@ export function Testimonials() {
                           src={testimonial.image}
                           alt={testimonial.name}
                           loading="lazy"
+                          width={56}
+                          height={56}
                           className="w-full h-full rounded-full object-cover ring-4 ring-gray-50
                                    group-hover:ring-primary/10 transition-all duration-300"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.src = 'https://via.placeholder.com/150';
+                            target.src = '/placeholder-avatar.jpg';
                             console.warn(`Failed to load image for testimonial: ${testimonial.id}`);
                           }}
                         />
