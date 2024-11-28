@@ -42,7 +42,7 @@ export function About() {
         setSkills(skillsResult);
         setCertificates(certificatesResult);
         if (statsResult) setStats(statsResult);
-        setAffiliations(affiliationsResult);
+        setAffiliations(affiliationsResult.sort((a, b) => b.order - a.order));
         setError(null);
       } catch (err) {
         setError('Failed to load data. Please try again later.');
@@ -340,11 +340,20 @@ export function About() {
                           <span className="text-white/90 group-hover:text-white transition-colors duration-300 font-medium text-sm leading-tight">
                             {affiliation.name}
                           </span>
+                          <span className="text-white/80 group-hover:text-white/90 transition-colors duration-300 text-sm mt-0.5">
+                            {affiliation.role}
+                          </span>
                           {affiliation.acronym && (
                             <span className="text-white/50 group-hover:text-white/70 transition-colors duration-300 text-xs mt-1">
                               {affiliation.acronym}
                             </span>
                           )}
+                          <span className="text-white/50 group-hover:text-white/70 transition-colors duration-300 text-xs mt-1">
+                            {affiliation.place}
+                          </span>
+                          <span className="text-white/50 group-hover:text-white/70 transition-colors duration-300 text-xs">
+                            {affiliation.timeline}
+                          </span>
                         </div>
                       </div>
                     ))}

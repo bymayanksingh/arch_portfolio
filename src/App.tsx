@@ -11,11 +11,11 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { SEO } from './components/SEO';
 import { StructuredData, getArchitectSchema } from './components/StructuredData';
 import { getAbout } from './services/firebaseService';
-import type { About } from './services/firebaseService';
+import type { About as AboutData } from './services/firebaseService';
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [about, setAbout] = useState<About | null>(null);
+  const [about, setAbout] = useState<AboutData | null>(null);
 
   useEffect(() => {
     async function fetchAbout() {

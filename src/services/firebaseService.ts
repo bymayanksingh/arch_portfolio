@@ -112,7 +112,10 @@ export interface Affiliation {
   acronym: string;
   icon: string;
   name: string;
+  place: string;
+  timeline: string;
   role: string;
+  order: number;
 }
 
 // Hero
