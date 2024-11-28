@@ -255,43 +255,6 @@ export function About() {
           </div>
         </div>
 
-        {/* Affiliations Section */}
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold font-playfair mb-4">Professional Affiliations</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Proud member of prestigious architectural organizations and institutions
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {affiliations.map((affiliation, index) => {
-                // Dynamically get the icon component
-                const IconComponent = Icons[affiliation.icon as keyof typeof Icons] || Icons.Building2;
-                
-                return (
-                  <div
-                    key={index}
-                    className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <IconComponent className="w-8 h-8 text-gray-700" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{affiliation.acronym}</h3>
-                        <p className="text-sm text-gray-500">{affiliation.role}</p>
-                      </div>
-                    </div>
-                    <p className="mt-4 text-gray-600 text-sm">{affiliation.name}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
         {/* Skills Section */}
         <div className="mb-40">
           <div className="text-center mb-24">
@@ -365,26 +328,7 @@ export function About() {
                 <div className="relative h-full flex flex-col">
                   <h3 className="text-2xl font-playfair font-bold mb-8">Professional Affiliations</h3>
                   <div className="grid grid-cols-1 gap-y-6 flex-grow">
-                    {[
-                      {
-                        name: "Royal Institute of British Architects",
-                        acronym: "RIBA",
-                        icon: Building2
-                      },
-                      {
-                        name: "American Institute of Architects",
-                        acronym: "AIA",
-                        icon: Building2
-                      },
-                      {
-                        name: "Green Building Council",
-                        icon: Award
-                      },
-                      {
-                        name: "International Association of Architects",
-                        icon: Users
-                      }
-                    ].map((affiliation, index) => (
+                    {affiliations.map((affiliation, index) => (
                       <div 
                         key={index} 
                         className="group flex items-start space-x-4 p-3 rounded-lg hover:bg-white/5 transition-colors duration-300"
