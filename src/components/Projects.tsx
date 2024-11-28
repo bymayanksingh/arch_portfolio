@@ -59,43 +59,22 @@ export function Projects() {
           </p>
         </div>
 
-        {/* Category Filter Container */}
-        <div className="relative mb-10 sm:mb-12">
-          {/* Gradient Fade Effect */}
-          <div className="absolute left-0 top-1 bottom-1 w-8 bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none sm:hidden"></div>
-          <div className="absolute right-0 top-1 bottom-1 w-8 bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none sm:hidden"></div>
-
-          {/* Scrollable Categories */}
-          <div className="relative flex items-center -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center">
-            <div className="flex gap-3 py-1 overflow-x-auto scrollbar-hide">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`
-                    category-btn
-                    relative px-5 h-10 rounded-full text-sm font-medium
-                    transition-all duration-200 ease-in-out
-                    flex items-center justify-center
-                    min-w-[80px] select-none
-                    ${selectedCategory === category
-                      ? 'bg-black text-white'
-                      : 'bg-white hover:bg-gray-100 text-gray-600 hover:text-gray-900'
-                    }
-                    ${selectedCategory === category 
-                      ? 'shadow-md transform scale-105' 
-                      : 'hover:shadow-sm'
-                    }
-                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black
-                    active:scale-95
-                  `}
-                >
-                  <span className="block whitespace-nowrap">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </span>
-                </button>
-              ))}
-            </div>
+        {/* Category Filter */}
+        <div className="flex overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center mb-10 sm:mb-12">
+          <div className="flex gap-3 pb-2 sm:pb-0 sm:flex-wrap sm:justify-center">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+                  selectedCategory === category
+                    ? 'bg-black text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </button>
+            ))}
           </div>
         </div>
 
