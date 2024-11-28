@@ -2,6 +2,7 @@ import React, { useState, FormEvent, useEffect } from 'react';
 import { Mail, Phone, MapPin, Clock, Send, Linkedin, Instagram } from 'lucide-react';
 import { submitMessage, getAbout } from '../services/firebaseService';
 import type { About } from '../services/firebaseService';
+import { containsProfanity, getProfanityMatches } from '../utils/profanityFilter';
 
 interface FormData {
   firstName: string;
@@ -10,6 +11,14 @@ interface FormData {
   projectType: string;
   customProjectType: string;
   message: string;
+}
+
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  projectType?: string;
+  message?: string;
 }
 
 export function Contact() {
@@ -22,6 +31,9 @@ export function Contact() {
     message: ''
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
   const [status, setStatus] = useState<{
     type: 'idle' | 'loading' | 'success' | 'error';
     message?: string;
@@ -29,22 +41,93 @@ export function Contact() {
 
   const [about, setAbout] = useState<About | null>(null);
 
-  useEffect(() => {
-    async function fetchAboutData() {
-      const data = await getAbout();
-      setAbout(data);
+  const validateField = (name: string, value: string): string | undefined => {
+    // First check for profanity in text fields
+    if (['firstName', 'lastName', 'message', 'customProjectType'].includes(name)) {
+      if (containsProfanity(value)) {
+        const matches = getProfanityMatches(value);
+        return `Please remove inappropriate language${matches.length > 0 ? ': ' + matches.join(', ') : ''}`;
+      }
     }
-    fetchAboutData();
-  }, []);
+
+    switch (name) {
+      case 'firstName':
+        if (!value.trim()) return 'First name is required';
+        if (value.length < 2) return 'First name must be at least 2 characters';
+        return undefined;
+      
+      case 'email':
+        if (!value.trim()) return 'Email is required';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return 'Please enter a valid email address';
+        return undefined;
+      
+      case 'projectType':
+        if (!value) return 'Please select a project type';
+        return undefined;
+      
+      case 'message':
+        if (!value.trim()) return 'Message is required';
+        if (value.length < 10) return 'Message must be at least 10 characters';
+        return undefined;
+      
+      default:
+        return undefined;
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    let isValid = true;
+
+    // Validate required fields
+    Object.keys(formData).forEach((key) => {
+      if (key === 'customProjectType' && formData.projectType !== 'Other') return;
+      if (key === 'lastName') return; // lastName is optional
+
+      const error = validateField(key, formData[key as keyof FormData]);
+      if (error) {
+        newErrors[key as keyof FormErrors] = error;
+        isValid = false;
+      }
+    });
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+    const error = validateField(name, value);
+    setErrors(prev => ({ ...prev, [name]: error }));
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (touched[name]) {
+      const error = validateField(name, value);
+      setErrors(prev => ({ ...prev, [name]: error }));
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
-    // Basic validation
-    if (!formData.firstName || !formData.email || !formData.message) {
+    // Mark all fields as touched
+    const allTouched = Object.keys(formData).reduce((acc, key) => ({
+      ...acc,
+      [key]: true
+    }), {});
+    setTouched(allTouched);
+
+    // Validate all fields
+    if (!validateForm()) {
       setStatus({
         type: 'error',
-        message: 'Please fill in all required fields'
+        message: 'Please fix the errors in the form'
       });
       return;
     }
@@ -73,6 +156,8 @@ export function Contact() {
           customProjectType: '',
           message: ''
         });
+        setTouched({});
+        setErrors({});
       } else {
         setStatus({
           type: 'error',
@@ -87,13 +172,13 @@ export function Contact() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  useEffect(() => {
+    async function fetchAboutData() {
+      const data = await getAbout();
+      setAbout(data);
+    }
+    fetchAboutData();
+  }, []);
 
   return (
     <div className="pt-24 pb-20">
@@ -119,126 +204,202 @@ export function Contact() {
                 </div>
               )}
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    First Name *
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+                    First Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
+                    id="firstName"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                    placeholder="Jane"
-                    required
+                    onBlur={handleBlur}
+                    className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm
+                      ${errors.firstName && touched.firstName
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-black focus:ring-black'
+                      }`}
                   />
+                  {errors.firstName && touched.firstName && (
+                    <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
+                  )}
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
                     Last Name
                   </label>
                   <input
                     type="text"
+                    id="lastName"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                    placeholder="Smith"
+                    onBlur={handleBlur}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                  placeholder="jane@example.com"
-                  required
-                />
-              </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm
+                      ${errors.email && touched.email
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-black focus:ring-black'
+                      }`}
+                  />
+                  {errors.email && touched.email && (
+                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                  )}
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Project Type
-                </label>
-                <select
-                  name="projectType"
-                  value={formData.projectType}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                  required
-                >
-                  <option value="">Select a project type</option>
-                  <option value="Residential">Residential</option>
-                  <option value="Commercial">Commercial</option>
-                  <option value="Interior">Interior Design</option>
-                  <option value="Landscape">Landscape</option>
-                  <option value="Employment">Employment</option>
-                  <option value="Other">Other</option>
-                </select>
+                <div>
+                  <label htmlFor="projectType" className="block text-sm font-medium text-gray-700">
+                    Project Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="projectType"
+                    name="projectType"
+                    value={formData.projectType}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm
+                      ${errors.projectType && touched.projectType
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-black focus:ring-black'
+                      }`}
+                  >
+                    <option value="">Select a project type</option>
+                    <option value="Residential">Residential</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Interior">Interior Design</option>
+                    <option value="Renovation">Renovation</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {errors.projectType && touched.projectType && (
+                    <p className="mt-1 text-sm text-red-500">{errors.projectType}</p>
+                  )}
+                </div>
               </div>
 
               {formData.projectType === 'Other' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Specify Project Type
+                  <label htmlFor="customProjectType" className="block text-sm font-medium text-gray-700">
+                    Specify Project Type <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
+                    id="customProjectType"
                     name="customProjectType"
                     value={formData.customProjectType}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                    placeholder="Please specify your project type"
-                    required
+                    onBlur={handleBlur}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Message *
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+                  Message <span className="text-red-500">*</span>
                 </label>
                 <textarea
+                  id="message"
                   name="message"
+                  rows={4}
                   value={formData.message}
                   onChange={handleChange}
-                  rows={6}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black/5 focus:outline-none"
-                  placeholder="Tell me about your project..."
-                  required
-                ></textarea>
+                  onBlur={handleBlur}
+                  className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm
+                    ${errors.message && touched.message
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-black focus:ring-black'
+                    }`}
+                />
+                {errors.message && touched.message && (
+                  <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                )}
               </div>
 
-              <button
-                type="submit"
-                disabled={status.type === 'loading'}
-                className={`w-full bg-black text-white py-4 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center justify-center ${
-                  status.type === 'loading' ? 'opacity-75 cursor-not-allowed' : ''
-                }`}
-              >
-                {status.type === 'loading' ? (
-                  <span className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sending...
-                  </span>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5 mr-2" />
-                    Send Message
-                  </>
-                )}
-              </button>
+              <div className="flex items-center justify-end">
+                <button
+                  type="submit"
+                  disabled={status.type === 'loading'}
+                  className={`inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white
+                    ${status.type === 'loading'
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-black hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black'
+                    }`}
+                >
+                  {status.type === 'loading' ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Send Message
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {status.type === 'error' && (
+                <div className="rounded-md bg-red-50 p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-red-700">{status.message}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {status.type === 'success' && (
+                <div className="rounded-md bg-green-50 p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-green-700">{status.message}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </form>
           </div>
 
