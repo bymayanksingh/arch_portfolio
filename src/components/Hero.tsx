@@ -99,7 +99,7 @@ export function Hero() {
               <h1 className="font-cormorant text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-white leading-tight">
                 Hello, I'm{' '}
                 <span className="relative inline-block">
-                  <span className="relative z-10 font-semibold">{heroData?.name || 'Pragya'}</span>
+                  <span className="relative z-10 font-semibold">{heroData?.name || 'Name'}</span>
                   <span className="absolute bottom-0 left-0 w-full h-1 bg-white/30 transform origin-left transition-transform duration-500 group-hover:scale-x-100"></span>
                 </span>
               </h1>
