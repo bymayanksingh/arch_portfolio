@@ -86,3 +86,40 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* Testimonial styles */
+@media (max-width: 768px) {
+  #testimonials .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  #testimonials .text-4xl {
+    font-size: 2rem;
+  }
+}
+
+/* Ensure perfect circular images */
+#testimonials .rounded-full {
+  aspect-ratio: 1;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+#testimonials .relative img.rounded-full {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+}
+
+/* Testimonial card responsive padding */
+@media (max-width: 640px) {
+  #testimonials .p-8 {
+    padding: 1.5rem;
+  }
+  
+  #testimonials .mb-16 {
+    margin-bottom: 2rem;
+  }
+}
