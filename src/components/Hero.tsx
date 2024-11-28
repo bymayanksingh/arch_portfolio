@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getHero } from '../services/firebaseService';
 import type { Hero as HeroType } from '../services/firebaseService';
@@ -16,11 +16,6 @@ export function Hero() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [scrollY, setScrollY] = useState(0);
-  
-  const heroRef = useRef<HTMLElement>(null);
-  const backgroundRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchHeroData() {
@@ -47,27 +42,9 @@ export function Hero() {
       }
     };
 
-    const handleScroll = () => {
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        if (rect.top <= window.innerHeight && rect.bottom >= 0) {
-          setScrollY(window.scrollY);
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    fetchStats();
+    fetchHeroData();
   }, []);
-
-  useEffect(() => {
-    if (backgroundRef.current) {
-      backgroundRef.current.style.transform = `translateY(${scrollY * 0.5}px)`;
-    }
-    if (contentRef.current) {
-      contentRef.current.style.transform = `translateY(${scrollY * 0.2}px)`;
-    }
-  }, [scrollY]);
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
@@ -91,10 +68,10 @@ export function Hero() {
   }
 
   return (
-    <section ref={heroRef} className="relative min-h-screen overflow-hidden parallax-container">
+    <section className="relative min-h-screen">
       {/* Background Image with Overlay */}
-      <div ref={backgroundRef} className="absolute inset-0 transition-transform will-change-transform parallax-bg">
-        <div className="relative w-full h-full scale-110">
+      <div className="absolute inset-0">
+        <div className="relative w-full h-full">
           <img 
             src={heroData?.backgroundImage || "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3"}
             alt="Abstract Architecture"
@@ -122,7 +99,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div ref={contentRef} className="relative h-screen transition-transform will-change-transform parallax-content">
+      <div className="relative min-h-screen flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 md:py-0">
           <div className="max-w-3xl space-y-8">
             {/* Intro Text */}
