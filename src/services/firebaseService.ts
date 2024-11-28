@@ -11,6 +11,7 @@ export interface Project {
   coverImage: string;
   description: string;
   client: string;
+  featured: boolean;
   area: string;
   status: string;
   details: string[];

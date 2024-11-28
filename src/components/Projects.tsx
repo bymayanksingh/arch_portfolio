@@ -15,11 +15,13 @@ export function Projects() {
     async function fetchProjects() {
       try {
         const allProjects = await getProjects();
-        setProjects(allProjects);
+        // Filter only featured projects
+        const featuredProjects = allProjects.filter(project => project.featured);
+        setProjects(featuredProjects);
         
-        // Extract unique categories
+        // Extract unique categories from featured projects only
         const uniqueCategories = Array.from(
-          new Set(allProjects.map(project => project.category))
+          new Set(featuredProjects.map(project => project.category))
         );
         setCategories(['all', ...uniqueCategories]);
       } catch (error) {
