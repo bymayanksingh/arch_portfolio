@@ -123,3 +123,20 @@ body {
     margin-bottom: 2rem;
   }
 }
+
+/* Project grid centering */
+#projects .grid {
+  margin: 0 auto;
+}
+
+#projects .grid > div {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  #projects .grid > div {
+    max-width: min(100%, 32rem);
+  }
+}
