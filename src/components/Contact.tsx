@@ -18,6 +18,7 @@ interface FormErrors {
   lastName?: string;
   email?: string;
   projectType?: string;
+  customProjectType?: string;
   message?: string;
 }
 
@@ -42,7 +43,13 @@ export function Contact() {
   const [about, setAbout] = useState<About | null>(null);
 
   const validateField = (name: string, value: string): string | undefined => {
-    // First check for profanity in text fields
+    // Basic validation first
+    if (!value.trim()) {
+      if (name === 'lastName') return undefined; // lastName is optional
+      return `${name.charAt(0).toUpperCase() + name.slice(1).replace(/([A-Z])/g, ' $1').toLowerCase()} is required`;
+    }
+
+    // Profanity check for text fields
     if (['firstName', 'lastName', 'message', 'customProjectType'].includes(name)) {
       if (containsProfanity(value)) {
         const matches = getProfanityMatches(value);
@@ -50,15 +57,19 @@ export function Contact() {
       }
     }
 
+    // Field-specific validation
     switch (name) {
       case 'firstName':
-        if (!value.trim()) return 'First name is required';
         if (value.length < 2) return 'First name must be at least 2 characters';
+        if (!/^[a-zA-Z\s-']+$/.test(value)) return 'First name can only contain letters, spaces, hyphens, and apostrophes';
+        return undefined;
+      
+      case 'lastName':
+        if (value.trim() && !/^[a-zA-Z\s-']+$/.test(value)) return 'Last name can only contain letters, spaces, hyphens, and apostrophes';
         return undefined;
       
       case 'email':
-        if (!value.trim()) return 'Email is required';
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(value)) return 'Please enter a valid email address';
         return undefined;
       
@@ -66,9 +77,13 @@ export function Contact() {
         if (!value) return 'Please select a project type';
         return undefined;
       
+      case 'customProjectType':
+        if (formData.projectType === 'Other' && !value.trim()) return 'Please specify the project type';
+        return undefined;
+      
       case 'message':
-        if (!value.trim()) return 'Message is required';
         if (value.length < 10) return 'Message must be at least 10 characters';
+        if (value.length > 1000) return 'Message must not exceed 1000 characters';
         return undefined;
       
       default:
@@ -80,11 +95,11 @@ export function Contact() {
     const newErrors: FormErrors = {};
     let isValid = true;
 
-    // Validate required fields
+    // Validate all fields
     Object.keys(formData).forEach((key) => {
+      // Skip customProjectType validation if project type is not 'Other'
       if (key === 'customProjectType' && formData.projectType !== 'Other') return;
-      if (key === 'lastName') return; // lastName is optional
-
+      
       const error = validateField(key, formData[key as keyof FormData]);
       if (error) {
         newErrors[key as keyof FormErrors] = error;
@@ -132,15 +147,25 @@ export function Contact() {
       return;
     }
 
+    // Additional validation before submission
+    if (formData.projectType === 'Other' && !formData.customProjectType.trim()) {
+      setErrors(prev => ({ ...prev, customProjectType: 'Please specify the project type' }));
+      setStatus({
+        type: 'error',
+        message: 'Please fix the errors in the form'
+      });
+      return;
+    }
+
     setStatus({ type: 'loading' });
 
     try {
       const result = await submitMessage({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        projectType: formData.projectType === 'Other' ? formData.customProjectType : formData.projectType,
-        message: formData.message
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim().toLowerCase(),
+        projectType: formData.projectType === 'Other' ? formData.customProjectType.trim() : formData.projectType,
+        message: formData.message.trim()
       });
       
       if (result.success) {
@@ -240,6 +265,9 @@ export function Contact() {
                     onBlur={handleBlur}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
                   />
+                  {errors.lastName && touched.lastName && (
+                    <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
+                  )}
                 </div>
 
                 <div>
@@ -305,8 +333,15 @@ export function Contact() {
                     value={formData.customProjectType}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
+                    className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm
+                      ${errors.customProjectType && touched.customProjectType
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : 'border-gray-300 focus:border-black focus:ring-black'
+                      }`}
                   />
+                  {errors.customProjectType && touched.customProjectType && (
+                    <p className="mt-1 text-sm text-red-500">{errors.customProjectType}</p>
+                  )}
                 </div>
               )}
 
