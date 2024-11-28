@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Download, Mail, Phone, Linkedin, Award, Building2, Users, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Download, Mail, Phone, Linkedin, Award, Building2, Users, CheckCircle2, Loader2 } from 'lucide-react';
 import { ImageModal } from '../components/ImageModal';
-import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
+import { getAbout, getSkills, getCertificates, getStats, getAffiliations, About as AboutType, Certificate, Stats, Affiliation } from '../services/firebaseService';
 
 interface Certificate {
   title: string;
@@ -17,6 +17,7 @@ export function About() {
   const [skills, setSkills] = useState<string[]>([]);
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
@@ -27,17 +28,19 @@ export function About() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [aboutResult, skillsResult, certificatesResult, statsResult] = await Promise.all([
+        const [aboutResult, skillsResult, certificatesResult, statsResult, affiliationsResult] = await Promise.all([
           getAbout(),
           getSkills(),
           getCertificates(),
-          getStats()
+          getStats(),
+          getAffiliations()
         ]);
         
         if (aboutResult) setAboutData(aboutResult);
         setSkills(skillsResult);
         setCertificates(certificatesResult);
         if (statsResult) setStats(statsResult);
+        setAffiliations(affiliationsResult);
         setError(null);
       } catch (err) {
         setError('Failed to load data. Please try again later.');
@@ -249,6 +252,38 @@ export function About() {
             </div>
           </div>
         </div>
+
+        {/* Professional Affiliations */}
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-4xl font-bold font-playfair mb-12 text-center">
+              Professional Affiliations
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {affiliations.map((affiliation, index) => {
+                const IconComponent = Icons[affiliation.icon as keyof typeof Icons] || Icons.Building2;
+                
+                return (
+                  <div
+                    key={index}
+                    className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0">
+                        <IconComponent className="w-8 h-8 text-black" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">{affiliation.acronym}</h3>
+                        <p className="text-gray-600 mb-2">{affiliation.name}</p>
+                        <p className="text-sm text-gray-500">{affiliation.role}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         {/* Skills Section */}
         <div className="mb-40">

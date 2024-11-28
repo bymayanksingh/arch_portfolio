@@ -108,6 +108,13 @@ export interface Certificate {
   verified: boolean;
 }
 
+export interface Affiliation {
+  acronym: string;
+  icon: string;
+  name: string;
+  role: string;
+}
+
 // Hero
 export const getHero = async (): Promise<Hero | null> => {
   try {
@@ -252,6 +259,21 @@ export const getCertificates = async (): Promise<Certificate[]> => {
   } catch (error) {
     console.error('Error fetching certificates:', error);
     return [];
+  }
+};
+
+// Affiliations
+export const getAffiliations = async (): Promise<Affiliation[]> => {
+  try {
+    const affiliationsRef = collection(db, 'affiliations');
+    const affiliationsSnapshot = await getDocs(affiliationsRef);
+    
+    return affiliationsSnapshot.docs.map(doc => ({
+      ...doc.data() as Affiliation
+    }));
+  } catch (error) {
+    console.error('Error fetching affiliations:', error);
+    throw error;
   }
 };
 
