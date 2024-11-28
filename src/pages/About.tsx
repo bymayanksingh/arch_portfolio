@@ -1,8 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { Download, Mail, Phone, Linkedin, Award, Building2, Users, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Download, Mail, Phone, Linkedin, Award as AwardIcon, Building2Icon, BuildingIcon, Users, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { ImageModal } from '../components/ImageModal';
 import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
 import { getAffiliations, type Affiliation } from '../services/firebaseService';
+import { getPublications, type Publication } from '../services/firebaseService';
+import { getAwards, type Award as AwardData } from '../services/firebaseService';
+import { Publications } from '../components/Publications';
+import { Awards } from '../components/Awards';
 import * as Icons from 'lucide-react';
 
 interface Certificate {
@@ -25,17 +29,29 @@ export function About() {
   const [currentCertificateIndex, setCurrentCertificateIndex] = useState(0);
   const certificatesRef = useRef<HTMLDivElement>(null);
   const [affiliations, setAffiliations] = useState<Affiliation[]>([]);
+  const [publications, setPublications] = useState<Publication[]>([]);
+  const [awards, setAwards] = useState<AwardData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [aboutResult, skillsResult, certificatesResult, statsResult, affiliationsResult] = await Promise.all([
+        const [
+          aboutResult,
+          skillsResult,
+          certificatesResult,
+          statsResult,
+          affiliationsResult,
+          publicationsResult,
+          awardsResult
+        ] = await Promise.all([
           getAbout(),
           getSkills(),
           getCertificates(),
           getStats(),
-          getAffiliations()
+          getAffiliations(),
+          getPublications(),
+          getAwards()
         ]);
         
         if (aboutResult) setAboutData(aboutResult);
@@ -43,6 +59,8 @@ export function About() {
         setCertificates(certificatesResult);
         if (statsResult) setStats(statsResult);
         setAffiliations(affiliationsResult.sort((a, b) => b.order - a.order));
+        setPublications(publicationsResult);
+        setAwards(awardsResult);
         setError(null);
       } catch (err) {
         setError('Failed to load data. Please try again later.');
@@ -126,7 +144,7 @@ export function About() {
             </p>
             <div className="flex flex-wrap gap-4">
               <a 
-                href={aboutData.resumeUrl} 
+                href={aboutData.resume} 
                 className="inline-flex items-center px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -160,9 +178,10 @@ export function About() {
           </p>
           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats?.items.map((stat, index) => {
-              const Icon = stat.icon === 'Building2' ? Building2 : 
-                          stat.icon === 'Award' ? Award : 
-                          stat.icon === 'Users' ? Users : Building2;
+              const Icon = stat.icon === 'Building2' ? Building2Icon : 
+                          stat.icon === 'Building' ? BuildingIcon : 
+                          stat.icon === 'Award' ? AwardIcon : 
+                          stat.icon === 'Users' ? Users : Building2Icon;
               return (
                 <div key={index} className="group">
                   <div className="relative bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
@@ -254,6 +273,16 @@ export function About() {
             </div>
           </div>
         </div>
+
+        {/* Publications Section */}
+        {publications.length > 0 && (
+          <Publications publications={publications} />
+        )}
+
+        {/* Awards Section */}
+        {awards.length > 0 && (
+          <Awards awards={awards} />
+        )}
 
         {/* Skills Section */}
         <div className="mb-40">
