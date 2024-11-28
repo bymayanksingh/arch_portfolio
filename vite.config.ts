@@ -9,7 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Pragya Singh - Professional Architect',
+        name: 'Professional Architect',
         short_name: 'Arch Portfolio',
         description: 'Professional architecture portfolio showcasing innovative design and sustainable solutions',
         theme_color: '#ffffff',

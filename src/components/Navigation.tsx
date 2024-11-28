@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { getAbout } from '../services/firebaseService';
+import type { About } from '../services/firebaseService';
 
 interface NavigationProps {
   isMenuOpen: boolean;
@@ -15,6 +17,19 @@ const navItems = [
 
 export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
   const location = useLocation();
+  const [about, setAbout] = useState<About | null>(null);
+
+  useEffect(() => {
+    async function fetchAbout() {
+      try {
+        const data = await getAbout();
+        setAbout(data);
+      } catch (error) {
+        console.error('Error fetching about data:', error);
+      }
+    }
+    fetchAbout();
+  }, []);
 
   return (
     <nav className="fixed w-full bg-white/90 backdrop-blur-sm z-50 border-b">
@@ -25,7 +40,7 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
             to="/" 
             className="font-playfair text-xl font-bold relative group"
           >
-            <span className="relative z-10">Pragya Singh</span>
+            <span className="relative z-10">{about?.name}</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-black transition-all duration-300 group-hover:w-full"></span>
           </Link>
 

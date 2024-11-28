@@ -74,6 +74,7 @@ export function Hero() {
         <img 
           src={heroData?.backgroundImage || "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3"}
           alt="Abstract Architecture"
+          loading="lazy"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent"></div>

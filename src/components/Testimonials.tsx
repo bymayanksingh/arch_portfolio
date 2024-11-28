@@ -100,6 +100,7 @@ export function Testimonials() {
                         <img
                           src={testimonial.image}
                           alt={testimonial.name}
+                          loading="lazy"
                           className="w-full h-full rounded-full object-cover ring-4 ring-gray-50
                                    group-hover:ring-primary/10 transition-all duration-300"
                           onError={(e) => {
