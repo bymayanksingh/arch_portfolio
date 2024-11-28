@@ -47,25 +47,28 @@ export function Projects() {
   }
 
   return (
-    <section id="projects" className="py-20 bg-gray-50">
+    <section id="projects" className="py-16 sm:py-20 lg:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold font-playfair mb-4">Featured Projects</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            Featured Projects
+          </h2>
+          <p className="text-gray-600 text-lg">
             Explore my portfolio of innovative architectural designs and successful projects
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex justify-center gap-4 mb-12 flex-wrap">
+        <div className="flex justify-center gap-3 mb-10 sm:mb-12 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                 selectedCategory === category
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-900'
               }`}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -74,50 +77,72 @@ export function Projects() {
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredProjects.map((project) => (
             <Link 
               key={project.id} 
               to={`/projects/${project.id}`}
-              className="group block bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="group block"
             >
-              <div className="flex flex-col h-full">
+              <article className="relative bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-xl">
                 {/* Image Container */}
-                <div className="relative overflow-hidden rounded-t-xl aspect-[4/3]">
+                <div className="relative aspect-[3/4] sm:aspect-[4/3] overflow-hidden">
                   <img 
                     src={project.coverImage}
                     alt={project.title}
                     loading="lazy"
                     width={800}
                     height={600}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/placeholder-project.jpg';
                     }}
                   />
-                </div>
-                
-                {/* Content Container */}
-                <div className="flex flex-col flex-grow p-4 sm:p-5 bg-gradient-to-t from-black/80 to-black/60">
-                  <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white mb-2 line-clamp-2">
-                    {project.title}
-                  </h3>
-                  <p className="text-white/80 text-sm sm:text-base mb-2">
-                    {project.location}, {project.year}
-                  </p>
-                  <p className="text-white/90 text-sm sm:text-base mb-4 line-clamp-3">
-                    {project.description}
-                  </p>
-                  <div className="flex items-center text-white mt-auto group-hover:translate-x-2 transition-transform duration-300">
-                    <span className="text-sm sm:text-base">View Project</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
+                  {/* Category Tag */}
+                  <div className="absolute top-4 left-4">
+                    <span className="inline-block px-3 py-1.5 bg-white/90 backdrop-blur-sm text-xs font-medium text-gray-900 rounded-full">
+                      {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+                    </span>
                   </div>
                 </div>
-              </div>
+
+                {/* Content Container */}
+                <div className="relative p-5 sm:p-6">
+                  {/* Title and Location */}
+                  <div className="space-y-2">
+                    <h3 className="font-playfair text-xl sm:text-2xl font-bold text-gray-900 group-hover:text-black">
+                      {project.title}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {project.location} • {project.year}
+                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <p className="mt-3 text-gray-600 text-sm line-clamp-2">
+                    {project.description}
+                  </p>
+
+                  {/* View Project Link */}
+                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">View Project</span>
+                    <div className="rounded-full p-2 bg-gray-50 group-hover:bg-gray-100 transition-colors">
+                      <ArrowRight className="w-4 h-4 text-gray-900" />
+                    </div>
+                  </div>
+                </div>
+              </article>
             </Link>
           ))}
         </div>
+
+        {/* Show Empty State if no projects */}
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-600">No projects found in this category.</p>
+          </div>
+        )}
         
         <div className="text-center mt-12">
           <Link 
