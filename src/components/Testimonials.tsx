@@ -94,13 +94,13 @@ export function Testimonials() {
 
                 {/* Profile */}
                 <div className="flex items-center mt-8 pt-6 border-t border-gray-100">
-                  <div className="relative">
+                  <div className="relative w-14 h-14 flex-shrink-0">
                     {testimonial.image ? (
-                      <div className="relative">
+                      <div className="relative w-full h-full">
                         <img
                           src={testimonial.image}
                           alt={testimonial.name}
-                          className="w-14 h-14 rounded-full object-cover ring-4 ring-gray-50
+                          className="w-full h-full rounded-full object-cover ring-4 ring-gray-50
                                    group-hover:ring-primary/10 transition-all duration-300"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
@@ -111,7 +111,7 @@ export function Testimonials() {
                         <div className="absolute inset-0 rounded-full ring-1 ring-black/5"></div>
                       </div>
                     ) : (
-                      <div className="w-14 h-14 rounded-full bg-gray-200 ring-4 ring-gray-50
+                      <div className="w-full h-full rounded-full bg-gray-200 ring-4 ring-gray-50
                                     group-hover:ring-primary/10 transition-all duration-300" />
                     )}
                   </div>
