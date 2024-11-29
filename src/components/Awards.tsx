@@ -8,7 +8,7 @@ interface AwardsProps {
 export function Awards({ awards }: AwardsProps) {
   return (
     <div className="mb-20">
-      <h2 className="text-4xl font-bold font-playfair mb-4 text-center">Awards & Recognition</h2>
+      <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center">Awards & Recognition</h2>
       <p className="text-gray-600 max-w-2xl mx-auto text-center mb-12">
         Celebrating excellence and innovation in architecture
       </p>

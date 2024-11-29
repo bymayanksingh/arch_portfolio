@@ -134,7 +134,7 @@ export function About() {
         {/* Hero Section */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
           <div>
-            <h1 className="text-5xl font-bold font-playfair mb-6">About Me</h1>
+            <h1 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">About Me</h1>
             <p className="text-xl text-gray-600 mb-8">
               Transforming spaces with innovative architectural solutions
             </p>
@@ -171,7 +171,7 @@ export function About() {
 
         {/* Stats Section */}
         <div className="mb-20 text-center">
-          <h2 className="text-4xl font-bold font-playfair mb-4">By the Numbers</h2>
+          <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">By the Numbers</h2>
           <p className="text-gray-600 max-w-2xl mx-auto mb-12">
             A snapshot of my architectural journey and achievements
           </p>
@@ -224,7 +224,7 @@ export function About() {
 
         {/* Certificates Section */}
         <div className="mb-20">
-          <h2 className="text-4xl font-bold font-playfair mb-4 text-center">Professional Certifications</h2>
+          <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center">Professional Certifications</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-center mb-8">
             Recognized achievements and professional development milestones
           </p>
@@ -286,7 +286,7 @@ export function About() {
         {/* Skills Section */}
         <div className="mb-40">
           <div className="text-center mb-24">
-            <h2 className="text-4xl font-bold font-playfair mb-4">Skills & Expertise</h2>
+            <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Skills & Expertise</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               My diverse skill set allows me to handle projects from concept to completion, 
               ensuring excellence at every stage of the architectural process.
@@ -354,7 +354,7 @@ export function About() {
                 />
 
                 <div className="relative h-full flex flex-col">
-                  <h3 className="text-2xl font-playfair font-bold mb-8">Professional Affiliations</h3>
+                  <h3 className="font-playfair text-2xl sm:text-3xl font-bold mb-8">Professional Affiliations</h3>
                   <div className="grid grid-cols-1 gap-y-6 flex-grow">
                     {affiliations.map((affiliation, index) => (
                       <div 
@@ -395,7 +395,7 @@ export function About() {
         {/* Contact Section */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold font-playfair mb-4">Let's Work Together</h2>
+            <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Let's Work Together</h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Have a project in mind? Let's create something extraordinary together.
             </p>
