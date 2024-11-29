@@ -2,12 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { getTimeline } from '../services/dataService';
 import type { TimelineItem } from '../services/firebaseService';
 import { Building, Award, Briefcase, Building2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const iconMap = {
   Building,
   Award,
   Briefcase,
   Building2
+};
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, x: -20 },
+  show: { 
+    opacity: 1, 
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
 };
 
 export function Timeline() {
@@ -63,22 +86,45 @@ export function Timeline() {
   return (
     <section id="timeline" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Professional Journey</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <motion.h2 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4"
+          >
+            Professional Journey
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-gray-600 max-w-2xl mx-auto"
+          >
             A timeline of my architectural career and key milestones
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="relative">
+        <motion.div 
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="relative"
+        >
           {/* Vertical line - only visible on desktop */}
           <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-200 md:block hidden"></div>
 
           {/* Timeline items */}
           <div className="space-y-8">
             {timelineData.map((item, index) => (
-              <div
+              <motion.div
                 key={index}
+                variants={item}
                 className={`relative flex items-center ${
                   index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'
                 } md:flex-row flex-row`}
@@ -149,10 +195,10 @@ export function Timeline() {
                   <div className="w-4 h-4 rounded-full bg-white border-4 border-gray-200 z-10"></div>
                   <div className="absolute w-6 h-6 rounded-full bg-gray-100 animate-pulse"></div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

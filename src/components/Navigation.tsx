@@ -52,17 +52,18 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
                 key={item.path}
                 to={item.path}
                 aria-label={item.ariaLabel}
-                className={`px-3 py-1.5 rounded-full transition-all duration-300 relative group ${
-                  location.pathname === item.path
-                    ? 'text-black'
-                    : 'text-gray-500 hover:text-black'
-                }`}
+                className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200
+                  ${location.pathname === item.path 
+                    ? 'text-black' 
+                    : 'text-gray-600 hover:text-black'
+                  }
+                  group
+                `}
               >
                 <span className="relative z-10">{item.label}</span>
-                {location.pathname === item.path && (
-                  <span className="absolute inset-0 bg-gray-100 rounded-full"></span>
-                )}
-                <span className="absolute inset-0 bg-gray-100 rounded-full opacity-0 transform scale-95 transition-all duration-300 group-hover:opacity-100 group-hover:scale-100"></span>
+                <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-black transform origin-left transition-transform duration-200 ease-out
+                  ${location.pathname === item.path ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}>
+                </span>
               </Link>
             ))}
             <Link
