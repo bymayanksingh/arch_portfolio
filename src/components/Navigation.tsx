@@ -12,7 +12,8 @@ interface NavigationProps {
 const navItems = [
   { path: '/', label: 'Home', ariaLabel: 'Go to Home page' },
   { path: '/projects', label: 'Projects', ariaLabel: 'View Architecture Projects' },
-  { path: '/about', label: 'About', ariaLabel: 'Learn more about the Architect' }
+  { path: '/about', label: 'About', ariaLabel: 'Learn more about the Architect' },
+  { path: '/resume', label: 'Resume', ariaLabel: 'View Interactive Resume' }
 ];
 
 export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
