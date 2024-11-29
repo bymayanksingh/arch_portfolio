@@ -83,7 +83,7 @@ export function HomeAbout() {
           </div>
 
           <div className="space-y-6">
-            <h2 className="font-playfair text-4xl font-bold">About Me</h2>
+            <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold">About Me</h2>
             <p className="text-xl text-gray-600">
               {about?.title || "Transforming spaces with innovative architectural solutions"}
             </p>
