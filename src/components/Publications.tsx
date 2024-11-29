@@ -36,7 +36,7 @@ export function Publications({ publications }: PublicationsProps) {
                     {publication.title}
                   </h3>
                   <p className="text-black/60 text-sm">
-                    {publication.authors}
+                    {publication.authors.join(', ')}
                   </p>
                   <p className="text-black/60 text-sm">
                     {publication.journal} • {publication.year}
@@ -46,6 +46,9 @@ export function Publications({ publications }: PublicationsProps) {
                       DOI: {publication.doi}
                     </p>
                   )}
+                  <p className="text-black/70 text-sm line-clamp-4 mt-2">
+                    {publication.abstract}
+                  </p>
                   <div className="pt-4">
                     <a
                       href={publication.link}
