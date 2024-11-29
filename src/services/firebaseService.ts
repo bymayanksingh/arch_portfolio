@@ -320,38 +320,22 @@ export const getPublications = async (): Promise<Publication[]> => {
   }
 };
 
-// Mock data for awards
-const mockAwards = [
-  {
-    id: '1',
-    title: 'Excellence in Sustainable Design',
-    organization: 'International Architecture Association',
-    year: '2023',
-    category: 'professional',
-    image: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2948&q=80'
-  },
-  {
-    id: '2',
-    title: 'Young Architect of the Year',
-    organization: 'National Architecture Foundation',
-    year: '2022',
-    category: 'professional',
-    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80'
-  },
-  {
-    id: '3',
-    title: 'Best Thesis Project',
-    organization: 'University of Architecture',
-    year: '2021',
-    category: 'academic',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80'
-  }
-];
-
+// Awards
 export const getAwards = async (): Promise<Award[]> => {
-  // Simulating API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return mockAwards;
+  try {
+    const awardsRef = collection(db, 'awards');
+    const querySnapshot = await getDocs(awardsRef);
+    const awards = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Award[];
+    
+    // Sort by order field
+    return awards.sort((a, b) => (a.order || 0) - (b.order || 0));
+  } catch (error) {
+    console.error('Error fetching awards:', error);
+    return [];
+  }
 };
 
 // Messages
