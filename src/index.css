@@ -87,6 +87,18 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide-dark::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide-dark {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  scrollbar-color: #333 transparent;
+}
+
 /* Smooth Scroll Behavior */
 .smooth-scroll {
   scroll-behavior: smooth;

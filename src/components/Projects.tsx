@@ -60,7 +60,7 @@ export function Projects() {
         </div>
 
         {/* Category Filter */}
-        <div className="flex overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center mb-10 sm:mb-12">
+        <div className="flex overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center mb-10 sm:mb-12">
           <div className="flex gap-3 pb-2 sm:pb-0 sm:flex-wrap sm:justify-center">
             {categories.map((category) => (
               <button
