@@ -44,9 +44,12 @@ export function Awards({ awards }: AwardsProps) {
                   <p className="text-black/60 text-sm">
                     {award.year}
                   </p>
+                  <p className="text-black/70 text-sm line-clamp-4">
+                    {award.description}
+                  </p>
                   <div className="pt-2">
                     <span className="inline-block px-3 py-1 text-xs font-medium text-black/60 bg-black/5 rounded-full capitalize">
-                      {award.category}
+                      {award.category.charAt(0).toUpperCase() + award.category.slice(1)}
                     </span>
                   </div>
                 </div>
