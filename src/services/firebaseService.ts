@@ -302,39 +302,23 @@ export const getAffiliations = async (): Promise<Affiliation[]> => {
   }
 };
 
-// Mock data for publications
-const mockPublications = [
-  {
-    id: '1',
-    title: 'Sustainable Urban Design: A Case Study of Modern Cities',
-    authors: 'Pragya Singh, John Smith',
-    journal: 'Journal of Urban Architecture',
-    year: 2023,
-    category: 'journal',
-    coverImage: 'https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
-    link: 'https://example.com/publication1'
-  },
-  {
-    id: '2',
-    title: 'Innovation in Residential Architecture: The Future of Living Spaces',
-    authors: 'Pragya Singh, Sarah Johnson',
-    journal: 'Architectural Review Quarterly',
-    year: 2022,
-    category: 'journal',
-    coverImage: 'https://images.unsplash.com/photo-1707989516323-4f0826d2ea92?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    link: 'https://example.com/publication2'
-  },
-  {
-    id: '3',
-    title: 'Integrating Green Spaces in Urban Planning',
-    authors: 'Pragya Singh',
-    journal: 'Conference on Sustainable Architecture',
-    year: 2023,
-    category: 'conference',
-    coverImage: 'https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80',
-    link: 'https://example.com/publication3'
+// Publications
+export const getPublications = async (): Promise<Publication[]> => {
+  try {
+    const publicationsRef = collection(db, 'publications');
+    const querySnapshot = await getDocs(publicationsRef);
+    const publications = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Publication[];
+    
+    // Sort by order field
+    return publications.sort((a, b) => (a.order || 0) - (b.order || 0));
+  } catch (error) {
+    console.error('Error fetching publications:', error);
+    return [];
   }
-];
+};
 
 // Mock data for awards
 const mockAwards = [
@@ -363,12 +347,6 @@ const mockAwards = [
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80'
   }
 ];
-
-export const getPublications = async (): Promise<Publication[]> => {
-  // Simulating API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return mockPublications;
-};
 
 export const getAwards = async (): Promise<Award[]> => {
   // Simulating API delay

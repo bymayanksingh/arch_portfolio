@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Download, Mail, Phone, Linkedin, Award as AwardIcon, Building2Icon, BuildingIcon, Users, CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Download, Mail, Phone, Linkedin, Award as AwardIcon, Building2Icon, BuildingIcon, Users, CheckCircle2, Loader2 } from 'lucide-react';
 import { ImageModal } from '../components/ImageModal';
 import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
 import { getAffiliations, type Affiliation } from '../services/firebaseService';
@@ -7,7 +7,6 @@ import { getPublications, type Publication } from '../services/firebaseService';
 import { getAwards, type Award as AwardData } from '../services/firebaseService';
 import { Publications } from '../components/Publications';
 import { Awards } from '../components/Awards';
-import * as Icons from 'lucide-react';
 
 interface Certificate {
   title: string;
