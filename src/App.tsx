@@ -12,6 +12,7 @@ import { SEO } from './components/SEO';
 import { StructuredData, getArchitectSchema } from './components/StructuredData';
 import { getAbout } from './services/firebaseService';
 import type { About as AboutData } from './services/firebaseService';
+import { BackToTop } from './components/BackToTop';
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,6 +47,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <BackToTop />
       </div>
     </Router>
   );
