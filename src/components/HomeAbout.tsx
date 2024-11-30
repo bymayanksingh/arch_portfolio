@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Download, ArrowRight, Award, Building2, Users } from 'lucide-react';
 import { About, getAbout, Stats } from '../services/firebaseService';
 import { getStats } from '../services/dataService';
+import { ImageFallback } from './ImageFallback';
 
 const iconMap = {
   Building2,
@@ -57,10 +58,10 @@ export function HomeAbout() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="relative">
-            <img 
+            <ImageFallback 
               src={about?.image || "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000"}
               alt={about?.name || "Profile"}
-              className="rounded-2xl shadow-2xl"
+              className="rounded-2xl shadow-2xl w-full aspect-[4/3] object-cover"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm rounded-b-2xl p-6">
               <div className="grid grid-cols-3 gap-4">

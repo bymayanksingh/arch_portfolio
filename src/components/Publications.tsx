@@ -1,5 +1,6 @@
 import { Publication } from '../services/firebaseService';
 import { ExternalLink } from 'lucide-react';
+import { ImageFallback } from './ImageFallback';
 
 interface PublicationsProps {
   publications: Publication[];
@@ -20,12 +21,21 @@ export function Publications({ publications }: PublicationsProps) {
               <div className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-500">
                 <div className="absolute -right-6 -top-6 w-32 h-32 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
                 <div className="absolute right-12 bottom-12 w-40 h-40 bg-black rounded-full transform translate-x-1/2 translate-y-1/2" />
+                {/* Mini Grid Pattern */}
+                <div 
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `linear-gradient(to right, rgb(0, 0, 0) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgb(0, 0, 0) 1px, transparent 1px)`,
+                    backgroundSize: '20px 20px'
+                  }}
+                />
               </div>
 
               {/* Content */}
               <div className="relative">
                 <div className="mb-6 aspect-video overflow-hidden rounded-lg">
-                  <img 
+                  <ImageFallback 
                     src={publication.coverImage} 
                     alt={publication.title}
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"

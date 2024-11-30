@@ -4,6 +4,7 @@ import type { Project } from '../services/firebaseService';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ImageFallback } from './ImageFallback';
 
 const container = {
   hidden: { opacity: 0 },
@@ -134,25 +135,13 @@ export function Projects() {
               >
                 <article className="relative bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-xl">
                   {/* Image Container */}
-                  <div className="relative aspect-[3/4] sm:aspect-[4/3] overflow-hidden">
-                    <img 
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-xl mb-4">
+                    <ImageFallback 
                       src={project.coverImage}
                       alt={project.title}
-                      loading="lazy"
-                      width={800}
-                      height={600}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/placeholder-project.jpg';
-                      }}
+                      className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                     />
-                    {/* Category Tag */}
-                    <div className="absolute top-4 left-4">
-                      <span className="inline-block px-3 py-1.5 bg-white/90 backdrop-blur-sm text-xs font-medium text-gray-900 rounded-full">
-                        {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
-                      </span>
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>
 
                   {/* Content Container */}

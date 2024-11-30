@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, Calendar, MapPin, Loader2 } from 'lucide-react';
 import { getProjects } from '../services/firebaseService';
 import type { Project } from '../services/firebaseService';
+import { ImageFallback } from '../components/ImageFallback';
 
 interface Category {
   id: string;
@@ -132,14 +133,10 @@ export function ProjectsPage() {
                 className="group block"
               >
                 <div className="relative overflow-hidden rounded-lg shadow-lg">
-                  <img 
+                  <ImageFallback 
                     src={project.coverImage}
                     alt={project.title}
                     className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://via.placeholder.com/800x600?text=Project+Image';
-                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
                     <div className="bg-black/40 px-3 py-1 rounded-full text-white text-sm inline-block mb-2 self-start">

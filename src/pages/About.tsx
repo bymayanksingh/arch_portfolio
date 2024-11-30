@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Download, Mail, Phone, Linkedin, Award as AwardIcon, Building2Icon, BuildingIcon, Users, CheckCircle2, Loader2 } from 'lucide-react';
 import { ImageModal } from '../components/ImageModal';
+import { ImageFallback } from '../components/ImageFallback';
 import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
 import { getAffiliations, type Affiliation } from '../services/firebaseService';
 import { getPublications, type Publication } from '../services/firebaseService';
@@ -161,10 +162,10 @@ export function About() {
             </div>
           </div>
           <div>
-            <img 
+            <ImageFallback 
               src={aboutData.image} 
               alt="Profile" 
-              className="rounded-2xl shadow-2xl"
+              className="rounded-2xl shadow-2xl w-full aspect-[4/3] object-cover"
             />
           </div>
         </div>
@@ -244,16 +245,25 @@ export function About() {
                   className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer aspect-[4/5]"
                 >
                   <div className="absolute inset-0">
-                    <img 
+                    <ImageFallback 
                       src={cert.image}
                       alt={cert.title}
                       className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
+                    {/* Mini Grid Pattern */}
+                    <div 
+                      className="absolute inset-0 opacity-5"
+                      style={{
+                        backgroundImage: `linear-gradient(to right, rgb(0, 0, 0) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgb(0, 0, 0) 1px, transparent 1px)`,
+                        backgroundSize: '20px 20px'
+                      }}
+                    />
                   </div>
                   <div className="relative h-full p-6 flex flex-col justify-end">
                     <div className="flex items-start mb-4">
-                      <CheckCircle2 className="w-6 h-6 text-green-400 mr-2 flex-shrink-0 mt-1" />
+                      {cert.verified && <CheckCircle2 className="w-6 h-6 text-green-400 mr-2 flex-shrink-0 mt-1" />}
                       <div>
                         <h3 className="text-xl font-bold text-white mb-2">{cert.title}</h3>
                         <p className="text-white/80 text-sm">{cert.organization}</p>
@@ -262,9 +272,11 @@ export function About() {
                     <p className="text-white/70 text-sm mb-3 line-clamp-2">{cert.description}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-white/60 text-sm">{cert.year}</span>
-                      <span className="px-3 py-1 bg-white/10 rounded-full text-white/90 text-sm backdrop-blur-sm">
-                        Verified
-                      </span>
+                      {cert.verified && (
+                        <span className="px-3 py-1 bg-white/10 rounded-full text-white/90 text-sm backdrop-blur-sm">
+                          Verified
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -418,21 +430,26 @@ export function About() {
       </div>
 
       {/* Certificate Modal */}
-      <ImageModal
-        isOpen={!!selectedCertificate}
-        onClose={() => {
-          setSelectedCertificate(null);
-          setCurrentCertificateIndex(0);
-        }}
-        image={selectedCertificate?.image || ''}
-        title={selectedCertificate?.title}
-        caption={`${selectedCertificate?.organization} • ${selectedCertificate?.year}`}
-        onPrevious={handlePrevCertificate}
-        onNext={handleNextCertificate}
-        showNavigation={certificates.length > 1}
-        currentIndex={currentCertificateIndex}
-        totalItems={certificates.length}
-      />
+      {selectedCertificate && (
+        <ImageModal
+          isOpen={!!selectedCertificate}
+          onClose={() => setSelectedCertificate(null)}
+          images={certificates.map(cert => ({
+            url: cert.image,
+            caption: cert.title
+          }))}
+          currentIndex={currentCertificateIndex}
+          onPrevious={handlePrevCertificate}
+          onNext={handleNextCertificate}
+          renderImage={(image) => (
+            <ImageFallback
+              src={image.url}
+              alt={image.caption}
+              className="max-h-[80vh] w-auto mx-auto"
+            />
+          )}
+        />
+      )}
     </div>
   );
 }

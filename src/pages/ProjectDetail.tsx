@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react';
 import { getProject, Project } from '../services/firebaseService';
 import { ImageModal } from '../components/ImageModal';
+import { ImageFallback } from '../components/ImageFallback';
 
 export function ProjectDetail() {
   const { id = '' } = useParams<{ id: string }>();
@@ -127,14 +128,10 @@ export function ProjectDetail() {
             className="relative cursor-pointer"
             onClick={() => setSelectedImage({ url: project.coverImage, caption: project.title })}
           >
-            <img 
+            <ImageFallback 
               src={project.coverImage} 
               alt={project.title}
               className="w-full h-[70vh] object-cover rounded-lg"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = 'https://via.placeholder.com/1200x800?text=Project+Image';
-              }}
             />
             <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
               <div className="bg-black/50 text-white px-4 py-2 rounded-full">
@@ -187,14 +184,10 @@ export function ProjectDetail() {
                   setCurrentImageIndex(index);
                 }}
               >
-                <img 
+                <ImageFallback 
                   src={image.url} 
                   alt={image.caption}
                   className="w-full h-64 object-cover rounded-lg"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://via.placeholder.com/800x600?text=Gallery+Image';
-                  }}
                 />
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg flex items-center justify-center">
                   <div className="bg-black/50 text-white px-4 py-2 rounded-full">
