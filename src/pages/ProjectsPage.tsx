@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Calendar, MapPin, Loader2 } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { getProjects } from '../services/firebaseService';
 import type { Project } from '../services/firebaseService';
 import { ImageFallback } from '../components/ImageFallback';
@@ -14,28 +14,31 @@ export function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [projects, setProjects] = useState<Project[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<Category[]>([
     { id: 'all', name: 'All Projects' }
   ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch projects only once and store in state
   useEffect(() => {
     async function fetchProjects() {
       try {
         const data = await getProjects();
         setProjects(data);
         
-        // Generate unique categories from projects and standardize to lowercase
-        const uniqueCategories = new Set(data.map(project => project.category.toLowerCase()));
+        // Extract unique categories from projects
+        const uniqueCategories = new Set(data.map(project => project.category.trim().toLowerCase()));
         const formattedCategories: Category[] = [
           { id: 'all', name: 'All Projects' },
           ...Array.from(uniqueCategories).map(category => ({
             id: category,
-            name: category.charAt(0).toUpperCase() + category.slice(1) // Capitalize first letter for display
+            name: category.charAt(0).toUpperCase() + category.slice(1)
           }))
         ];
         setCategories(formattedCategories);
+        setFilteredProjects(data); // Initially show all projects
       } catch (error) {
         console.error('Error fetching projects:', error);
         setError('Failed to load projects');
@@ -46,18 +49,29 @@ export function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = 
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.location.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = 
-      activeCategory === 'all' || 
-      project.category.toLowerCase() === activeCategory;
+  // Handle filtering whenever search query or category changes
+  useEffect(() => {
+    const filtered = projects.filter(project => {
+      const projectCategory = project.category.trim().toLowerCase();
+      
+      const matchesSearch = searchQuery === '' || 
+        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        projectCategory.includes(searchQuery.toLowerCase()) ||
+        project.location.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesCategory = activeCategory === 'all' || projectCategory === activeCategory;
 
-    return matchesSearch && matchesCategory;
-  });
+      return matchesSearch && matchesCategory;
+    });
+
+    setFilteredProjects(filtered);
+  }, [searchQuery, activeCategory, projects]);
+
+  const handleCategoryChange = (categoryId: string) => {
+    console.log('Selected category:', categoryId);
+    console.log('Current projects:', projects.length);
+    setActiveCategory(categoryId);
+  };
 
   if (loading) {
     return (
@@ -99,7 +113,7 @@ export function ProjectsPage() {
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => handleCategoryChange(category.id)}
               className={`px-4 py-2 rounded-full transition-colors ${
                 activeCategory === category.id
                   ? 'bg-black text-white'
@@ -142,17 +156,8 @@ export function ProjectsPage() {
                     <div className="bg-black/40 px-3 py-1 rounded-full text-white text-sm inline-block mb-2 self-start">
                       {project.category}
                     </div>
-                    <h3 className="font-playfair text-2xl font-bold text-white mb-2">{project.title}</h3>
-                    <div className="flex items-center text-white/80 space-x-4">
-                      <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        <span>{project.location}</span>
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        <span>{project.date}</span>
-                      </div>
-                    </div>
+                    <h3 className="text-white text-xl font-bold mb-1">{project.title}</h3>
+                    <p className="text-white/80">{project.location}</p>
                   </div>
                 </div>
               </Link>
