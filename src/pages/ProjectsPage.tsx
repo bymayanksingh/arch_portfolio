@@ -54,7 +54,7 @@ export function ProjectsPage() {
     
     const matchesCategory = 
       activeCategory === 'all' || 
-      project.category.toLowerCase().replace(/\s+/g, '-') === activeCategory;
+      project.category.toLowerCase() === activeCategory.replace(/-/g, ' ');
 
     return matchesSearch && matchesCategory;
   });
