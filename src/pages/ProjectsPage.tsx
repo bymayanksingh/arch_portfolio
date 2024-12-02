@@ -146,18 +146,58 @@ export function ProjectsPage() {
                 to={`/projects/${project.id}`}
                 className="group block"
               >
-                <div className="relative overflow-hidden rounded-lg shadow-lg">
-                  <ImageFallback 
-                    src={project.coverImage}
-                    alt={project.title}
-                    className="w-full h-80 object-cover transform group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-                    <div className="bg-black/40 px-3 py-1 rounded-full text-white text-sm inline-block mb-2 self-start">
-                      {project.category}
+                <div className="relative overflow-hidden rounded-xl shadow-md transition-all duration-300 hover:shadow-xl bg-white">
+                  {/* Image Container */}
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <ImageFallback 
+                      src={project.coverImage}
+                      alt={project.title}
+                      className="w-full h-full object-cover transform group-hover:scale-115 transition-all duration-700 ease-out"
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-70 group-hover:opacity-85 transition-all duration-300" />
+                  </div>
+
+                  {/* Content Container */}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                    {/* Category Tag - Always visible */}
+                    <div className="inline-block mb-4">
+                      <span className="bg-black/30 backdrop-blur-sm border border-white/20 text-white px-4 py-1.5 rounded-full text-sm font-medium tracking-wide shadow-lg">
+                        {project.category}
+                      </span>
                     </div>
-                    <h3 className="text-white text-xl font-bold mb-1">{project.title}</h3>
-                    <p className="text-white/80">{project.location}</p>
+
+                    {/* Title and Location */}
+                    <div className="space-y-3 transform group-hover:translate-y-[-4px] transition-all duration-500">
+                      <h3 className="font-playfair text-2xl font-bold text-white leading-tight group-hover:text-white/90 transition-colors duration-300">
+                        {project.title}
+                      </h3>
+                      <div className="flex items-center space-x-4 text-white/80">
+                        <span className="text-sm font-medium">{project.location}</span>
+                        <span className="text-sm">•</span>
+                        <span className="text-sm font-medium">{project.date}</span>
+                      </div>
+                    </div>
+
+                    {/* View Project Button - Always visible */}
+                    <div className="mt-5 flex items-center justify-between transform group-hover:translate-y-[-4px] transition-all duration-500">
+                      <span className="inline-flex items-center text-white text-sm font-medium group-hover:text-white/90 transition-colors duration-300">
+                        View Project Details
+                        <svg 
+                          className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={1.5} 
+                            d="M17 8l4 4m0 0l-4 4m4-4H3" 
+                          />
+                        </svg>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>
