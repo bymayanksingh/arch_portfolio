@@ -17,15 +17,53 @@ export function ImageFallback({
   const [loading, setLoading] = useState(true);
 
   const handleError = () => {
+    console.error('Image failed to load:', src);
+    console.error('Error loading image for:', alt);
     setError(true);
     setLoading(false);
   };
 
   const handleLoad = () => {
+    console.log('Image loaded successfully:', src);
     setLoading(false);
   };
 
-  if (error || !src) {
+  // Convert Google Drive URL to a direct access format
+  const processImageUrl = (url: string) => {
+    if (!url) return url;
+
+    // Handle Google Drive URLs
+    if (url.includes('drive.google.com') || url.includes('drive.usercontent.google.com')) {
+      // Extract the file ID
+      let fileId = '';
+      
+      // Match ID from various Google Drive URL formats
+      const patterns = [
+        /\/file\/d\/([^/]+)/,  // matches /file/d/{fileId}
+        /id=([^&]+)/,          // matches id={fileId}
+        /\/d\/([^/]+)/         // matches /d/{fileId}
+      ];
+
+      for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+          fileId = match[1];
+          break;
+        }
+      }
+
+      if (fileId) {
+        // Use the direct image proxy URL
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
+      }
+    }
+    
+    return url;
+  };
+
+  const processedSrc = processImageUrl(src);
+
+  if (error || !processedSrc) {
     return (
       <div 
         className={`relative overflow-hidden ${fallbackClassName || className}`}
@@ -87,11 +125,12 @@ export function ImageFallback({
         </div>
       )}
       <img
-        src={src}
+        src={processedSrc}
         alt={alt}
         className={`${className} ${loading ? 'hidden' : ''}`}
         onError={handleError}
         onLoad={handleLoad}
+        referrerPolicy="no-referrer"
         {...props}
       />
     </>
