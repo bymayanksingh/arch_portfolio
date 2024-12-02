@@ -134,17 +134,17 @@ export function Hero() {
             </div>
 
             {/* Stats */}
-            <div className="pt-12 grid grid-cols-3 gap-8 sm:gap-12 max-w-lg">
+            <div className="pt-12 grid grid-cols-3 gap-4 sm:gap-8 md:gap-12 max-w-lg">
               {stats?.items ? (
                 stats.items.map((stat, index) => {
                   const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;
                   return (
                     <div key={index} className="text-center group">
-                      <Icon className="w-6 h-6 mx-auto mb-3 text-white/60 group-hover:text-white transition-colors duration-300" />
-                      <div className="font-cormorant text-3xl sm:text-4xl font-semibold text-white mb-1">
+                      <Icon className="w-6 h-6 mx-auto mb-2 sm:mb-3 text-white/60 group-hover:text-white transition-colors duration-300" />
+                      <div className="font-cormorant text-2xl sm:text-3xl md:text-4xl font-semibold text-white mb-1">
                         {stat.value}
                       </div>
-                      <div className="text-white/60 text-sm tracking-wider uppercase group-hover:text-white/80 transition-colors duration-300">
+                      <div className="text-white/60 text-xs sm:text-sm tracking-wider uppercase group-hover:text-white/80 transition-colors duration-300 leading-tight">
                         {stat.label}
                       </div>
                     </div>
