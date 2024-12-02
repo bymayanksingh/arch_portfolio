@@ -4,6 +4,7 @@ import { getHero } from '../services/firebaseService';
 import type { Hero as HeroType } from '../services/firebaseService';
 import { getStats } from '../services/dataService';
 import { ArrowRight, ScrollText, Award, Building2, Users } from 'lucide-react';
+import { ImageFallback } from './ImageFallback';
 
 const iconMap = {
   Building2,
@@ -72,17 +73,13 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <div className="relative w-full h-full">
-          <img 
+          <ImageFallback 
             src={heroData?.backgroundImage || "https://images.unsplash.com/photo-1637088059531-4ffcc89d0dd3"}
             alt="Abstract Architecture"
             loading="eager"
             width={1920}
             height={1080}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.src = '/placeholder-hero.jpg';
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent"></div>
         </div>

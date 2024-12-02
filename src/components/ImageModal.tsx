@@ -1,10 +1,12 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+import { ImageFallback } from './ImageFallback';
 
 interface ImageModalProps {
   isOpen: boolean;
   onClose: () => void;
-  image: string;
+  images?: { url: string; caption?: string }[];
+  image?: string;
   title?: string;
   caption?: string;
   onPrevious?: () => void;
@@ -12,11 +14,13 @@ interface ImageModalProps {
   showNavigation?: boolean;
   currentIndex?: number;
   totalItems?: number;
+  renderImage?: (image: { url: string; caption?: string }) => React.ReactNode;
 }
 
 export function ImageModal({
   isOpen,
   onClose,
+  images,
   image,
   title,
   caption,
@@ -25,6 +29,7 @@ export function ImageModal({
   showNavigation = false,
   currentIndex = 0,
   totalItems = 0,
+  renderImage,
 }: ImageModalProps) {
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -140,14 +145,20 @@ export function ImageModal({
           style={{ height: 'calc(100vh - 12rem)' }}
           onClick={(e) => e.stopPropagation()}
         >
-          <img
-            src={image}
-            alt={title || 'Modal image'}
-            className="w-full h-full object-contain transition-all duration-300"
-            style={{
-              transform: `scale(${scale}) rotate(${rotation}deg)`,
-            }}
-          />
+          {renderImage ? (
+            // Use custom render function if provided
+            renderImage(images ? images[currentIndex] : { url: image || '', caption: caption })
+          ) : (
+            // Default image rendering
+            <ImageFallback
+              src={images ? images[currentIndex].url : (image || '')}
+              alt={images ? images[currentIndex].caption || 'Modal image' : (title || 'Modal image')}
+              className="w-full h-full object-contain transition-all duration-300"
+              style={{
+                transform: `scale(${scale}) rotate(${rotation}deg)`,
+              }}
+            />
+          )}
         </div>
 
         {/* Image info */}
@@ -164,6 +175,9 @@ export function ImageModal({
               )}
               {caption && (
                 <p className="text-white/80 text-sm">{caption}</p>
+              )}
+              {images && images[currentIndex]?.caption && (
+                <p className="text-white/80 text-sm">{images[currentIndex].caption}</p>
               )}
               {showNavigation && totalItems > 1 && (
                 <div className="mt-2 text-sm text-white/60">

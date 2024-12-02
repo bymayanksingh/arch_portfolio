@@ -441,6 +441,8 @@ export function About() {
           currentIndex={currentCertificateIndex}
           onPrevious={handlePrevCertificate}
           onNext={handleNextCertificate}
+          showNavigation={true}
+          totalItems={certificates.length}
           renderImage={(image) => (
             <ImageFallback
               src={image.url}
