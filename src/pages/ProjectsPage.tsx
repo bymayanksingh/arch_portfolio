@@ -57,12 +57,16 @@ export function ProjectsPage() {
   // Handle filtering whenever search query or category changes
   useEffect(() => {
     const filtered = projects.filter(project => {
+      // Safely handle all text fields
       const projectCategory = (project.category || '').toLowerCase().trim();
+      const projectTitle = (project.title || '').toLowerCase().trim();
+      const projectLocation = (project.location || '').toLowerCase().trim();
+      const searchTerm = searchQuery.toLowerCase().trim();
       
       const matchesSearch = searchQuery === '' || 
-        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        projectCategory.includes(searchQuery.toLowerCase()) ||
-        (project.location || '').toLowerCase().includes(searchQuery.toLowerCase());
+        projectTitle.includes(searchTerm) ||
+        projectCategory.includes(searchTerm) ||
+        projectLocation.includes(searchTerm);
       
       const matchesCategory = activeCategory === 'all' || projectCategory === activeCategory;
 
@@ -175,12 +179,12 @@ export function ProjectsPage() {
                     {/* Title and Location */}
                     <div className="space-y-3 transform group-hover:translate-y-[-4px] transition-all duration-500">
                       <h3 className="font-playfair text-2xl font-bold text-white leading-tight group-hover:text-white/90 transition-colors duration-300">
-                        {project.title}
+                        {project.title || 'Untitled Project'}
                       </h3>
                       <div className="flex items-center space-x-4 text-white/80">
                         <span className="text-sm font-medium">{project.location || 'Unknown Location'}</span>
                         <span className="text-sm">•</span>
-                        <span className="text-sm font-medium">{project.date}</span>
+                        <span className="text-sm font-medium">{project.date || 'No Date'}</span>
                       </div>
                     </div>
 
