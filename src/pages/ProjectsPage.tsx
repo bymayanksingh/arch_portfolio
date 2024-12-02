@@ -28,8 +28,13 @@ export function ProjectsPage() {
         const data = await getProjects();
         setProjects(data);
         
-        // Extract unique categories from projects
-        const uniqueCategories = new Set(data.map(project => project.category.trim().toLowerCase()));
+        // Extract unique categories from projects and handle undefined/null values
+        const uniqueCategories = new Set(
+          data
+            .filter(project => project.category) // Filter out undefined/null categories
+            .map(project => (project.category || '').toLowerCase().trim())
+        );
+        
         const formattedCategories: Category[] = [
           { id: 'all', name: 'All Projects' },
           ...Array.from(uniqueCategories).map(category => ({
@@ -52,12 +57,12 @@ export function ProjectsPage() {
   // Handle filtering whenever search query or category changes
   useEffect(() => {
     const filtered = projects.filter(project => {
-      const projectCategory = project.category.trim().toLowerCase();
+      const projectCategory = (project.category || '').toLowerCase().trim();
       
       const matchesSearch = searchQuery === '' || 
         project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         projectCategory.includes(searchQuery.toLowerCase()) ||
-        project.location.toLowerCase().includes(searchQuery.toLowerCase());
+        (project.location || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesCategory = activeCategory === 'all' || projectCategory === activeCategory;
 
@@ -163,7 +168,7 @@ export function ProjectsPage() {
                     {/* Category Tag - Always visible */}
                     <div className="inline-block mb-4">
                       <span className="bg-black/30 backdrop-blur-sm border border-white/20 text-white px-4 py-1.5 rounded-full text-sm font-medium tracking-wide shadow-lg">
-                        {project.category}
+                        {project.category || 'Uncategorized'}
                       </span>
                     </div>
 
@@ -173,7 +178,7 @@ export function ProjectsPage() {
                         {project.title}
                       </h3>
                       <div className="flex items-center space-x-4 text-white/80">
-                        <span className="text-sm font-medium">{project.location}</span>
+                        <span className="text-sm font-medium">{project.location || 'Unknown Location'}</span>
                         <span className="text-sm">•</span>
                         <span className="text-sm font-medium">{project.date}</span>
                       </div>
