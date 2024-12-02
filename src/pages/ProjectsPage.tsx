@@ -26,13 +26,13 @@ export function ProjectsPage() {
         const data = await getProjects();
         setProjects(data);
         
-        // Generate unique categories from projects
-        const uniqueCategories = new Set(data.map(project => project.category));
+        // Generate unique categories from projects and standardize to lowercase
+        const uniqueCategories = new Set(data.map(project => project.category.toLowerCase()));
         const formattedCategories: Category[] = [
           { id: 'all', name: 'All Projects' },
           ...Array.from(uniqueCategories).map(category => ({
-            id: category.toLowerCase().replace(/\s+/g, '-'),
-            name: category
+            id: category,
+            name: category.charAt(0).toUpperCase() + category.slice(1) // Capitalize first letter for display
           }))
         ];
         setCategories(formattedCategories);
@@ -54,7 +54,7 @@ export function ProjectsPage() {
     
     const matchesCategory = 
       activeCategory === 'all' || 
-      project.category.toLowerCase() === activeCategory.replace(/-/g, ' ');
+      project.category.toLowerCase() === activeCategory;
 
     return matchesSearch && matchesCategory;
   });
