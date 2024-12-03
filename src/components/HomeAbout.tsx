@@ -69,10 +69,10 @@ export function HomeAbout() {
                   stats.items.map((stat, index) => {
                     const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;
                     return (
-                      <div key={index} className="text-center text-white">
+                      <div key={index} className="text-center text-gray-600">
                         <Icon className="w-4 h-4 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2" />
                         <div className="font-playfair text-lg sm:text-2xl font-bold">{stat.value}</div>
-                        <div className="text-xs sm:text-sm text-white/80">{stat.label}</div>
+                        <div className="text-xs sm:text-sm text-gray-600">{stat.label}</div>
                       </div>
                     );
                   })
