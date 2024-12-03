@@ -63,7 +63,7 @@ export function HomeAbout() {
               alt={about?.name || "Profile"}
               className="rounded-2xl shadow-2xl w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[4/3] object-cover"
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm rounded-b-2xl p-4 sm:p-6">
+            <div className="absolute bottom-0 left-0 right-0 bg-soft-black/80 backdrop-blur-sm rounded-b-2xl p-4 sm:p-6">
               <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 {stats?.items ? (
                   stats.items.map((stat, index) => {
@@ -94,7 +94,7 @@ export function HomeAbout() {
             <div className="flex flex-wrap gap-4 pt-4">
               <Link 
                 to="/about"
-                className="inline-flex items-center px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-soft-black text-white rounded-lg hover:bg-soft-black-hover transition-colors"
               >
                 Learn More
                 <ArrowRight className="ml-2 w-5 h-5" />

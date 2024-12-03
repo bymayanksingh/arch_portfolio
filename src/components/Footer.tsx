@@ -23,7 +23,7 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="relative bg-black text-white mt-auto overflow-hidden">
+    <footer className="relative bg-soft-black text-white mt-auto overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-[0.1]">
         <div className="absolute -right-20 -top-20 w-96 h-96 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />

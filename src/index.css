@@ -1,3 +1,9 @@
+:root {
+  --soft-black: #1a1a1a;
+  --soft-black-hover: #2a2a2a;
+  --text-soft-black: #2d2d2d;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
