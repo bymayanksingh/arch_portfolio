@@ -45,7 +45,7 @@ export function HomeAbout() {
 
   if (loading) {
     return (
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 sm:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse">Loading...</div>
         </div>
@@ -54,25 +54,25 @@ export function HomeAbout() {
   }
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-12 sm:py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="relative">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
+          <div className="relative order-2 lg:order-1">
             <ImageFallback 
               src={about?.image || "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=2000"}
               alt={about?.name || "Profile"}
-              className="rounded-2xl shadow-2xl w-full aspect-[4/3] object-cover"
+              className="rounded-2xl shadow-2xl w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[4/3] object-cover"
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm rounded-b-2xl p-6">
-              <div className="grid grid-cols-3 gap-4">
+            <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm rounded-b-2xl p-4 sm:p-6">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 {stats?.items ? (
                   stats.items.map((stat, index) => {
                     const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;
                     return (
                       <div key={index} className="text-center text-white">
-                        <Icon className="w-6 h-6 mx-auto mb-2" />
-                        <div className="font-playfair text-2xl font-bold">{stat.value}</div>
-                        <div className="text-sm text-white/80">{stat.label}</div>
+                        <Icon className="w-4 h-4 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2" />
+                        <div className="font-playfair text-lg sm:text-2xl font-bold">{stat.value}</div>
+                        <div className="text-xs sm:text-sm text-white/80">{stat.label}</div>
                       </div>
                     );
                   })
@@ -83,7 +83,7 @@ export function HomeAbout() {
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6 order-1 lg:order-2">
             <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold">About Me</h2>
             <p className="text-xl text-gray-600">
               {about?.title || "Transforming spaces with innovative architectural solutions"}
