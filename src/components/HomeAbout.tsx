@@ -63,16 +63,16 @@ export function HomeAbout() {
               alt={about?.name || "Profile"}
               className="rounded-2xl shadow-2xl w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[4/3] object-cover"
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-soft-black/90 backdrop-blur-sm rounded-b-2xl p-4 sm:p-6">
+            <div className="absolute bottom-0 left-0 right-0 bg-soft-black/60 backdrop-blur-sm rounded-b-2xl p-4 sm:p-6">
               <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 {stats?.items ? (
                   stats.items.map((stat, index) => {
                     const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;
                     return (
                       <div key={index} className="text-center">
-                        <Icon className="w-4 h-4 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-white" />
-                        <div className="font-playfair text-lg sm:text-2xl font-bold text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">{stat.value}</div>
-                        <div className="text-xs sm:text-sm text-gray-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">{stat.label}</div>
+                        <Icon className="w-4 h-4 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-black drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]" />
+                        <div className="font-playfair text-lg sm:text-2xl font-bold text-black drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">{stat.value}</div>
+                        <div className="text-xs sm:text-sm text-black drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">{stat.label}</div>
                       </div>
                     );
                   })
