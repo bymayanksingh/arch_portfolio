@@ -3,13 +3,17 @@ import { Link } from 'react-router-dom';
 import { getHero } from '../services/firebaseService';
 import type { Hero as HeroType } from '../services/firebaseService';
 import { getStats } from '../services/dataService';
-import { ArrowRight, ScrollText, Award, Building2, Users } from 'lucide-react';
+import { ArrowRight, ScrollText, Award, Building2, Users, Briefcase, Handshake, Clock, BookOpen, FileCheck } from 'lucide-react';
 import { ImageFallback } from './ImageFallback';
 
 const iconMap = {
-  Building2,
+  Briefcase,
   Award,
-  Users
+  Users,
+  Handshake,
+  Clock,
+  BookOpen,
+  FileCheck
 };
 
 export function Hero() {

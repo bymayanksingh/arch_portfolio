@@ -51,11 +51,6 @@ export function Publications({ publications }: PublicationsProps) {
                   <p className="text-black/60 text-sm">
                     {publication.journal} • {publication.year}
                   </p>
-                  {publication.doi && (
-                    <p className="text-black/60 text-sm">
-                      DOI: {publication.doi}
-                    </p>
-                  )}
                   <p className="text-black/70 text-sm line-clamp-4 mt-2">
                     {publication.abstract}
                   </p>
