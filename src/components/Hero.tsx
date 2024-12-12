@@ -101,7 +101,7 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative min-h-screen flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-32 md:pt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-40 pb-32 md:pt-28 md:pb-24">
           <div className="max-w-3xl space-y-8">
             {/* Intro Text */}
             <div className="space-y-6">
