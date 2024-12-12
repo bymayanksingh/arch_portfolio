@@ -38,10 +38,10 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
           {/* Logo */}
           <Link 
             to="/"
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-0.1 group"
           >
             <img 
-              src="/apple-icon-60x60.png"
+              src="/icon-545x545.png"
               alt="Logo"
               className="w-8 h-8 object-contain group-hover:scale-105 transition-transform duration-300"
             />
