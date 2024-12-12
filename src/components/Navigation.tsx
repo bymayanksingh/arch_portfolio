@@ -37,12 +37,20 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link 
-            to="/" 
-            className="font-playfair text-xl font-bold relative group"
-            aria-label="Return to Homepage"
+            to="/"
+            className="flex items-center gap-3 group"
           >
-            <span className="relative z-10">{about?.name}</span>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-text-soft-black transition-all duration-300 group-hover:w-full"></span>
+            <img 
+              src="/apple-icon-60x60.png"
+              alt="Logo"
+              className="w-8 h-8 object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="relative">
+              <span className="font-playfair text-xl relative inline-block">
+                {about?.name}
+                <span className="absolute -bottom-0.5 left-0 w-0 h-[2px] bg-primary/30 group-hover:w-full transition-all duration-500 ease-out"></span>
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
