@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Download, ArrowRight, Award, Building2, Users } from 'lucide-react';
-import { About, getAbout, Stats } from '../services/firebaseService';
-import { getStats } from '../services/dataService';
+import { Download, ArrowRight } from 'lucide-react';
+import { About, getAbout } from '../services/firebaseService';
 import { ImageFallback } from './ImageFallback';
-
-const iconMap = {
-  Building2,
-  Award,
-  Users
-};
 
 export function HomeAbout() {
   const [about, setAbout] = useState<About | null>(null);
-  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAbout = async () => {
@@ -24,23 +15,12 @@ export function HomeAbout() {
         setAbout(aboutData);
       } catch (error) {
         console.error('Error fetching about data:', error);
-      }
-    };
-
-    const fetchStats = async () => {
-      try {
-        const data = await getStats();
-        setStats(data);
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-        setError('Failed to load stats');
       } finally {
         setLoading(false);
       }
     };
 
     fetchAbout();
-    fetchStats();
   }, []);
 
   if (loading) {
@@ -63,24 +43,6 @@ export function HomeAbout() {
               alt={about?.name || "Profile"}
               className="rounded-2xl shadow-2xl w-full aspect-[4/3] sm:aspect-[16/12] lg:aspect-[4/3] object-cover"
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-black/75 backdrop-blur-md rounded-b-2xl p-4 sm:p-6">
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                {stats?.items ? (
-                  stats.items.map((stat, index) => {
-                    const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;
-                    return (
-                      <div key={index} className="text-center">
-                        <Icon className="w-4 h-4 sm:w-6 sm:h-6 mx-auto mb-1 sm:mb-2 text-white" />
-                        <div className="font-playfair text-lg sm:text-2xl font-bold text-white">{stat.value}</div>
-                        <div className="text-xs sm:text-sm text-gray-200">{stat.label}</div>
-                      </div>
-                    );
-                  })
-                ) : error ? (
-                  <p className="text-red-500">{error}</p>
-                ) : null}
-              </div>
-            </div>
           </div>
 
           <div className="space-y-4 sm:space-y-6 order-1 lg:order-2">

@@ -5,3 +5,4 @@ node_modules
 .env.*.local
 scripts/serviceAccount.json
 serviceAccount.json
+dist

@@ -167,6 +167,34 @@ export function ProjectDetail() {
                 <dt className="font-semibold">Status</dt>
                 <dd className="text-gray-600">{project.status}</dd>
               </div>
+              <div>
+                <dt className="font-semibold">Source</dt>
+                <dd className="text-gray-600">
+                  {project.source && (
+                    <a 
+                      href={project.source}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline transition-colors inline-flex items-center gap-1"
+                    >
+                      {(() => {
+                        try {
+                          const url = new URL(project.source);
+                          const hostname = url.hostname.replace('www.', '');
+                          return hostname.split('.')[0].charAt(0).toUpperCase() + hostname.split('.')[0].slice(1);
+                        } catch {
+                          return project.source;
+                        }
+                      })()}
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                    </a>
+                  )}
+                </dd>
+              </div>
             </dl>
           </div>
         </div>

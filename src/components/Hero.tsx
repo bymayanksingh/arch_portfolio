@@ -101,18 +101,18 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative min-h-screen flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 md:py-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-32 md:pt-20">
           <div className="max-w-3xl space-y-8">
             {/* Intro Text */}
             <div className="space-y-6">
-              <h1 className="font-cormorant text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-white leading-tight">
+              <h1 className="font-cormorant text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-white leading-tight">
                 Hello, I'm{' '}
                 <span className="relative inline-block">
                   <span className="relative z-10 font-semibold">{heroData?.name || 'Name'}</span>
                   <span className="absolute bottom-0 left-0 w-full h-1 bg-white/30 transform origin-left transition-transform duration-500 group-hover:scale-x-100"></span>
                 </span>
               </h1>
-              <p className="font-cormorant text-2xl sm:text-2xl md:text-3xl text-white/90 font-light max-w-2xl leading-relaxed tracking-wide">
+              <p className="font-cormorant text-xl sm:text-xl md:text-2xl lg:text-3xl text-white/90 font-light max-w-2xl leading-relaxed tracking-wide">
                 {heroData?.subtitle || 'Licensed architect in Manchester, specializing in sustainable design and innovative architectural solutions.'}
               </p>
             </div>

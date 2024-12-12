@@ -12,6 +12,7 @@ export interface Project {
   description: string;
   client: string;
   featured: boolean;
+  source: string;
   area: string;
   status: string;
   details: string[];
@@ -141,6 +142,10 @@ export interface Award {
   image?: string;
   category: 'competition' | 'academic' | 'professional';
   order: number;
+}
+
+export interface GraduationGallery {
+  images: string[];
 }
 
 // Hero
@@ -336,6 +341,22 @@ export const getAwards = async (): Promise<Award[]> => {
     console.error('Error fetching awards:', error);
     return [];
   }
+};
+
+// Graduation Gallery
+export const getGraduationGallery = async (): Promise<GraduationGallery> => {
+  const collectionRef = collection(db, 'graduation');
+  const querySnapshot = await getDocs(collectionRef);
+  
+  const images: string[] = [];
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.images) {
+      images.push(...data.images);
+    }
+  });
+  
+  return { images };
 };
 
 // Messages

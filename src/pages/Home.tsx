@@ -3,14 +3,14 @@ import { HomeAbout } from '../components/HomeAbout';
 import { Timeline } from '../components/Timeline';
 import { Projects } from '../components/Projects';
 import { Testimonials } from '../components/Testimonials';
-import { GraduationVideo } from '../components/GraduationVideo';
+// import { GraduationGallery } from '../components/GraduationGallery';
 
 export function Home() {
   return (
     <>
       <Hero />
       <HomeAbout />
-      <GraduationVideo />
+      {/* <GraduationGallery /> */}
       <Timeline />
       <Projects />
       <Testimonials />
