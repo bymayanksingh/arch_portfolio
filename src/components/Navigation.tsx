@@ -45,10 +45,12 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
               alt="Logo"
               className="w-8 h-8 object-contain group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="relative">
-              <span className="font-playfair text-xl relative inline-block">
+            <div className="relative overflow-hidden">
+              <span className="font-playfair text-xl">
                 {about?.name}
-                <span className="absolute -bottom-0.5 left-0 w-0 h-[2px] bg-primary/30 group-hover:w-full transition-all duration-500 ease-out"></span>
+              </span>
+              <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-primary/40 via-primary/60 to-primary/40">
+                <span className="absolute inset-0 w-full h-full bg-black transform translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out" />
               </span>
             </div>
           </Link>

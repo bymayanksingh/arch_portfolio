@@ -119,7 +119,7 @@ export function Timeline() {
           className="relative"
         >
           {/* Vertical line - only visible on desktop */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gray-200 md:block hidden"></div>
+          <div className="absolute left-1/2 transform -translate-x-1/2 h-[calc(100%-120px)] w-0.5 bg-gray-200 md:block hidden"></div>
 
           {/* Timeline items */}
           <div className="space-y-8">
@@ -199,6 +199,16 @@ export function Timeline() {
                 </div>
               </motion.div>
             ))}
+
+            {/* Simple Journey Continuation */}
+            <motion.div
+              variants={item}
+              className="relative flex flex-col justify-center items-center mt-24"
+            >
+              <p className="font-playfair text-base tracking-widest text-primary/70">
+                Onwards & Upwards.
+              </p>
+            </motion.div>
           </div>
         </motion.div>
       </div>
