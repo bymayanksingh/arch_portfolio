@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getTestimonials } from '../services/firebaseService';
 import type { Testimonial } from '../services/firebaseService';
-import { Quote } from 'lucide-react';
+import { Quote, ExternalLink } from 'lucide-react';
 
 export function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -126,6 +126,20 @@ export function Testimonials() {
                       {testimonial.role}
                     </p>
                   </div>
+                  {testimonial.source && (
+                    <a
+                      href={testimonial.source}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-auto flex items-center gap-1.5 text-sm bg-primary/5 hover:bg-primary/10 
+                               text-primary hover:text-primary/90 px-3 py-1.5 rounded-full transition-all duration-300
+                               group/source transform hover:-translate-y-0.5"
+                      aria-label={`View source of ${testimonial.name}'s testimonial`}
+                    >
+                      <span className="hidden sm:inline font-medium">View Source</span>
+                      <ExternalLink className="w-3.5 h-3.5 group-hover/source:translate-x-0.5 transition-transform" />
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

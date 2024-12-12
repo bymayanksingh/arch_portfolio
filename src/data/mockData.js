@@ -18,22 +18,25 @@ export const testimonials = [
     id: "testimonial1",
     name: "Sarah Chen",
     role: "CEO, Urban Developers Inc.",
-    content: "Their innovative approach to sustainable architecture has transformed our vision of modern urban spaces. The attention to detail and commitment to excellence is unmatched.",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
+    content: "Their innovative approach to sustainable architecture has transformed our vision of modern spaces. The attention to detail and commitment to excellence is unmatched.",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150",
+    source: "https://linkedin.com/testimonial1"
   },
   {
     id: "testimonial2",
     name: "Michael Torres",
     role: "Director, Global Architecture Forum",
     content: "A visionary architect who consistently delivers beyond expectations. Their work speaks volumes about their dedication to creating spaces that inspire and endure.",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150"
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150",
+    source: "https://linkedin.com/testimonial2"
   },
   {
     id: "testimonial3",
     name: "Emma Watson",
     role: "Principal, Design Excellence Ltd",
     content: "Working with them has been an absolute pleasure. Their ability to blend functionality with aesthetic beauty is remarkable. They've set new standards in architectural innovation.",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150"
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150",
+    source: "https://linkedin.com/testimonial3"
   }
 ];
 

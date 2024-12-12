@@ -41,6 +41,7 @@ export interface Testimonial {
   role: string;
   content: string;
   image: string;
+  source: string;
 }
 
 export interface TimelineItem {
