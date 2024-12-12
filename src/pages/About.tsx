@@ -324,20 +324,11 @@ export function About() {
                         <h3 className="text-sm tracking-[0.2em] text-[#333] group-hover:text-black transition-colors duration-500">
                           {skill.toUpperCase()}
                         </h3>
-                        <span className="text-xs tracking-wider text-black/40 group-hover:text-black/60 transition-colors duration-500 tabular-nums">
-                          {Math.floor(Math.random() * 15 + 85)}
-                        </span>
                       </div>
 
                       {/* Progress Bar */}
                       <div className="relative h-px">
                         <div className="absolute inset-0 w-full bg-black/5" />
-                        <div 
-                          className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-700 ease-out"
-                          style={{ 
-                            width: `${Math.random() * 15 + 85}%`
-                          }}
-                        />
                       </div>
                     </div>
                   </div>
