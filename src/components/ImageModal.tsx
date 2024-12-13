@@ -139,54 +139,55 @@ export function ImageModal({
           </>
         )}
 
-        {/* Image container */}
-        <div 
-          className="relative w-full"
-          style={{ height: 'calc(100vh - 12rem)' }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {renderImage ? (
-            // Use custom render function if provided
-            renderImage(images ? images[currentIndex] : { url: image || '', caption: caption })
-          ) : (
-            // Default image rendering
-            <ImageFallback
-              src={images ? images[currentIndex].url : (image || '')}
-              alt={images ? images[currentIndex].caption || 'Modal image' : (title || 'Modal image')}
-              className="w-full h-full object-contain transition-all duration-300"
-              style={{
-                transform: `scale(${scale}) rotate(${rotation}deg)`,
-              }}
-            />
+        {/* Main content container with flex column */}
+        <div className="flex flex-col h-[calc(100vh-8rem)] gap-4">
+          {/* Image container */}
+          <div 
+            className="relative flex-1 min-h-0 w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {renderImage ? (
+              // Use custom render function if provided
+              renderImage(images ? images[currentIndex] : { url: image || '', caption: caption })
+            ) : (
+              // Default image rendering
+              <ImageFallback
+                src={images ? images[currentIndex].url : (image || '')}
+                alt={images ? images[currentIndex].caption || 'Modal image' : (title || 'Modal image')}
+                className="w-full h-full object-contain transition-all duration-300"
+                style={{
+                  transform: `scale(${scale}) rotate(${rotation}deg)`,
+                }}
+              />
+            )}
+          </div>
+
+          {/* Image info - Now rendered below the image */}
+          {(title || caption || (showNavigation && totalItems > 1)) && (
+            <div className="w-full" onClick={(e) => e.stopPropagation()}>
+              <div className="bg-black/50 backdrop-blur-sm rounded-xl p-4 text-white">
+                <div className="max-w-3xl mx-auto">
+                  {title && (
+                    <h3 className="text-lg font-semibold mb-1">
+                      {title}
+                    </h3>
+                  )}
+                  {caption && (
+                    <p className="text-white/80 text-sm">{caption}</p>
+                  )}
+                  {images && images[currentIndex]?.caption && (
+                    <p className="text-white/80 text-sm">{images[currentIndex].caption}</p>
+                  )}
+                  {showNavigation && totalItems > 1 && (
+                    <div className="mt-2 text-sm text-white/60">
+                      {currentIndex + 1} of {totalItems}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
-
-        {/* Image info */}
-        {(title || caption || (showNavigation && totalItems > 1)) && (
-          <div className="absolute bottom-6 left-6 right-6 z-10">
-            <div 
-              className="bg-black/50 backdrop-blur-sm rounded-xl p-4 text-white"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {title && (
-                <h3 className="text-lg font-semibold mb-1">
-                  {title}
-                </h3>
-              )}
-              {caption && (
-                <p className="text-white/80 text-sm">{caption}</p>
-              )}
-              {images && images[currentIndex]?.caption && (
-                <p className="text-white/80 text-sm">{images[currentIndex].caption}</p>
-              )}
-              {showNavigation && totalItems > 1 && (
-                <div className="mt-2 text-sm text-white/60">
-                  {currentIndex + 1} of {totalItems}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
