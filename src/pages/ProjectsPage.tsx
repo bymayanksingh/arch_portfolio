@@ -4,6 +4,7 @@ import { Search, Loader2, X } from 'lucide-react';
 import { getProjects } from '../services/firebaseService';
 import type { Project } from '../services/firebaseService';
 import { ImageFallback } from '../components/ImageFallback';
+import { ScrollNudge } from '../components/ScrollNudge';
 
 interface Category {
   id: string;
@@ -153,6 +154,7 @@ export function ProjectsPage() {
 
   return (
     <div className="pt-24 pb-20">
+      <ScrollNudge />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">My Projects</h1>
         <p className="text-gray-600 text-lg mb-8 max-w-2xl">
