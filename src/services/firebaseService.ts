@@ -145,6 +145,13 @@ export interface Award {
   order: number;
 }
 
+export interface Upskilling {
+  id?: string;
+  title: string;
+  description: string;
+  image: string;
+}
+
 // Hero
 export const getHero = async (): Promise<Hero | null> => {
   try {
@@ -337,6 +344,22 @@ export const getAwards = async (): Promise<Award[]> => {
   } catch (error) {
     console.error('Error fetching awards:', error);
     return [];
+  }
+};
+
+// Upskilling
+export async function getUpskilling(): Promise<Upskilling | null> {
+  try {
+    const docRef = doc(db, 'upskilling', 'bim-certification');
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() } as Upskilling;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching upskilling data:', error);
+    return null;
   }
 };
 
