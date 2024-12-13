@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getTimeline } from '../services/dataService';
 import type { TimelineItem } from '../services/firebaseService';
-import { Building, Award, Briefcase, Building2 } from 'lucide-react';
+import { Building, Award, Briefcase, Building2, Rocket } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const iconMap = {
   Building,
   Award,
   Briefcase,
-  Building2
+  Building2,
+  Rocket
 };
 
 const container = {
