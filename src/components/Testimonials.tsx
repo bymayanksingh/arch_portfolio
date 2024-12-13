@@ -55,7 +55,7 @@ export function Testimonials() {
         <div className="text-center mb-16">
           <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Testimonials</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Hear what my clients have to say about their experience working with me
+            Hear what my past employers & clients have to say about their experience working with me
           </p>
         </div>
 
