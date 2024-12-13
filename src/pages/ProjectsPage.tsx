@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Loader2 } from 'lucide-react';
+import { Search, Loader2, X } from 'lucide-react';
 import { getProjects } from '../services/firebaseService';
 import type { Project } from '../services/firebaseService';
 import { ImageFallback } from '../components/ImageFallback';
@@ -13,6 +13,10 @@ interface Category {
 export function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [activeLocation, setActiveLocation] = useState('all');
+  const [yearRange, setYearRange] = useState<{ min: number; max: number }>({ min: 0, max: 9999 });
+  const [locations, setLocations] = useState<string[]>(['all']);
+  const [availableYears, setAvailableYears] = useState<{ min: number; max: number }>({ min: 9999, max: 0 });
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<Category[]>([
@@ -28,12 +32,27 @@ export function ProjectsPage() {
         const data = await getProjects();
         setProjects(data);
         
-        // Extract unique categories from projects and handle undefined/null values
+        // Extract unique categories
         const uniqueCategories = new Set(
           data
-            .filter(project => project.category) // Filter out undefined/null categories
+            .filter(project => project.category) 
             .map(project => (project.category || '').toLowerCase().trim())
         );
+        
+        // Extract unique locations
+        const uniqueLocations = new Set(
+          data
+            .filter(project => project.location)
+            .map(project => (project.location || '').toLowerCase().trim())
+        );
+
+        // Find min and max years
+        const years = data
+          .filter(project => project.year)
+          .map(project => parseInt(project.year));
+        
+        const minYear = Math.min(...years);
+        const maxYear = Math.max(...years);
         
         const formattedCategories: Category[] = [
           { id: 'all', name: 'All Projects' },
@@ -42,8 +61,14 @@ export function ProjectsPage() {
             name: category.charAt(0).toUpperCase() + category.slice(1)
           }))
         ];
+
+        const formattedLocations = ['all', ...Array.from(uniqueLocations)];
+        
         setCategories(formattedCategories);
-        setFilteredProjects(data); // Initially show all projects
+        setLocations(formattedLocations);
+        setAvailableYears({ min: minYear, max: maxYear });
+        setYearRange({ min: minYear, max: maxYear });
+        setFilteredProjects(data);
       } catch (error) {
         console.error('Error fetching projects:', error);
         setError('Failed to load projects');
@@ -54,13 +79,13 @@ export function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  // Handle filtering whenever search query or category changes
+  // Handle filtering whenever any filter changes
   useEffect(() => {
     const filtered = projects.filter(project => {
-      // Safely handle all text fields
       const projectCategory = (project.category || '').toLowerCase().trim();
       const projectTitle = (project.title || '').toLowerCase().trim();
       const projectLocation = (project.location || '').toLowerCase().trim();
+      const projectYear = project.year ? parseInt(project.year) : 0;
       const searchTerm = searchQuery.toLowerCase().trim();
       
       const matchesSearch = searchQuery === '' || 
@@ -69,17 +94,34 @@ export function ProjectsPage() {
         projectLocation.includes(searchTerm);
       
       const matchesCategory = activeCategory === 'all' || projectCategory === activeCategory;
+      const matchesLocation = activeLocation === 'all' || projectLocation === activeLocation;
+      const matchesYearRange = projectYear >= yearRange.min && projectYear <= yearRange.max;
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesLocation && matchesYearRange;
     });
 
     setFilteredProjects(filtered);
-  }, [searchQuery, activeCategory, projects]);
+  }, [searchQuery, activeCategory, activeLocation, yearRange, projects]);
 
   const handleCategoryChange = (categoryId: string) => {
-    console.log('Selected category:', categoryId);
-    console.log('Current projects:', projects.length);
     setActiveCategory(categoryId);
+  };
+
+  const handleLocationChange = (location: string) => {
+    setActiveLocation(location);
+  };
+
+  const handleYearRangeChange = (type: 'min' | 'max', value: number) => {
+    setYearRange(prev => {
+      const newValue = parseInt(value.toString());
+      if (type === 'min') {
+        // Ensure min doesn't exceed max
+        return { ...prev, min: Math.min(newValue, prev.max) };
+      } else {
+        // Ensure max doesn't go below min
+        return { ...prev, max: Math.max(newValue, prev.min) };
+      }
+    });
   };
 
   if (loading) {
@@ -117,33 +159,163 @@ export function ProjectsPage() {
           Explore my portfolio of innovative architectural designs and sustainable solutions
         </p>
         
-        {/* Categories */}
-        <div className="flex flex-wrap gap-4 mb-8">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryChange(category.id)}
-              className={`px-4 py-2 rounded-full transition-colors ${
-                activeCategory === category.id
-                  ? 'bg-black text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
+        <div className="space-y-8 mb-12">
+          {/* Filter Sections Container */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            {/* Filter Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-playfair text-xl font-semibold">Filters</h3>
+              <button 
+                onClick={() => {
+                  setActiveCategory('all');
+                  setActiveLocation('all');
+                  setYearRange(availableYears);
+                }}
+                className="text-sm text-gray-500 hover:text-black transition-colors duration-200"
+              >
+                Reset All
+              </button>
+            </div>
+
+            <div className="space-y-8">
+              {/* Categories Section */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Categories</h4>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategoryChange(category.id)}
+                      className={`px-4 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+                        activeCategory === category.id
+                          ? 'bg-black text-white shadow-md'
+                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Locations Section */}
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Locations</h4>
+                <div className="flex flex-wrap gap-2">
+                  {locations.map((location) => (
+                    <button
+                      key={location}
+                      onClick={() => handleLocationChange(location)}
+                      className={`px-4 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+                        activeLocation === location
+                          ? 'bg-black text-white shadow-md'
+                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {location === 'all' ? 'All Locations' : location.charAt(0).toUpperCase() + location.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Year Range Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-medium text-gray-700">Year Range</h4>
+                  <span className="text-sm bg-gray-50 px-3 py-1 rounded-full text-gray-600">
+                    {yearRange.min} - {yearRange.max}
+                  </span>
+                </div>
+                <div className="relative mt-4 h-2">
+                  {/* Track Background */}
+                  <div className="absolute inset-0 h-2 bg-gray-100 rounded-full"></div>
+                  
+                  {/* Selected Range */}
+                  <div 
+                    className="absolute h-2 bg-black rounded-full"
+                    style={{
+                      left: `${((yearRange.min - availableYears.min) / (availableYears.max - availableYears.min)) * 100}%`,
+                      right: `${100 - ((yearRange.max - availableYears.min) / (availableYears.max - availableYears.min)) * 100}%`
+                    }}
+                  ></div>
+                  
+                  {/* Slider Container */}
+                  <div className="relative h-2">
+                    {/* Min Range Input */}
+                    <input
+                      type="range"
+                      min={availableYears.min}
+                      max={availableYears.max}
+                      value={yearRange.min}
+                      onChange={(e) => handleYearRangeChange('min', parseInt(e.target.value))}
+                      className="pointer-events-none absolute appearance-none bg-transparent w-full h-2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-black [&::-moz-range-thumb]:border-0"
+                    />
+                    
+                    {/* Max Range Input */}
+                    <input
+                      type="range"
+                      min={availableYears.min}
+                      max={availableYears.max}
+                      value={yearRange.max}
+                      onChange={(e) => handleYearRangeChange('max', parseInt(e.target.value))}
+                      className="pointer-events-none absolute appearance-none bg-transparent w-full h-2 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:shadow-md [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-black [&::-moz-range-thumb]:border-0"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search projects by name, category, or location..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full p-4 pl-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 transition-all duration-200"
+            />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative mb-12">
-          <input
-            type="text"
-            placeholder="Search projects by name, category, or location..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full p-4 pl-12 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5"
-          />
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        {/* Active Filters Display */}
+        {(activeCategory !== 'all' || activeLocation !== 'all' || 
+          yearRange.min !== availableYears.min || yearRange.max !== availableYears.max) && (
+          <div className="flex flex-wrap gap-2 mb-8">
+            {activeCategory !== 'all' && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
+                Category: {categories.find(c => c.id === activeCategory)?.name}
+                <X 
+                  className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
+                  onClick={() => setActiveCategory('all')}
+                />
+              </span>
+            )}
+            {activeLocation !== 'all' && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
+                Location: {activeLocation.charAt(0).toUpperCase() + activeLocation.slice(1)}
+                <X 
+                  className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
+                  onClick={() => setActiveLocation('all')}
+                />
+              </span>
+            )}
+            {(yearRange.min !== availableYears.min || yearRange.max !== availableYears.max) && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
+                Year: {yearRange.min} - {yearRange.max}
+                <X 
+                  className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
+                  onClick={() => setYearRange(availableYears)}
+                />
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Results Count */}
+        <div className="mb-8 text-sm text-gray-500">
+          Showing {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
         </div>
 
         {/* Projects Grid */}
