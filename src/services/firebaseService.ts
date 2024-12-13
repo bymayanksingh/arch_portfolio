@@ -145,10 +145,6 @@ export interface Award {
   order: number;
 }
 
-export interface GraduationGallery {
-  images: string[];
-}
-
 // Hero
 export const getHero = async (): Promise<Hero | null> => {
   try {
@@ -342,22 +338,6 @@ export const getAwards = async (): Promise<Award[]> => {
     console.error('Error fetching awards:', error);
     return [];
   }
-};
-
-// Graduation Gallery
-export const getGraduationGallery = async (): Promise<GraduationGallery> => {
-  const collectionRef = collection(db, 'graduation');
-  const querySnapshot = await getDocs(collectionRef);
-  
-  const images: string[] = [];
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    if (data.images) {
-      images.push(...data.images);
-    }
-  });
-  
-  return { images };
 };
 
 // Messages
