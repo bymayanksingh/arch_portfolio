@@ -28,7 +28,6 @@ export function Hero() {
         const data = await getHero();
         setHeroData(data);
       } catch (error) {
-        //console.error('Error fetching hero data:', error);
         setError(error instanceof Error ? error.message : 'Failed to load hero data');
       } finally {
         setLoading(false);
@@ -40,7 +39,6 @@ export function Hero() {
         const data = await getStats();
         setStats(data);
       } catch (error) {
-        //console.error('Error fetching stats:', error);
         setError('Failed to load stats');
       } finally {
         setLoading(false);
@@ -108,7 +106,7 @@ export function Hero() {
               <h1 className="font-cormorant text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-white leading-tight">
                 Hello, I'm{' '}
                 <span className="relative inline-block">
-                  <span className="relative z-10 font-semibold">{heroData?.name || 'Name'}</span>
+                  <span className="relative z-10 font-normal">{heroData?.name || 'Name'}</span>
                   <span className="absolute bottom-0 left-0 w-full h-1 bg-white/30 transform origin-left transition-transform duration-500 group-hover:scale-x-100"></span>
                 </span>
               </h1>
@@ -145,7 +143,7 @@ export function Hero() {
                   return (
                     <div key={index} className="text-center group">
                       <Icon className="w-6 h-6 mx-auto mb-2 sm:mb-3 text-white/60 group-hover:text-white transition-colors duration-300" />
-                      <div className="font-cormorant text-xl sm:text-2xl lg:text-3xl font-semibold text-white mb-1">
+                      <div className="font-cormorant text-xl sm:text-2xl lg:text-3xl font-normal text-white mb-1">
                         {stat.value}
                       </div>
                       <div className="text-white/60 text-xs sm:text-sm tracking-wider uppercase group-hover:text-white/80 transition-colors duration-300 leading-tight">
