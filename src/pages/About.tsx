@@ -1,13 +1,28 @@
-import { useState, useRef, useEffect } from 'react';
-import { Download, Mail, Phone, Linkedin, Award as AwardIcon, Building2Icon, BuildingIcon, Users, CheckCircle2, Loader2 } from 'lucide-react';
-import { ImageModal } from '../components/ImageModal';
+import { useState, useRef, useEffect, lazy, Suspense } from 'react';
+import { Download, Mail, Loader2, CheckCircle2, Phone, Linkedin, Award as AwardIcon, Building2Icon, BuildingIcon, Users } from 'lucide-react';
 import { ImageFallback } from '../components/ImageFallback';
 import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
 import { getAffiliations, type Affiliation } from '../services/firebaseService';
 import { getPublications, type Publication } from '../services/firebaseService';
 import { getAwards, type Award as AwardData } from '../services/firebaseService';
-import { Publications } from '../components/Publications';
-import { Awards } from '../components/Awards';
+
+// Lazy load heavy components
+const ImageModal = lazy(() => import('../components/ImageModal').then(module => ({ default: module.ImageModal })));
+const Publications = lazy(() => import('../components/Publications').then(module => ({ default: module.Publications })));
+const Awards = lazy(() => import('../components/Awards').then(module => ({ default: module.Awards })));
+
+// Lazy load icons to reduce initial bundle size
+const IconComponents = lazy(() => import('lucide-react').then(module => ({
+  default: {
+    Building2Icon: module.Building2,
+    BuildingIcon: module.Building,
+    AwardIcon: module.Award,
+    Users: module.Users,
+    CheckCircle2: module.CheckCircle2,
+    Phone: module.Phone,
+    Linkedin: module.Linkedin
+  }
+})));
 
 interface Certificate {
   title: string;
@@ -32,7 +47,10 @@ export function About() {
   const [publications, setPublications] = useState<Publication[]>([]);
   const [awards, setAwards] = useState<AwardData[]>([]);
 
+  // Memoize data fetching to prevent unnecessary re-renders
   useEffect(() => {
+    let mounted = true;
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -54,6 +72,8 @@ export function About() {
           getAwards()
         ]);
         
+        if (!mounted) return;
+
         if (aboutResult) setAboutData(aboutResult);
         setSkills(skillsResult);
         setCertificates(certificatesResult);
@@ -63,14 +83,21 @@ export function About() {
         setAwards(awardsResult);
         setError(null);
       } catch (err) {
+        if (!mounted) return;
         setError('Failed to load data. Please try again later.');
         //console.error('Error fetching data:', err);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const scrollCertificates = (direction: 'left' | 'right') => {
@@ -90,7 +117,6 @@ export function About() {
     const newCert = certificates[newIndex];
     if (newCert) {
       setSelectedCertificate(newCert);
-      //console.log('Previous certificate:', newCert); // Debug log
     }
   };
 
@@ -101,7 +127,6 @@ export function About() {
     const newCert = certificates[newIndex];
     if (newCert) {
       setSelectedCertificate(newCert);
-      //console.log('Next certificate:', newCert); // Debug log
     }
   };
 
@@ -171,57 +196,21 @@ export function About() {
         </div>
 
         {/* Stats Section */}
-        <div className="mb-20 text-center">
-          <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">By the Numbers</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-12">
-            A snapshot of my architectural journey and achievements
-          </p>
-          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            {stats?.items.map((stat, index) => {
-              const Icon = stat.icon === 'Building2' ? Building2Icon : 
-                          stat.icon === 'Building' ? BuildingIcon : 
-                          stat.icon === 'Award' ? AwardIcon : 
-                          stat.icon === 'Users' ? Users : Building2Icon;
-              return (
-                <div key={index} className="group">
-                  <div className="relative bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden">
-                    {/* Decorative Background Elements */}
-                    <div className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-500">
-                      <div className="absolute -right-6 -top-6 w-32 h-32 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-                      <div className="absolute right-12 bottom-12 w-40 h-40 bg-black rounded-full transform translate-x-1/2 translate-y-1/2" />
-                      <div className="absolute left-1/2 top-1/2 w-24 h-24 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
-                    </div>
-
-                    {/* Grid Pattern */}
-                    <div 
-                      className="absolute inset-0 opacity-[0.015] group-hover:opacity-[0.03] transition-opacity duration-500"
-                      style={{
-                        backgroundImage: `linear-gradient(to right, black 1px, transparent 1px),
-                                        linear-gradient(to bottom, black 1px, transparent 1px)`,
-                        backgroundSize: '20px 20px'
-                      }}
-                    />
-
-                    <div className="relative flex flex-col items-center text-center">
-                      <div className="mb-4 p-3 rounded-full bg-black/5 group-hover:bg-black/10 transition-colors duration-300">
-                        <Icon className="w-6 h-6 text-black/70" />
-                      </div>
-                      <div className="relative mb-2">
-                        <div className="text-5xl font-playfair text-black/80 group-hover:text-black transition-colors duration-500">
-                          {stat.value}
-                        </div>
-                        <div className="absolute bottom-0 left-1/2 w-12 h-[1px] bg-black/10 group-hover:w-24 group-hover:bg-black/20 transform -translate-x-1/2 transition-all duration-700" />
-                      </div>
-                      <div className="text-base font-medium text-black/60 group-hover:text-black/70 transition-colors duration-500">
-                        {stat.label}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        <Suspense fallback={<div className="h-40 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>}>
+          <div className="mb-20 text-center">
+            <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">By the Numbers</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto mb-12">
+              A snapshot of my architectural journey and achievements
+            </p>
+            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+              {stats?.items.map((stat, index) => (
+                <Suspense key={index} fallback={<div className="h-40 animate-pulse bg-gray-100 rounded-xl" />}>
+                  <StatCard stat={stat} />
+                </Suspense>
+              ))}
+            </div>
           </div>
-        </div>
+        </Suspense>
 
         {/* Certificates Section */}
         <div className="mb-20">
@@ -238,7 +227,6 @@ export function About() {
                 <div 
                   key={cert.id || index}
                   onClick={() => {
-                    //console.log('Selected certificate:', cert); // Debug log
                     setSelectedCertificate(cert);
                     setCurrentCertificateIndex(index);
                   }}
@@ -286,14 +274,14 @@ export function About() {
         </div>
 
         {/* Publications Section */}
-        {publications.length > 0 && (
+        <Suspense fallback={<div className="h-40 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>}>
           <Publications publications={publications} />
-        )}
+        </Suspense>
 
         {/* Awards Section */}
-        {awards.length > 0 && (
+        <Suspense fallback={<div className="h-40 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin" /></div>}>
           <Awards awards={awards} />
-        )}
+        </Suspense>
 
         {/* Skills Section */}
         <div className="mb-40">
@@ -422,27 +410,63 @@ export function About() {
 
       {/* Certificate Modal */}
       {selectedCertificate && (
-        <ImageModal
-          isOpen={!!selectedCertificate}
-          onClose={() => setSelectedCertificate(null)}
-          images={certificates.map(cert => ({
-            url: cert.image,
-            caption: cert.title
-          }))}
-          currentIndex={currentCertificateIndex}
-          onPrevious={handlePrevCertificate}
-          onNext={handleNextCertificate}
-          showNavigation={true}
-          totalItems={certificates.length}
-          renderImage={(image) => (
-            <ImageFallback
-              src={image.url}
-              alt={image.caption}
-              className="max-h-[80vh] w-auto mx-auto"
-            />
-          )}
-        />
+        <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-white" /></div>}>
+          <ImageModal
+            isOpen={!!selectedCertificate}
+            onClose={() => setSelectedCertificate(null)}
+            image={selectedCertificate.image}
+            onPrev={handlePrevCertificate}
+            onNext={handleNextCertificate}
+            title={selectedCertificate.title}
+            showNavigation={certificates.length > 1}
+          />
+        </Suspense>
       )}
+    </div>
+  );
+}
+
+function StatCard({ stat }: { stat: any }) {
+  const Icon = stat.icon === 'Building2' ? Building2Icon : 
+              stat.icon === 'Building' ? BuildingIcon : 
+              stat.icon === 'Award' ? AwardIcon : 
+              stat.icon === 'Users' ? Users : Building2Icon;
+
+  return (
+    <div className="group">
+      <div className="relative bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-500">
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute right-12 bottom-12 w-40 h-40 bg-black rounded-full transform translate-x-1/2 translate-y-1/2" />
+          <div className="absolute left-1/2 top-1/2 w-24 h-24 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+        </div>
+
+        {/* Grid Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.015] group-hover:opacity-[0.03] transition-opacity duration-500"
+          style={{
+            backgroundImage: `linear-gradient(to right, black 1px, transparent 1px),
+                              linear-gradient(to bottom, black 1px, transparent 1px)`,
+            backgroundSize: '20px 20px'
+          }}
+        />
+
+        <div className="relative flex flex-col items-center text-center">
+          <div className="mb-4 p-3 rounded-full bg-black/5 group-hover:bg-black/10 transition-colors duration-300">
+            <Icon className="w-6 h-6 text-black/70" />
+          </div>
+          <div className="relative mb-2">
+            <div className="text-5xl font-playfair text-black/80 group-hover:text-black transition-colors duration-500">
+              {stat.value}
+            </div>
+            <div className="absolute bottom-0 left-1/2 w-12 h-[1px] bg-black/10 group-hover:w-24 group-hover:bg-black/20 transform -translate-x-1/2 transition-all duration-700" />
+          </div>
+          <div className="text-base font-medium text-black/60 group-hover:text-black/70 transition-colors duration-500">
+            {stat.label}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
