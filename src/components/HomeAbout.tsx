@@ -14,7 +14,7 @@ export function HomeAbout() {
         const aboutData = await getAbout();
         setAbout(aboutData);
       } catch (error) {
-        console.error('Error fetching about data:', error);
+        //console.error('Error fetching about data:', error);
       } finally {
         setLoading(false);
       }

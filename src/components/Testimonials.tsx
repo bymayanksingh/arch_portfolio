@@ -14,7 +14,7 @@ export function Testimonials() {
         const data = await getTestimonials();
         setTestimonials(data);
       } catch (error) {
-        console.error('Error fetching testimonials:', error);
+        //console.error('Error fetching testimonials:', error);
         setError('Failed to load testimonials');
       } finally {
         setLoading(false);
@@ -108,7 +108,7 @@ export function Testimonials() {
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.src = '/placeholder-avatar.jpg';
-                            console.warn(`Failed to load image for testimonial: ${testimonial.id}`);
+                            //console.warn(`Failed to load image for testimonial: ${testimonial.id}`);
                           }}
                         />
                         <div className="absolute inset-0 rounded-full ring-1 ring-black/5"></div>

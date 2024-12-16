@@ -25,7 +25,7 @@ export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {
         const data = await getAbout();
         setAbout(data);
       } catch (error) {
-        console.error('Error fetching about data:', error);
+        //console.error('Error fetching about data:', error);
       }
     }
     fetchAbout();

@@ -17,14 +17,14 @@ export function ImageFallback({
   const [loading, setLoading] = useState(true);
 
   const handleError = () => {
-    console.error('Image failed to load:', src);
-    console.error('Error loading image for:', alt);
+    //console.error('Image failed to load:', src);
+    //console.error('Error loading image for:', alt);
     setError(true);
     setLoading(false);
   };
 
   const handleLoad = () => {
-    console.log('Image loaded successfully:', src);
+    //console.log('Image loaded successfully:', src);
     setLoading(false);
   };
 

@@ -63,7 +63,7 @@ async function populateCollection(collectionName, data) {
     
     //console.log(`Successfully populated ${collectionName} collection!`);
   } catch (error) {
-    console.error(`Error in ${collectionName}:`, error);
+    //console.error(`Error in ${collectionName}:`, error);
     throw error;
   }
 }
@@ -81,7 +81,7 @@ async function populateAllData() {
 
     //console.log('Successfully populated all collections!');
   } catch (error) {
-    console.error('Error populating data:', error);
+    //console.error('Error populating data:', error);
     throw error;
   }
 }
@@ -91,6 +91,6 @@ populateAllData().then(() => {
   //console.log('Finished populating all data');
   process.exit(0);
 }).catch((error) => {
-  console.error('Failed to populate data:', error);
+  //console.error('Failed to populate data:', error);
   process.exit(1);
 });

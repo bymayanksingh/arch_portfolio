@@ -28,7 +28,7 @@ export function Hero() {
         const data = await getHero();
         setHeroData(data);
       } catch (error) {
-        console.error('Error fetching hero data:', error);
+        //console.error('Error fetching hero data:', error);
         setError(error instanceof Error ? error.message : 'Failed to load hero data');
       } finally {
         setLoading(false);
@@ -40,7 +40,7 @@ export function Hero() {
         const data = await getStats();
         setStats(data);
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        //console.error('Error fetching stats:', error);
         setError('Failed to load stats');
       } finally {
         setLoading(false);

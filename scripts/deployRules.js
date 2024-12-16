@@ -33,7 +33,7 @@ async function deployRules() {
     
     //console.log('Successfully deployed Firestore rules!');
   } catch (error) {
-    console.error('Error deploying rules:', error);
+    //console.error('Error deploying rules:', error);
   }
 }
 
@@ -42,6 +42,6 @@ deployRules().then(() => {
   //console.log('Finished deploying rules');
   process.exit(0);
 }).catch((error) => {
-  console.error('Failed to deploy rules:', error);
+  //console.error('Failed to deploy rules:', error);
   process.exit(1);
 });

@@ -159,7 +159,7 @@ export const getHero = async (): Promise<Hero | null> => {
     const heroDoc = snapshot.docs[0];
     return heroDoc ? { id: heroDoc.id, ...heroDoc.data() } as Hero : null;
   } catch (error) {
-    console.error('Error fetching hero:', error);
+    //console.error('Error fetching hero:', error);
     return null;
   }
 };
@@ -170,7 +170,7 @@ export const getProjects = async (): Promise<Project[]> => {
     const snapshot = await getDocs(collection(db, 'projects'));
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Project);
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    //console.error('Error fetching projects:', error);
     return [];
   }
 };
@@ -192,7 +192,7 @@ export const getProject = async (id: string): Promise<Project | null> => {
     //console.log('No project found with ID:', id);
     return null;
   } catch (error) {
-    console.error('Error fetching project:', error);
+    //console.error('Error fetching project:', error);
     return null;
   }
 };
@@ -203,7 +203,7 @@ export const getProjectsByCategory = async (category: string): Promise<Project[]
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Project);
   } catch (error) {
-    console.error('Error fetching projects by category:', error);
+    //console.error('Error fetching projects by category:', error);
     return [];
   }
 };
@@ -215,7 +215,7 @@ export const getSkills = async (): Promise<string[]> => {
     const skillsDoc = snapshot.docs[0];
     return skillsDoc ? (skillsDoc.data().list as string[]) : [];
   } catch (error) {
-    console.error('Error fetching skills:', error);
+    //console.error('Error fetching skills:', error);
     return [];
   }
 };
@@ -226,7 +226,7 @@ export const getTestimonials = async (): Promise<Testimonial[]> => {
     const snapshot = await getDocs(collection(db, 'testimonials'));
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Testimonial);
   } catch (error) {
-    console.error('Error fetching testimonials:', error);
+    //console.error('Error fetching testimonials:', error);
     return [];
   }
 };
@@ -237,7 +237,7 @@ export const getTimeline = async (): Promise<TimelineItem[]> => {
     const snapshot = await getDocs(collection(db, 'timeline'));
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as TimelineItem);
   } catch (error) {
-    console.error('Error fetching timeline:', error);
+    //console.error('Error fetching timeline:', error);
     return [];
   }
 };
@@ -255,7 +255,7 @@ export const getAbout = async (): Promise<About | null> => {
     
     return null;
   } catch (error) {
-    console.error('Error fetching about data:', error);
+    //console.error('Error fetching about data:', error);
     return null;
   }
 };
@@ -267,7 +267,7 @@ export const getContact = async (): Promise<Contact | null> => {
     const contactDoc = snapshot.docs[0];
     return contactDoc ? { id: contactDoc.id, ...contactDoc.data() } as Contact : null;
   } catch (error) {
-    console.error('Error fetching contact:', error);
+    //console.error('Error fetching contact:', error);
     return null;
   }
 };
@@ -283,7 +283,7 @@ export const getStats = async (): Promise<Stats | null> => {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching stats:', error);
+    //console.error('Error fetching stats:', error);
     return null;
   }
 };
@@ -294,7 +294,7 @@ export const getCertificates = async (): Promise<Certificate[]> => {
     const snapshot = await getDocs(collection(db, 'certificates'));
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Certificate);
   } catch (error) {
-    console.error('Error fetching certificates:', error);
+    //console.error('Error fetching certificates:', error);
     return [];
   }
 };
@@ -306,7 +306,7 @@ export const getAffiliations = async (): Promise<Affiliation[]> => {
     const snapshot = await getDocs(affiliationsRef);
     return snapshot.docs.map(doc => doc.data() as Affiliation);
   } catch (error) {
-    console.error('Error fetching affiliations:', error);
+    //console.error('Error fetching affiliations:', error);
     return [];
   }
 };
@@ -324,7 +324,7 @@ export const getPublications = async (): Promise<Publication[]> => {
     // Sort by order field
     return publications.sort((a, b) => (a.order || 0) - (b.order || 0));
   } catch (error) {
-    console.error('Error fetching publications:', error);
+    //console.error('Error fetching publications:', error);
     return [];
   }
 };
@@ -342,7 +342,7 @@ export const getAwards = async (): Promise<Award[]> => {
     // Sort by order field
     return awards.sort((a, b) => (a.order || 0) - (b.order || 0));
   } catch (error) {
-    console.error('Error fetching awards:', error);
+    //console.error('Error fetching awards:', error);
     return [];
   }
 };
@@ -358,7 +358,7 @@ export async function getUpskilling(): Promise<Upskilling | null> {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching upskilling data:', error);
+    //console.error('Error fetching upskilling data:', error);
     return null;
   }
 };
@@ -375,7 +375,7 @@ export const submitMessage = async (messageData: Omit<Message, 'id' | 'createdAt
     await addDoc(messagesCollection, messageWithTimestamp);
     return { success: true };
   } catch (error) {
-    console.error('Error submitting message:', error);
+    //console.error('Error submitting message:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'An error occurred while submitting your message' 

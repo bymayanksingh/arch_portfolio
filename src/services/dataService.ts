@@ -10,7 +10,7 @@ const checkFirebaseAvailability = async () => {
     await firebaseService.getHero();
     isFirebaseAvailable = true;
   } catch (error) {
-    console.warn('Firebase is not available, using fallback data:', error);
+    //console.warn('Firebase is not available, using fallback data:', error);
     isFirebaseAvailable = false;
   }
 };
@@ -25,7 +25,7 @@ export const getHero = async () => {
       const hero = await firebaseService.getHero();
       if (hero) return hero;
     } catch (error) {
-      console.warn('Error fetching hero data from Firebase:', error);
+      //console.warn('Error fetching hero data from Firebase:', error);
     }
   }
   return fallbackData.fallbackHero;
@@ -37,7 +37,7 @@ export const getProjects = async () => {
       const projects = await firebaseService.getProjects();
       if (projects.length > 0) return projects;
     } catch (error) {
-      console.warn('Error fetching projects from Firebase:', error);
+      //console.warn('Error fetching projects from Firebase:', error);
     }
   }
   return fallbackData.fallbackProjects;
@@ -49,7 +49,7 @@ export const getProject = async (id: string) => {
       const project = await firebaseService.getProject(id);
       if (project) return project;
     } catch (error) {
-      console.warn('Error fetching project from Firebase:', error);
+      //console.warn('Error fetching project from Firebase:', error);
     }
   }
   return fallbackData.fallbackProjects[0];
@@ -61,7 +61,7 @@ export const getProjectsByCategory = async (category: string) => {
       const projects = await firebaseService.getProjectsByCategory(category);
       if (projects.length > 0) return projects;
     } catch (error) {
-      console.warn('Error fetching projects by category from Firebase:', error);
+      //console.warn('Error fetching projects by category from Firebase:', error);
     }
   }
   return fallbackData.fallbackProjects.filter(p => p.category === category);
@@ -73,7 +73,7 @@ export const getTestimonials = async () => {
       const testimonials = await firebaseService.getTestimonials();
       if (testimonials.length > 0) return testimonials;
     } catch (error) {
-      console.warn('Error fetching testimonials from Firebase:', error);
+      //console.warn('Error fetching testimonials from Firebase:', error);
     }
   }
   return fallbackData.fallbackTestimonials;
@@ -85,7 +85,7 @@ export const getTimeline = async () => {
       const timeline = await firebaseService.getTimeline();
       if (timeline.length > 0) return timeline;
     } catch (error) {
-      console.warn('Error fetching timeline from Firebase:', error);
+      //console.warn('Error fetching timeline from Firebase:', error);
     }
   }
   return fallbackData.fallbackTimeline;
@@ -97,7 +97,7 @@ export const getAbout = async () => {
       const about = await firebaseService.getAbout();
       if (about) return about;
     } catch (error) {
-      console.warn('Error fetching about data from Firebase:', error);
+      //console.warn('Error fetching about data from Firebase:', error);
     }
   }
   return fallbackData.fallbackAbout;
@@ -109,7 +109,7 @@ export const getContact = async () => {
       const contact = await firebaseService.getContact();
       if (contact) return contact;
     } catch (error) {
-      console.warn('Error fetching contact data from Firebase:', error);
+      //console.warn('Error fetching contact data from Firebase:', error);
     }
   }
   return fallbackData.fallbackContact;
@@ -120,7 +120,7 @@ export const submitMessage = async (messageData: Parameters<typeof firebaseServi
     try {
       return await firebaseService.submitMessage(messageData);
     } catch (error) {
-      console.warn('Error submitting message to Firebase:', error);
+      //console.warn('Error submitting message to Firebase:', error);
     }
   }
   // Return a mock success response when Firebase is not available
@@ -136,7 +136,7 @@ export const getStats = async () => {
       const stats = await firebaseService.getStats();
       if (stats) return stats;
     } catch (error) {
-      console.warn('Error fetching stats from Firebase:', error);
+      //console.warn('Error fetching stats from Firebase:', error);
     }
   }
   return fallbackData.fallbackStats;

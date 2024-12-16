@@ -64,7 +64,7 @@ export function About() {
         setError(null);
       } catch (err) {
         setError('Failed to load data. Please try again later.');
-        console.error('Error fetching data:', err);
+        //console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }

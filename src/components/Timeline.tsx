@@ -47,7 +47,7 @@ export function Timeline() {
         const sortedData = [...data].sort((a, b) => a.year - b.year);
         setTimelineData(sortedData);
       } catch (error) {
-        console.error('Error fetching timeline data:', error);
+        //console.error('Error fetching timeline data:', error);
         setError('Unable to load timeline data. Please try again later.');
       } finally {
         setLoading(false);

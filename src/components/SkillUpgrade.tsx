@@ -23,7 +23,7 @@ export function SkillUpgrade() {
         const data = await getUpskilling();
         setUpskilling(data);
       } catch (error) {
-        console.error('Error fetching upskilling data:', error);
+        //console.error('Error fetching upskilling data:', error);
       } finally {
         setLoading(false);
       }

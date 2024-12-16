@@ -14,7 +14,7 @@ export function Footer() {
         const data = await getAbout();
         setAbout(data);
       } catch (error) {
-        console.error('Error fetching about data:', error);
+        //console.error('Error fetching about data:', error);
       } finally {
         setLoading(false);
       }

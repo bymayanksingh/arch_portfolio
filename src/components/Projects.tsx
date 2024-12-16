@@ -49,7 +49,7 @@ export function Projects() {
         );
         setCategories(['all', ...uniqueCategories]);
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        //console.error('Error fetching projects:', error);
         setError('Failed to load projects');
       } finally {
         setLoading(false);

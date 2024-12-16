@@ -45,7 +45,7 @@ export function ProjectsPage() {
         setCategories(formattedCategories);
         setFilteredProjects(data); // Initially show all projects
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        //console.error('Error fetching projects:', error);
         setError('Failed to load projects');
       } finally {
         setLoading(false);
@@ -77,8 +77,8 @@ export function ProjectsPage() {
   }, [searchQuery, activeCategory, projects]);
 
   const handleCategoryChange = (categoryId: string) => {
-    console.log('Selected category:', categoryId);
-    console.log('Current projects:', projects.length);
+    //console.log('Selected category:', categoryId);
+    //console.log('Current projects:', projects.length);
     setActiveCategory(categoryId);
   };
 
