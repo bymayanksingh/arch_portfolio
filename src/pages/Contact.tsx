@@ -38,13 +38,47 @@ export function Contact() {
     e.preventDefault();
     setStatus({ type: 'loading' });
 
+    // Client-side validation
+    if (!formData.firstName.match(/^[a-zA-Z\s-]{2,50}$/)) {
+      setStatus({ 
+        type: 'error', 
+        message: 'Please enter a valid first name (2-50 characters, letters only)' 
+      });
+      return;
+    }
+
+    if (formData.lastName && !formData.lastName.match(/^[a-zA-Z\s-]{2,50}$/)) {
+      setStatus({ 
+        type: 'error', 
+        message: 'Please enter a valid last name (2-50 characters, letters only)' 
+      });
+      return;
+    }
+
+    if (!formData.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+      setStatus({ 
+        type: 'error', 
+        message: 'Please enter a valid email address' 
+      });
+      return;
+    }
+
+    if (formData.message.length < 10 || formData.message.length > 1000) {
+      setStatus({ 
+        type: 'error', 
+        message: 'Message must be between 10 and 1000 characters' 
+      });
+      return;
+    }
+
     try {
       const result = await submitMessage({
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         projectType: formData.projectType === 'Other' ? formData.customProjectType : formData.projectType,
-        message: formData.message
+        message: formData.message,
+        createdAt: new Date().toISOString()
       });
 
       if (result.success) {
@@ -52,6 +86,7 @@ export function Contact() {
           type: 'success',
           message: 'Thank you for your message! I will get back to you soon.'
         });
+        // Reset form
         setFormData({
           firstName: '',
           lastName: '',
@@ -61,15 +96,12 @@ export function Contact() {
           message: ''
         });
       } else {
-        setStatus({
-          type: 'error',
-          message: result.error || 'Something went wrong. Please try again.'
-        });
+        throw new Error(result.error);
       }
     } catch (error) {
       setStatus({
         type: 'error',
-        message: 'Failed to send message. Please try again.'
+        message: error instanceof Error ? error.message : 'Failed to send message. Please try again later.'
       });
     }
   };

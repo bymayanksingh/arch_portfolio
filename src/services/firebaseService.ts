@@ -85,11 +85,11 @@ export interface Contact {
 export interface Message {
   id?: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   email: string;
-  projectType: string;
+  projectType?: string;
   message: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface Stats {
@@ -391,18 +391,31 @@ export async function getUpskilling(): Promise<Upskilling | null> {
 };
 
 // Messages
-export const submitMessage = async (messageData: Omit<Message, 'id' | 'createdAt'>): Promise<{ success: boolean; error?: string }> => {
+export const submitMessage = async (messageData: Omit<Message, 'id'>): Promise<{ success: boolean; error?: string }> => {
   try {
+    // Validate data before submission
+    if (!messageData.firstName.match(/^[a-zA-Z\s-]{2,50}$/)) {
+      throw new Error('Invalid first name format');
+    }
+    if (messageData.lastName && !messageData.lastName.match(/^[a-zA-Z\s-]{2,50}$/)) {
+      throw new Error('Invalid last name format');
+    }
+    if (!messageData.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+      throw new Error('Invalid email format');
+    }
+    if (messageData.message.length < 10 || messageData.message.length > 1000) {
+      throw new Error('Message must be between 10 and 1000 characters');
+    }
+    if (messageData.projectType && messageData.projectType.length > 100) {
+      throw new Error('Project type is too long');
+    }
+
     const messagesCollection = collection(db, 'contact');
-    const messageWithTimestamp = {
-      ...messageData,
-      createdAt: new Date()
-    };
     
-    await addDoc(messagesCollection, messageWithTimestamp);
+    await addDoc(messagesCollection, messageData);
     return { success: true };
   } catch (error) {
-    //console.error('Error submitting message:', error);
+    console.error('Error submitting message:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'An error occurred while submitting your message' 

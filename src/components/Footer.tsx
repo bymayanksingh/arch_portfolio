@@ -23,16 +23,16 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="relative bg-soft-black text-white mt-auto overflow-hidden">
+    <footer className="relative bg-[#0A0A0A] text-white mt-auto overflow-hidden">
       {/* Decorative Background Elements */}
-      <div className="absolute inset-0 opacity-[0.1]">
+      <div className="absolute inset-0 opacity-[0.08]">
         <div className="absolute -right-20 -top-20 w-96 h-96 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
         <div className="absolute -left-20 bottom-0 w-80 h-80 bg-white rounded-full transform translate-y-1/2" />
       </div>
 
       {/* Grid Pattern */}
       <div 
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage: `linear-gradient(to right, white 1px, transparent 1px),
                           linear-gradient(to bottom, white 1px, transparent 1px)`,
@@ -45,12 +45,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="font-playfair text-xl font-bold mb-4">{about?.name}</h3>
-            <p className="text-gray-400 mb-4">{about?.shortDescription}</p>
+            <h3 className="font-playfair text-xl font-bold mb-4 text-white">{about?.name}</h3>
+            <p className="text-gray-300 mb-4">{about?.shortDescription}</p>
             <div className="flex items-center space-x-4">
               <a
                 href={`mailto:${about?.email}`}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-300 hover:text-white transition-colors"
                 aria-label="Email"
               >
                 <Mail className="w-5 h-5" />
@@ -59,7 +59,7 @@ export function Footer() {
                 href={about?.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-300 hover:text-white transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5" />
@@ -68,7 +68,7 @@ export function Footer() {
                 href={about?.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-300 hover:text-white transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
@@ -78,31 +78,31 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-playfair text-lg font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-playfair text-lg font-semibold mb-4 text-white">Quick Links</h4>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-              <li><Link to="/projects" className="text-gray-400 hover:text-white transition-colors">Projects</Link></li>
-              <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About</Link></li>
-              <li><Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/" className="text-gray-300 hover:text-white transition-colors">Home</Link></li>
+              <li><Link to="/projects" className="text-gray-300 hover:text-white transition-colors">Projects</Link></li>
+              <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link></li>
+              <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>
 
           {/* Services */}
           <div>
-            <h4 className="font-playfair text-lg font-semibold mb-4">Services</h4>
+            <h4 className="font-playfair text-lg font-semibold mb-4 text-white">Services</h4>
             <ul className="space-y-2">
               {about?.services ? (
                 about.services.map((service, index) => (
-                  <li key={index} className="text-gray-400 hover:text-white transition-colors">
+                  <li key={index} className="text-gray-300 hover:text-white transition-colors">
                     {service}
                   </li>
                 ))
               ) : (
                 <>
-                  <li className="text-gray-400">Site Layouts</li>
-                  <li className="text-gray-400">Interior Design</li>
-                  <li className="text-gray-400">3D Rendering</li>
-                  <li className="text-gray-400">Construction Docs</li>
+                  <li className="text-gray-300">Site Layouts</li>
+                  <li className="text-gray-300">Interior Design</li>
+                  <li className="text-gray-300">3D Rendering</li>
+                  <li className="text-gray-300">Construction Docs</li>
                 </>
               )}
             </ul>
@@ -110,12 +110,12 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-playfair text-lg font-semibold mb-4">Contact Me</h4>
+            <h4 className="font-playfair text-lg font-semibold mb-4 text-white">Contact Me</h4>
             <div className="space-y-4">
               {about?.email && (
                 <a 
                   href={`mailto:${about.email}`} 
-                  className="flex items-center group text-gray-400 hover:text-white transition-colors"
+                  className="flex items-center group text-gray-300 hover:text-white transition-colors"
                 >
                   <div className="w-12 flex justify-center">
                     <Mail className="w-5 h-5" strokeWidth={1.5} />
@@ -126,7 +126,7 @@ export function Footer() {
               {about?.phone && (
                 <a 
                   href={`tel:${about.phone}`} 
-                  className="flex items-center group text-gray-400 hover:text-white transition-colors"
+                  className="flex items-center group text-gray-300 hover:text-white transition-colors"
                 >
                   <div className="w-12 flex justify-center">
                     <Phone className="w-5 h-5" strokeWidth={1.5} />
@@ -135,7 +135,7 @@ export function Footer() {
                 </a>
               )}
               {about?.city && about?.country && (
-                <div className="flex items-center group text-gray-400">
+                <div className="flex items-center group text-gray-300">
                   <div className="w-12 flex justify-center">
                     <MapPin className="w-5 h-5" strokeWidth={1.5} />
                   </div>
@@ -148,7 +148,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="text-center">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-300 text-sm">
               &copy; {new Date().getFullYear()} {about?.name}, All rights reserved.
             </p>
           </div>
