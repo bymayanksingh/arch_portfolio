@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Loader2, X } from 'lucide-react';
 import { getProjects } from '../services/firebaseService';
 import type { Project } from '../services/firebaseService';
 import { ImageFallback } from '../components/ImageFallback';
 import { ScrollNudge } from '../components/ScrollNudge';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface Category {
   id: string;
@@ -13,6 +14,9 @@ interface Category {
 
 export function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeLocation, setActiveLocation] = useState('all');
   const [yearRange, setYearRange] = useState<{ min: number; max: number }>({ min: 0, max: 9999 });
@@ -71,7 +75,6 @@ export function ProjectsPage() {
         setYearRange({ min: minYear, max: maxYear });
         setFilteredProjects(data);
       } catch (error) {
-        //console.error('Error fetching projects:', error);
         setError('Failed to load projects');
       } finally {
         setLoading(false);
@@ -80,33 +83,58 @@ export function ProjectsPage() {
     fetchProjects();
   }, []);
 
-  // Handle filtering whenever any filter changes
-  useEffect(() => {
-    const filtered = projects.filter(project => {
+  // Memoized search function
+  const searchProjects = useMemo(() => (
+    projects: Project[],
+    searchTerm: string,
+    category: string,
+    location: string,
+    years: { min: number; max: number }
+  ) => {
+    return projects.filter(project => {
       const projectCategory = (project.category || '').toLowerCase().trim();
       const projectTitle = (project.title || '').toLowerCase().trim();
       const projectLocation = (project.location || '').toLowerCase().trim();
+      const projectDescription = (project.description || '').toLowerCase().trim();
       const projectYear = project.year ? parseInt(project.year) : 0;
-      const searchTerm = searchQuery.toLowerCase().trim();
+      const searchTerms = searchTerm.toLowerCase().trim().split(' ').filter(Boolean);
       
-      const matchesSearch = searchQuery === '' || 
-        projectTitle.includes(searchTerm) ||
-        projectCategory.includes(searchTerm) ||
-        projectLocation.includes(searchTerm);
+      // Match any search term against multiple fields
+      const matchesSearch = searchTerm === '' || searchTerms.every(term => 
+        projectTitle.includes(term) ||
+        projectCategory.includes(term) ||
+        projectLocation.includes(term) ||
+        projectDescription.includes(term)
+      );
       
-      const matchesCategory = activeCategory === 'all' || projectCategory === activeCategory;
-      const matchesLocation = activeLocation === 'all' || projectLocation === activeLocation;
-      const matchesYearRange = projectYear >= yearRange.min && projectYear <= yearRange.max;
+      const matchesCategory = category === 'all' || projectCategory === category;
+      const matchesLocation = location === 'all' || projectLocation === location;
+      const matchesYearRange = projectYear >= years.min && projectYear <= years.max;
 
       return matchesSearch && matchesCategory && matchesLocation && matchesYearRange;
     });
+  }, []);
 
+  // Handle filtering with debounced search
+  useEffect(() => {
+    setIsSearching(true);
+    const filtered = searchProjects(
+      projects,
+      debouncedSearchQuery,
+      activeCategory,
+      activeLocation,
+      yearRange
+    );
     setFilteredProjects(filtered);
-  }, [searchQuery, activeCategory, activeLocation, yearRange, projects]);
+    setIsSearching(false);
+  }, [debouncedSearchQuery, activeCategory, activeLocation, yearRange, projects, searchProjects]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setIsSearching(true);
+  };
 
   const handleCategoryChange = (categoryId: string) => {
-    //console.log('Selected category:', categoryId);
-    //console.log('Current projects:', projects.length);
     setActiveCategory(categoryId);
   };
 
@@ -115,41 +143,24 @@ export function ProjectsPage() {
   };
 
   const handleYearRangeChange = (type: 'min' | 'max', value: number) => {
-    setYearRange(prev => {
-      const newValue = parseInt(value.toString());
-      if (type === 'min') {
-        // Ensure min doesn't exceed max
-        return { ...prev, min: Math.min(newValue, prev.max) };
-      } else {
-        // Ensure max doesn't go below min
-        return { ...prev, max: Math.max(newValue, prev.min) };
-      }
-    });
+    setYearRange(prev => ({
+      ...prev,
+      [type]: value
+    }));
   };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-gray-700" />
-          <p className="text-gray-600">Loading projects...</p>
-        </div>
+        <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-black/80 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        {error}
       </div>
     );
   }
@@ -174,6 +185,7 @@ export function ProjectsPage() {
                   setActiveCategory('all');
                   setActiveLocation('all');
                   setYearRange(availableYears);
+                  setSearchQuery('');
                 }}
                 className="text-sm text-gray-500 hover:text-black transition-colors duration-200"
               >
@@ -182,6 +194,28 @@ export function ProjectsPage() {
             </div>
 
             <div className="space-y-8">
+              {/* Search Bar */}
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search projects by name, category, location, or description..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-full p-4 pl-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 transition-all duration-200"
+                />
+                {isSearching ? (
+                  <Loader2 className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 animate-spin text-gray-400" />
+                ) : searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              </div>
+
               {/* Categories Section */}
               <div>
                 <h4 className="text-sm font-medium text-gray-700 mb-3">Categories</h4>
@@ -270,128 +304,116 @@ export function ProjectsPage() {
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search projects by name, category, or location..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full p-4 pl-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black/5 transition-all duration-200"
-            />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          </div>
-        </div>
-
-        {/* Active Filters Display */}
-        {(activeCategory !== 'all' || activeLocation !== 'all' || 
-          yearRange.min !== availableYears.min || yearRange.max !== availableYears.max) && (
-          <div className="flex flex-wrap gap-2 mb-8">
-            {activeCategory !== 'all' && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
-                Category: {categories.find(c => c.id === activeCategory)?.name}
-                <X 
-                  className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
-                  onClick={() => setActiveCategory('all')}
-                />
+          {/* Active Filters Display */}
+          {(activeCategory !== 'all' || activeLocation !== 'all' || 
+            yearRange.min !== availableYears.min || yearRange.max !== availableYears.max) && (
+            <div className="flex flex-wrap gap-2 mb-8">
+              {activeCategory !== 'all' && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
+                  Category: {categories.find(c => c.id === activeCategory)?.name}
+                  <X 
+                    className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
+                    onClick={() => setActiveCategory('all')}
+                  />
+                </span>
+              )}
+              {activeLocation !== 'all' && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
+                  Location: {activeLocation.charAt(0).toUpperCase() + activeLocation.slice(1)}
+                  <X 
+                    className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
+                    onClick={() => setActiveLocation('all')}
+                  />
               </span>
-            )}
-            {activeLocation !== 'all' && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
-                Location: {activeLocation.charAt(0).toUpperCase() + activeLocation.slice(1)}
-                <X 
-                  className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
-                  onClick={() => setActiveLocation('all')}
-                />
-              </span>
-            )}
-            {(yearRange.min !== availableYears.min || yearRange.max !== availableYears.max) && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
-                Year: {yearRange.min} - {yearRange.max}
-                <X 
-                  className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
-                  onClick={() => setYearRange(availableYears)}
-                />
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Results Count */}
-        <div className="mb-8 text-sm text-gray-500">
-          Showing {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
-        </div>
-
-        {/* Projects Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.length > 0 ? (
-            filteredProjects.map((project) => (
-              <Link 
-                key={project.id} 
-                to={`/projects/${project.id}`}
-                className="group block"
-              >
-                <div className="relative overflow-hidden rounded-xl shadow-md transition-all duration-300 hover:shadow-xl bg-white">
-                  {/* Image Container */}
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <ImageFallback 
-                      src={project.coverImage}
-                      alt={project.title}
-                      className="w-full h-full object-cover transform group-hover:scale-115 transition-all duration-700 ease-out"
-                    />
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-70 group-hover:opacity-85 transition-all duration-300" />
-                  </div>
-
-                  {/* Content Container */}
-                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                    {/* Category Tag - Always visible */}
-                    <div className="inline-block mb-4">
-                      <span className="bg-black/30 backdrop-blur-sm border border-white/20 text-white px-4 py-1.5 rounded-full text-sm font-medium tracking-wide shadow-lg">
-                        {project.category || 'Uncategorized'}
-                      </span>
-                    </div>
-
-                    {/* Title and Location */}
-                    <div className="space-y-3 transform group-hover:translate-y-[-4px] transition-all duration-500">
-                      <h3 className="font-playfair text-2xl font-bold text-white leading-tight group-hover:text-white/90 transition-colors duration-300">
-                        {project.title || 'Untitled Project'}
-                      </h3>
-                      <div className="flex items-center space-x-4 text-white/80">
-                        <span className="text-sm font-medium">{project.location || 'Unknown Location'}</span>
-                        <span className="text-sm">•</span>
-                        <span className="text-sm font-medium">{project.date || 'No Date'}</span>
-                      </div>
-                    </div>
-
-                    {/* View Project Button - Always visible */}
-                    <div className="mt-5 flex items-center justify-between transform group-hover:translate-y-[-4px] transition-all duration-500">
-                      <span className="inline-flex items-center text-white text-sm font-medium group-hover:text-white/90 transition-colors duration-300">
-                        View Project Details
-                        <svg 
-                          className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={1.5} 
-                            d="M17 8l4 4m0 0l-4 4m4-4H3" 
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <p className="text-gray-500 text-lg">No projects found matching your criteria</p>
+              )}
+              {(yearRange.min !== availableYears.min || yearRange.max !== availableYears.max) && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-black/5 text-sm">
+                  Year: {yearRange.min} - {yearRange.max}
+                  <X 
+                    className="w-4 h-4 ml-2 cursor-pointer hover:text-black/70" 
+                    onClick={() => setYearRange(availableYears)}
+                  />
+                </span>
+              )}
             </div>
           )}
+
+          {/* Results Count */}
+          <div className="mb-8 text-sm text-gray-500">
+            Showing {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
+          </div>
+
+          {/* Projects Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project) => (
+                <Link 
+                  key={project.id} 
+                  to={`/projects/${project.id.toLowerCase()}`}
+                  className="group block"
+                >
+                  <div className="relative overflow-hidden rounded-xl shadow-md transition-all duration-300 hover:shadow-xl bg-white">
+                    {/* Image Container */}
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <ImageFallback 
+                        src={project.coverImage}
+                        alt={project.title}
+                        className="w-full h-full object-cover transform group-hover:scale-115 transition-all duration-700 ease-out"
+                      />
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-70 group-hover:opacity-85 transition-all duration-300" />
+                    </div>
+
+                    {/* Content Container */}
+                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                      {/* Category Tag - Always visible */}
+                      <div className="inline-block mb-4">
+                        <span className="bg-black/30 backdrop-blur-sm border border-white/20 text-white px-4 py-1.5 rounded-full text-sm font-medium tracking-wide shadow-lg">
+                          {project.category || 'Uncategorized'}
+                        </span>
+                      </div>
+
+                      {/* Title and Location */}
+                      <div className="space-y-3 transform group-hover:translate-y-[-4px] transition-all duration-500">
+                        <h3 className="font-playfair text-2xl font-bold text-white leading-tight group-hover:text-white/90 transition-colors duration-300">
+                          {project.title || 'Untitled Project'}
+                        </h3>
+                        <div className="flex items-center space-x-4 text-white/80">
+                          <span className="text-sm font-medium">{project.location || 'Unknown Location'}</span>
+                          <span className="text-sm">•</span>
+                          <span className="text-sm font-medium">{project.date || 'No Date'}</span>
+                        </div>
+                      </div>
+
+                      {/* View Project Button - Always visible */}
+                      <div className="mt-5 flex items-center justify-between transform group-hover:translate-y-[-4px] transition-all duration-500">
+                        <span className="inline-flex items-center text-white text-sm font-medium group-hover:text-white/90 transition-colors duration-300">
+                          View Project Details
+                          <svg 
+                            className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={1.5} 
+                              d="M17 8l4 4m0 0l-4 4m4-4H3" 
+                            />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500 text-lg">No projects found matching your criteria</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

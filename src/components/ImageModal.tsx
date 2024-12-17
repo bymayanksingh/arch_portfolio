@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw } from 'lucide-react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
+import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, MoveIcon, Maximize2 } from 'lucide-react';
 import { ImageFallback } from './ImageFallback';
 
 interface ImageModalProps {
@@ -15,6 +15,11 @@ interface ImageModalProps {
   currentIndex?: number;
   totalItems?: number;
   renderImage?: (image: { url: string; caption?: string }) => React.ReactNode;
+}
+
+interface Position {
+  x: number;
+  y: number;
 }
 
 export function ImageModal({
@@ -33,6 +38,10 @@ export function ImageModal({
 }: ImageModalProps) {
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPosition, setStartPosition] = useState<Position>({ x: 0, y: 0 });
+  const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -48,6 +57,18 @@ export function ImageModal({
         case 'Escape':
           onClose();
           break;
+        case '+':
+          handleZoomIn();
+          break;
+        case '-':
+          handleZoomOut();
+          break;
+        case 'r':
+          handleRotate();
+          break;
+        case '0':
+          resetTransforms();
+          break;
       }
     };
 
@@ -55,8 +76,13 @@ export function ImageModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onPrevious, onNext, onClose]);
 
+  useEffect(() => {
+    // Reset position when image changes
+    resetTransforms();
+  }, [currentIndex]);
+
   const handleZoomIn = () => {
-    setScale(prev => Math.min(prev + 0.25, 3));
+    setScale(prev => Math.min(prev + 0.25, 4));
   };
 
   const handleZoomOut = () => {
@@ -70,6 +96,44 @@ export function ImageModal({
   const resetTransforms = () => {
     setScale(1);
     setRotation(0);
+    setPosition({ x: 0, y: 0 });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scale > 1) {
+      setIsDragging(true);
+      setStartPosition({
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && scale > 1) {
+      const newX = e.clientX - startPosition.x;
+      const newY = e.clientY - startPosition.y;
+      
+      // Calculate boundaries based on zoom level
+      const maxOffset = (scale - 1) * 200; // Adjust this value based on your needs
+      
+      setPosition({
+        x: Math.max(Math.min(newX, maxOffset), -maxOffset),
+        y: Math.max(Math.min(newY, maxOffset), -maxOffset)
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.ctrlKey) {
+      e.preventDefault();
+      const delta = e.deltaY * -0.01;
+      setScale(prev => Math.max(0.5, Math.min(4, prev + delta)));
+    }
   };
 
   if (!isOpen) return null;
@@ -96,21 +160,36 @@ export function ImageModal({
           <button
             onClick={handleZoomIn}
             className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            title="Zoom In (+)"
           >
             <ZoomIn className="w-6 h-6" />
           </button>
           <button
             onClick={handleZoomOut}
             className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            title="Zoom Out (-)"
           >
             <ZoomOut className="w-6 h-6" />
           </button>
           <button
             onClick={handleRotate}
             className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            title="Rotate (R)"
           >
             <RotateCw className="w-6 h-6" />
           </button>
+          <button
+            onClick={resetTransforms}
+            className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            title="Reset (0)"
+          >
+            <Maximize2 className="w-6 h-6" />
+          </button>
+          {scale > 1 && (
+            <div className="p-2 text-white/70 bg-black/20 rounded-full">
+              <MoveIcon className="w-6 h-6" />
+            </div>
+          )}
         </div>
 
         {/* Navigation buttons */}
@@ -143,8 +222,14 @@ export function ImageModal({
         <div className="flex flex-col h-[calc(100vh-8rem)] gap-4">
           {/* Image container */}
           <div 
-            className="relative flex-1 min-h-0 w-full"
+            ref={imageRef}
+            className="relative flex-1 min-h-0 w-full cursor-move"
             onClick={(e) => e.stopPropagation()}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onWheel={handleWheel}
           >
             {renderImage ? (
               // Use custom render function if provided
@@ -156,8 +241,10 @@ export function ImageModal({
                 alt={images ? images[currentIndex].caption || 'Modal image' : (title || 'Modal image')}
                 className="w-full h-full object-contain transition-all duration-300"
                 style={{
-                  transform: `scale(${scale}) rotate(${rotation}deg)`,
+                  transform: `translate(${position.x}px, ${position.y}px) scale(${scale}) rotate(${rotation}deg)`,
+                  cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'
                 }}
+                draggable={false}
               />
             )}
           </div>

@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, query, where, addDoc, updateDoc, increment } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, where, addDoc, updateDoc, increment, limit } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 export interface Project {
@@ -21,6 +21,7 @@ export interface Project {
     caption: string;
   }[];
   claps: number;
+  categories: string[];
 }
 
 export interface Hero {
@@ -169,7 +170,7 @@ export const getHero = async (): Promise<Hero | null> => {
 export const getProjects = async (): Promise<Project[]> => {
   try {
     const snapshot = await getDocs(collection(db, 'projects'));
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Project);
+    return snapshot.docs.map(doc => ({ ...doc.data() }) as Project);
   } catch (error) {
     //console.error('Error fetching projects:', error);
     return [];
@@ -178,22 +179,17 @@ export const getProjects = async (): Promise<Project[]> => {
 
 export const getProject = async (id: string): Promise<Project | null> => {
   try {
-    //console.log('Fetching project with ID:', id);
     const projectsRef = collection(db, 'projects');
     const q = query(projectsRef, where('id', '==', id));
     const querySnapshot = await getDocs(q);
     
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
-      const data = { id: doc.id, ...doc.data() } as Project;
-      //console.log('Found project:', data);
-      return data;
+      return doc.data() as Project;
     }
-    
-    //console.log('No project found with ID:', id);
     return null;
   } catch (error) {
-    //console.error('Error fetching project:', error);
+    console.error('Error fetching project:', error);
     return null;
   }
 };
@@ -202,7 +198,7 @@ export const getProjectsByCategory = async (category: string): Promise<Project[]
   try {
     const q = query(collection(db, 'projects'), where('category', '==', category));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Project);
+    return snapshot.docs.map(doc => ({ ...doc.data() }) as Project);
   } catch (error) {
     //console.error('Error fetching projects by category:', error);
     return [];
@@ -211,29 +207,61 @@ export const getProjectsByCategory = async (category: string): Promise<Project[]
 
 export async function updateProjectClaps(projectId: string, claps: number) {
   try {
-    const projectRef = doc(db, 'projects', projectId);
-    const docSnap = await getDoc(projectRef);
-    if (docSnap.exists()) {
-      const currentClaps = docSnap.data().claps || 0;
-      console.log('Current claps:', currentClaps);
-      
-      // Use increment operation instead of direct value
-      await updateDoc(projectRef, {
-        claps: increment(1)
+    const projectsRef = collection(db, 'projects');
+    const q = query(projectsRef, where('id', '==', projectId));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      const docRef = querySnapshot.docs[0].ref;
+      const currentClaps = querySnapshot.docs[0].data().claps || 0;
+      await updateDoc(docRef, {
+        claps: currentClaps + claps
       });
-      
-      // Get updated value
-      const updatedSnap = await getDoc(projectRef);
-      const newTotal = updatedSnap.data()?.claps || currentClaps + 1;
-      console.log('New total:', newTotal);
-      return newTotal;
+      return true;
     }
-    return claps;
+    return false;
   } catch (error) {
-    console.error('Error updating claps:', error);
-    throw error;
+    console.error('Error updating project claps:', error);
+    return false;
   }
 }
+
+// Get related projects based on category
+export const getRelatedProjects = async (currentProjectId: string, category: string): Promise<Project[]> => {
+  try {
+    if (!category) return [];
+    
+    const projectsRef = collection(db, 'projects');
+    const q = query(
+      projectsRef,
+      where('category', '==', category),
+      limit(4) // Get one extra in case current project is included
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const projects: Project[] = [];
+    
+    querySnapshot.forEach((doc) => {
+      const data = doc.data() as Project;
+      // Skip the current project using the project.id field
+      if (data.id !== currentProjectId) {
+        projects.push({
+          ...data,
+          coverImage: data.coverImage || '',
+          title: data.title || '',
+          description: data.description || '',
+          category: data.category || '',
+          shortDescription: data.description?.substring(0, 150) + '...' || ''
+        });
+      }
+    });
+    
+    return projects.slice(0, 3);
+  } catch (error) {
+    console.error('Error fetching related projects:', error);
+    return [];
+  }
+};
 
 // Skills
 export const getSkills = async (): Promise<string[]> => {
