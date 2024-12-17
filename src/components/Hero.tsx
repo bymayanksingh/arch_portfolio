@@ -81,14 +81,14 @@ export function Hero() {
             loading="eager"
             width={1920}
             height={1080}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent md:to-transparent/50"></div>
         </div>
         
         {/* Animated Pattern Overlay */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 pattern-animate" 
+          <div className="absolute inset-0 pattern-animate hidden md:block" 
                style={{
                  backgroundImage: 'linear-gradient(90deg, #ffffff 1px, transparent 1px), linear-gradient(0deg, #ffffff 1px, transparent 1px)',
                  backgroundSize: '50px 50px'
@@ -99,28 +99,28 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative min-h-screen flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-40 pb-32 md:pt-28 md:pb-24">
-          <div className="max-w-3xl space-y-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 md:py-28">
+          <div className="max-w-3xl space-y-6 md:space-y-8">
             {/* Intro Text */}
-            <div className="space-y-6">
-              <h1 className="font-cormorant text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-white leading-tight">
+            <div className="space-y-4 md:space-y-6">
+              <h1 className="font-cormorant text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-white leading-tight">
                 Hello, I'm{' '}
                 <span className="relative inline-block">
                   <span className="relative z-10 font-normal">{heroData?.name || 'Name'}</span>
                   <span className="absolute bottom-0 left-0 w-full h-1 bg-white/30 transform origin-left transition-transform duration-500 group-hover:scale-x-100"></span>
                 </span>
               </h1>
-              <p className="font-cormorant text-xl sm:text-xl md:text-2xl lg:text-3xl text-white/90 font-light max-w-2xl leading-relaxed tracking-wide">
+              <p className="font-cormorant text-lg sm:text-xl md:text-2xl lg:text-3xl text-white/90 font-light max-w-2xl leading-relaxed tracking-wide">
                 {heroData?.subtitle || 'Licensed architect in Manchester, specializing in sustainable design and innovative architectural solutions.'}
               </p>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 to="/contact"
                 aria-label="Contact me for architectural projects"
-                className="group inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1"
+                className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto"
               >
                 Contact Me
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -128,7 +128,7 @@ export function Hero() {
               <button
                 onClick={scrollToProjects}
                 aria-label="Scroll to view architecture projects"
-                className="group inline-flex items-center px-6 sm:px-8 py-3 sm:py-4 bg-transparent text-white border-2 border-white/30 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1"
+                className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-transparent text-white border-2 border-white/30 rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-auto"
               >
                 View Projects
                 <ScrollText className="ml-2 w-5 h-5 group-hover:translate-y-1 transition-transform" aria-hidden="true" />
@@ -136,7 +136,7 @@ export function Hero() {
             </div>
 
             {/* Stats */}
-            <div className="pt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-8 md:gap-12 lg:gap-6 max-w-full">
+            <div className="pt-8 md:pt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 md:gap-8 lg:gap-6 max-w-full">
               {stats?.items ? (
                 stats.items.map((stat, index) => {
                   const Icon = iconMap[stat.icon as keyof typeof iconMap] || Building2;

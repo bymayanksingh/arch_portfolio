@@ -146,48 +146,48 @@ export function ImageModal({
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative w-full h-full md:h-auto md:max-w-7xl px-2 sm:px-4 md:px-6">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute right-6 top-6 z-10 p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+          className="absolute right-2 sm:right-4 md:right-6 top-2 sm:top-4 md:top-6 z-10 p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
         >
-          <X className="w-6 h-6" />
+          <X className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
         {/* Image controls */}
-        <div className="absolute left-6 top-6 z-10 flex space-x-2">
+        <div className="absolute left-2 sm:left-4 md:left-6 top-2 sm:top-4 md:top-6 z-10 flex flex-wrap gap-2">
           <button
             onClick={handleZoomIn}
-            className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            className="p-1.5 sm:p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
             title="Zoom In (+)"
           >
-            <ZoomIn className="w-6 h-6" />
+            <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
           <button
             onClick={handleZoomOut}
-            className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            className="p-1.5 sm:p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
             title="Zoom Out (-)"
           >
-            <ZoomOut className="w-6 h-6" />
+            <ZoomOut className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
           <button
             onClick={handleRotate}
-            className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            className="p-1.5 sm:p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
             title="Rotate (R)"
           >
-            <RotateCw className="w-6 h-6" />
+            <RotateCw className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
           <button
             onClick={resetTransforms}
-            className="p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+            className="p-1.5 sm:p-2 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
             title="Reset (0)"
           >
-            <Maximize2 className="w-6 h-6" />
+            <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
           {scale > 1 && (
-            <div className="p-2 text-white/70 bg-black/20 rounded-full">
-              <MoveIcon className="w-6 h-6" />
+            <div className="p-1.5 sm:p-2 text-white/70 bg-black/20 rounded-full">
+              <MoveIcon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
             </div>
           )}
         </div>
@@ -201,9 +201,9 @@ export function ImageModal({
                 resetTransforms();
                 onPrevious?.();
               }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+              className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
             >
-              <ChevronLeft className="w-8 h-8" />
+              <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />
             </button>
             <button
               onClick={(e) => {
@@ -211,15 +211,15 @@ export function ImageModal({
                 resetTransforms();
                 onNext?.();
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
+              className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 p-2 sm:p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full transition-colors"
             >
-              <ChevronRight className="w-8 h-8" />
+              <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8" />
             </button>
           </>
         )}
 
         {/* Main content container with flex column */}
-        <div className="flex flex-col h-[calc(100vh-8rem)] gap-4">
+        <div className="flex flex-col h-screen md:h-[calc(100vh-4rem)] gap-2 sm:gap-4">
           {/* Image container */}
           <div 
             ref={imageRef}
@@ -232,10 +232,8 @@ export function ImageModal({
             onWheel={handleWheel}
           >
             {renderImage ? (
-              // Use custom render function if provided
               renderImage(images ? images[currentIndex] : { url: image || '', caption: caption })
             ) : (
-              // Default image rendering
               <ImageFallback
                 src={images ? images[currentIndex].url : (image || '')}
                 alt={images ? images[currentIndex].caption || 'Modal image' : (title || 'Modal image')}
@@ -251,22 +249,22 @@ export function ImageModal({
 
           {/* Image info - Now rendered below the image */}
           {(title || caption || (showNavigation && totalItems > 1)) && (
-            <div className="w-full" onClick={(e) => e.stopPropagation()}>
-              <div className="bg-black/50 backdrop-blur-sm rounded-xl p-4 text-white">
+            <div className="w-full px-2 sm:px-0 pb-2 sm:pb-0" onClick={(e) => e.stopPropagation()}>
+              <div className="bg-black/50 backdrop-blur-sm rounded-xl p-3 sm:p-4 text-white">
                 <div className="max-w-3xl mx-auto">
                   {title && (
-                    <h3 className="text-lg font-semibold mb-1">
+                    <h3 className="text-base sm:text-lg font-semibold mb-1">
                       {title}
                     </h3>
                   )}
                   {caption && (
-                    <p className="text-white/80 text-sm">{caption}</p>
+                    <p className="text-white/80 text-xs sm:text-sm">{caption}</p>
                   )}
                   {images && images[currentIndex]?.caption && (
-                    <p className="text-white/80 text-sm">{images[currentIndex].caption}</p>
+                    <p className="text-white/80 text-xs sm:text-sm">{images[currentIndex].caption}</p>
                   )}
                   {showNavigation && totalItems > 1 && (
-                    <div className="mt-2 text-sm text-white/60">
+                    <div className="mt-1 sm:mt-2 text-xs sm:text-sm text-white/60">
                       {currentIndex + 1} of {totalItems}
                     </div>
                   )}

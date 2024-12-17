@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react';
-import { Download, Mail, Loader2, CheckCircle2, Phone, Linkedin, Award as AwardIcon, Building2Icon, BuildingIcon, Users } from 'lucide-react';
+import { 
+  Download, Mail, Loader2, CheckCircle2, Phone, Linkedin,
+  Award, Briefcase, Users, Handshake, Clock, BookOpen, FileCheck,
+} from 'lucide-react';
 import { ImageFallback } from '../components/ImageFallback';
 import { getAbout, getSkills, getCertificates, getStats, About as AboutType, Certificate, Stats } from '../services/firebaseService';
 import { getAffiliations, type Affiliation } from '../services/firebaseService';
@@ -10,19 +13,6 @@ import { getAwards, type Award as AwardData } from '../services/firebaseService'
 const ImageModal = lazy(() => import('../components/ImageModal').then(module => ({ default: module.ImageModal })));
 const Publications = lazy(() => import('../components/Publications').then(module => ({ default: module.Publications })));
 const Awards = lazy(() => import('../components/Awards').then(module => ({ default: module.Awards })));
-
-// Lazy load icons to reduce initial bundle size
-const IconComponents = lazy(() => import('lucide-react').then(module => ({
-  default: {
-    Building2Icon: module.Building2,
-    BuildingIcon: module.Building,
-    AwardIcon: module.Award,
-    Users: module.Users,
-    CheckCircle2: module.CheckCircle2,
-    Phone: module.Phone,
-    Linkedin: module.Linkedin
-  }
-})));
 
 interface Certificate {
   title: string;
@@ -427,10 +417,17 @@ export function About() {
 }
 
 function StatCard({ stat }: { stat: any }) {
-  const Icon = stat.icon === 'Building2' ? Building2Icon : 
-              stat.icon === 'Building' ? BuildingIcon : 
-              stat.icon === 'Award' ? AwardIcon : 
-              stat.icon === 'Users' ? Users : Building2Icon;
+  const iconMap = {
+    'Briefcase': Briefcase,
+    'Award': Award,
+    'Users': Users,
+    'Handshake': Handshake,
+    'Clock': Clock,
+    'BookOpen': BookOpen,
+    'FileCheck': FileCheck,
+  };
+
+  const Icon = iconMap[stat.icon as keyof typeof iconMap] || Briefcase;
 
   return (
     <div className="group">
