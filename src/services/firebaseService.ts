@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, query, where, addDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, where, addDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 export interface Project {
@@ -212,10 +212,23 @@ export const getProjectsByCategory = async (category: string): Promise<Project[]
 export async function updateProjectClaps(projectId: string, claps: number) {
   try {
     const projectRef = doc(db, 'projects', projectId);
-    await updateDoc(projectRef, {
-      claps: claps
-    });
-    return true;
+    const docSnap = await getDoc(projectRef);
+    if (docSnap.exists()) {
+      const currentClaps = docSnap.data().claps || 0;
+      console.log('Current claps:', currentClaps);
+      
+      // Use increment operation instead of direct value
+      await updateDoc(projectRef, {
+        claps: increment(1)
+      });
+      
+      // Get updated value
+      const updatedSnap = await getDoc(projectRef);
+      const newTotal = updatedSnap.data()?.claps || currentClaps + 1;
+      console.log('New total:', newTotal);
+      return newTotal;
+    }
+    return claps;
   } catch (error) {
     console.error('Error updating claps:', error);
     throw error;

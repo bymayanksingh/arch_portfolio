@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { updateProjectClaps } from '../services/firebaseService';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 interface ClapProps {
   projectId: string;
@@ -11,39 +12,69 @@ export function Clap({ projectId, initialClaps = 0 }: ClapProps) {
   const [claps, setClaps] = useState(initialClaps);
   const [isClapping, setIsClapping] = useState(false);
   const [particles, setParticles] = useState<number[]>([]);
+  const [userClaps, setUserClaps] = useState(0);
 
-  // Load claps from localStorage
+  // Load initial data
   useEffect(() => {
-    const userClaps = localStorage.getItem(`claps_${projectId}`);
-    if (userClaps) {
-      setClaps(parseInt(userClaps));
+    if (!projectId) return;
+
+    // Load user's personal claps from localStorage
+    const savedUserClaps = localStorage.getItem(`claps_${projectId}`);
+    if (savedUserClaps) {
+      setUserClaps(parseInt(savedUserClaps));
     }
+
+    // Get initial claps from Firestore
+    const fetchClaps = async () => {
+      try {
+        const clapsRef = doc(db, 'projectClaps', projectId);
+        const clapsSnap = await getDoc(clapsRef);
+        
+        if (clapsSnap.exists()) {
+          setClaps(clapsSnap.data().count || 0);
+        } else {
+          // Initialize with 0 claps
+          await setDoc(clapsRef, { count: 0 });
+          setClaps(0);
+        }
+      } catch (error) {
+        console.error('Error fetching initial claps:', error);
+      }
+    };
+
+    fetchClaps();
   }, [projectId]);
 
   const handleClap = async () => {
-    if (isClapping) return;
-    
+    if (isClapping || !projectId) return;
     setIsClapping(true);
-    const newClaps = claps + 1;
-    setClaps(newClaps);
-    
-    // Add particle effect
-    setParticles(prev => [...prev, Date.now()]);
-    
-    // Update localStorage
-    localStorage.setItem(`claps_${projectId}`, newClaps.toString());
-    
-    // Update Firebase
+
     try {
-      await updateProjectClaps(projectId, newClaps);
+      const newClaps = claps + 1;
+      const clapsRef = doc(db, 'projectClaps', projectId);
+      
+      // Update Firestore
+      await setDoc(clapsRef, { count: newClaps });
+
+      // Update local state
+      setClaps(newClaps);
+      const newUserClaps = userClaps + 1;
+      setUserClaps(newUserClaps);
+      setParticles(prev => [...prev, Date.now()]);
+      
+      // Update localStorage
+      localStorage.setItem(`claps_${projectId}`, newUserClaps.toString());
     } catch (error) {
       console.error('Failed to update claps:', error);
+    } finally {
+      setTimeout(() => {
+        setIsClapping(false);
+      }, 300);
     }
-    
-    setTimeout(() => {
-      setIsClapping(false);
-    }, 300);
   };
+
+  // Don't render if no projectId
+  if (!projectId) return null;
 
   return (
     <div className="fixed bottom-8 right-8 z-50">
