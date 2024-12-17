@@ -8,3 +8,5 @@ node_modules/*
 scripts/serviceAccount.json
 serviceAccount.json
 dist
+firestore.rules
+firestore.indexes.json
