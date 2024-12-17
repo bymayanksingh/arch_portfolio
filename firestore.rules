@@ -4,43 +4,49 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Allow read access to all collections
     match /hero/{document=**} {
-      allow read: true;
-      allow write: false;
+      allow read: if true;
+      allow write: if false;
     }
     
-    match /projects/{document=**} {
-      allow read: true;
-      allow write: false;
+    match /projects/{projectId} {
+      allow read: if true;
+      // Allow updating only the claps field
+      allow update: if
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['claps']) &&
+        request.resource.data.claps is number &&
+        request.resource.data.claps >= 0;
+      allow create: if false;
+      allow delete: if false;
     }
     
     match /skills/{document=**} {
-      allow read: true;
-      allow write: false;
+      allow read: if true;
+      allow write: if false;
     }
     
     match /testimonials/{document=**} {
-      allow read: true;
-      allow write: false;
+      allow read: if true;
+      allow write: if false;
     }
     
     match /timeline/{document=**} {
-      allow read: true;
-      allow write: false;
+      allow read: if true;
+      allow write: if false;
     }
     
     match /about/{document=**} {
-      allow read: true;
-      allow write: false;
+      allow read: if true;
+      allow write: if false;
     }
     
     match /contact/{document=**} {
-      allow read: true;
-      allow write: false;
+      allow read: if true;
+      allow write: if false;
     }
     
     // Allow creating new messages with validation
     match /messages/{messageId} {
-      allow read: false;
+      allow read: if false;
       allow create: if
         // Required fields are present and of correct type
         request.resource.data.firstName is string &&
@@ -61,7 +67,8 @@ service cloud.firestore {
     
     // Default rule - deny everything else
     match /{document=**} {
-      allow read, write: if false;
+      allow read: if false;
+      allow write: if false;
     }
   }
 }

@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, query, where, addDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, where, addDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 export interface Project {
@@ -20,6 +20,7 @@ export interface Project {
     url: string;
     caption: string;
   }[];
+  claps: number;
 }
 
 export interface Hero {
@@ -207,6 +208,19 @@ export const getProjectsByCategory = async (category: string): Promise<Project[]
     return [];
   }
 };
+
+export async function updateProjectClaps(projectId: string, claps: number) {
+  try {
+    const projectRef = doc(db, 'projects', projectId);
+    await updateDoc(projectRef, {
+      claps: claps
+    });
+    return true;
+  } catch (error) {
+    console.error('Error updating claps:', error);
+    throw error;
+  }
+}
 
 // Skills
 export const getSkills = async (): Promise<string[]> => {

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, X, Loader2, ChevronUp } from 'lucide-react';
 import { getProject, Project } from '../services/firebaseService';
 import { ImageModal } from '../components/ImageModal';
 import { ImageFallback } from '../components/ImageFallback';
+import { Clap } from '../components/Clap';
 
 export function ProjectDetail() {
   const { id = '' } = useParams<{ id: string }>();
@@ -104,12 +105,20 @@ export function ProjectDetail() {
 
   return (
     <div className="pt-24 pb-20" onKeyDown={handleKeyDown} tabIndex={0}>
+      <Clap 
+        projectId={project?.id || ''} 
+        initialClaps={project?.claps || 0}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link to="/projects" className="inline-flex items-center text-gray-600 hover:text-black mb-8">
-          <ArrowLeft className="mr-2" />
+        <Link
+          to="/projects"
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-8"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Projects
         </Link>
-
+        
         {/* Project Header */}
         <div className="mb-12">
           <h1 className="font-playfair text-4xl md:text-5xl font-bold mb-4">{project.title}</h1>
