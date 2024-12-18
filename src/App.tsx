@@ -19,6 +19,8 @@ import { StructuredData, getArchitectSchema } from './components/StructuredData'
 import { getAbout } from './services/firebaseService';
 import type { About as AboutData } from './services/firebaseService';
 import { BackToTop } from './components/BackToTop';
+import { Blog } from './pages/Blog';
+import { BlogDetail } from './pages/BlogDetail';
 
 // Root layout component
 function RootLayout({ about }: { about: AboutData | null }) {
@@ -65,6 +67,8 @@ export default function App() {
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogDetail />} />
       </Route>
     ),
     {

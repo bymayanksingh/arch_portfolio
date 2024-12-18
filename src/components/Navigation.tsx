@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { getAbout } from '../services/firebaseService';
 import type { About } from '../services/firebaseService';
+import { featureFlags } from '../config/featureFlags';
 
 interface NavigationProps {
   isMenuOpen: boolean;
@@ -12,7 +13,8 @@ interface NavigationProps {
 const navItems = [
   { path: '/', label: 'Home', ariaLabel: 'Go to Home page' },
   { path: '/projects', label: 'Projects', ariaLabel: 'View Architecture Projects' },
-  { path: '/about', label: 'About', ariaLabel: 'Learn more about the Architect' }
+  { path: '/about', label: 'About', ariaLabel: 'Learn more about the Architect' },
+  ...(featureFlags.SHOW_BLOG ? [{ path: '/blog', label: 'Blog', ariaLabel: 'Read Architectural Insights' }] : [])
 ];
 
 export function Navigation({ isMenuOpen, setIsMenuOpen }: NavigationProps) {

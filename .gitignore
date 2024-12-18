@@ -8,3 +8,4 @@ node_modules/*
 scripts/serviceAccount.json
 serviceAccount.json
 dist
+*/node_modules/*

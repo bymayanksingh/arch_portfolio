@@ -52,7 +52,7 @@ A modern, responsive architecture portfolio built with React, TypeScript, and Fi
 ### New Features
 - [ ] Add a blog section for architectural insights
 - [ ] Implement a newsletter subscription system
-- [ ] Add a project filtering system by multiple categories
+- [x] Add a project filtering system by multiple categories
 - [ ] Add a dark mode toggle
 
 ### Build & Deployment
