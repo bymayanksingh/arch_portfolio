@@ -50,9 +50,11 @@ export function HomeAbout() {
             <p className="text-xl text-gray-600">
               {about?.title || "Transforming spaces with innovative architectural solutions"}
             </p>
-            <p className="text-gray-600 leading-relaxed">
-              {about?.description || "As a licensed architect with over a decade of experience, I specialize in creating sustainable, innovative spaces that harmoniously blend form and function. My approach combines traditional architectural principles with cutting-edge technology."}
-            </p>
+            {about?.description?.map((desc, index) => (
+              <p key={index} className="text-gray-600 leading-relaxed">
+                {desc || "As a licensed architect with over a decade of experience, I specialize in creating sustainable, innovative spaces that harmoniously blend form and function. My approach combines traditional architectural principles with cutting-edge technology."}
+              </p>
+            ))}
             <div className="flex flex-wrap gap-4 pt-4">
               <Link 
                 to="/about"

@@ -60,7 +60,7 @@ export interface About {
   id: string;
   name: string;
   title: string;
-  description: string;
+  description: string[];
   shortDescription: string;
   image: string;
   email: string;
