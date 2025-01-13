@@ -154,9 +154,12 @@ export function About() {
             <p className="text-xl text-gray-600 mb-8">
               Transforming spaces with innovative architectural solutions
             </p>
-            <p className="text-gray-600 leading-relaxed mb-8">
-              {aboutData.description}
-            </p>
+
+            {aboutData?.description?.map((desc, index) => (
+              <p key={index} className="text-gray-600 leading-relaxed mb-4">
+                {desc || "As a licensed architect with over a decade of experience, I specialize in creating sustainable, innovative spaces that harmoniously blend form and function. My approach combines traditional architectural principles with cutting-edge technology."}
+              </p>
+            ))}
             <div className="flex flex-wrap gap-4">
               <a 
                 href={aboutData.resume} 
@@ -178,9 +181,9 @@ export function About() {
           </div>
           <div>
             <ImageFallback 
-              src={aboutData.image} 
+              src={aboutData.secondaryimage} 
               alt="Profile" 
-              className="rounded-2xl shadow-2xl w-full aspect-[4/3] object-cover"
+              className="rounded-2xl shadow-2xl w-full aspect-[3/4] sm:aspect-[3/4] object-cover"
             />
           </div>
         </div>

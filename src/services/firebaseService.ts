@@ -63,6 +63,7 @@ export interface About {
   description: string[];
   shortDescription: string;
   image: string;
+  secondaryimage: string;
   email: string;
   city: string;
   country: string;

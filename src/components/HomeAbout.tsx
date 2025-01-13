@@ -36,6 +36,12 @@ export function HomeAbout() {
   return (
     <section className="py-12 sm:py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">About Me</h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            {about?.title || "Transforming spaces with innovative architectural solutions"}
+          </p>
+        </div>
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
           <div className="relative order-2 lg:order-1">
             <ImageFallback 
@@ -46,10 +52,6 @@ export function HomeAbout() {
           </div>
 
           <div className="space-y-4 sm:space-y-6 order-1 lg:order-2">
-            <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold">About Me</h2>
-            <p className="text-xl text-gray-600">
-              {about?.title || "Transforming spaces with innovative architectural solutions"}
-            </p>
             {about?.description?.map((desc, index) => (
               <p key={index} className="text-gray-600 leading-relaxed">
                 {desc || "As a licensed architect with over a decade of experience, I specialize in creating sustainable, innovative spaces that harmoniously blend form and function. My approach combines traditional architectural principles with cutting-edge technology."}

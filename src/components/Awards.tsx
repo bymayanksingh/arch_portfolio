@@ -1,12 +1,37 @@
 import { Award } from '../services/firebaseService';
 import { Trophy } from 'lucide-react';
 import { ImageFallback } from './ImageFallback';
+import { useState } from 'react';
+import { ImageModal } from './ImageModal';
 
 interface AwardsProps {
   awards: Award[];
 }
 
 export function Awards({ awards }: AwardsProps) {
+  const [selectedAward, setSelectedAward] = useState<Award | null>(null);
+  const [currentAwardIndex, setCurrentAwardIndex] = useState(0);
+
+  const handlePrevAward = () => {
+    if (awards.length === 0) return;
+    const newIndex = currentAwardIndex === 0 ? awards.length - 1 : currentAwardIndex - 1;
+    setCurrentAwardIndex(newIndex);
+    const newAward = awards[newIndex];
+    if (newAward) {
+      setSelectedAward(newAward);
+    }
+  };
+
+  const handleNextAward = () => {
+    if (awards.length === 0) return;
+    const newIndex = currentAwardIndex === awards.length - 1 ? 0 : currentAwardIndex + 1;
+    setCurrentAwardIndex(newIndex);
+    const newAward = awards[newIndex];
+    if (newAward) {
+      setSelectedAward(newAward);
+    }
+  };
+
   return (
     <div className="mb-20">
       <h2 className="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center">Awards & Recognition</h2>
@@ -14,14 +39,19 @@ export function Awards({ awards }: AwardsProps) {
         Celebrating excellence and innovation in architecture
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {awards.map((award) => (
+        {awards.map((award, index) => (
           <div key={award.id} className="group">
-            <div className="relative bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden h-full">
+            <div 
+              className="relative bg-white p-8 rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden h-full cursor-pointer"
+              onClick={() => {
+                setSelectedAward(award);
+                setCurrentAwardIndex(index);
+              }}
+            >
               {/* Decorative Background Elements */}
               <div className="absolute inset-0 opacity-[0.02] group-hover:opacity-[0.04] transition-opacity duration-500">
                 <div className="absolute -right-6 -top-6 w-32 h-32 bg-black rounded-full transform -translate-x-1/2 -translate-y-1/2" />
                 <div className="absolute right-12 bottom-12 w-40 h-40 bg-black rounded-full transform translate-x-1/2 translate-y-1/2" />
-                {/* Mini Grid Pattern */}
                 <div 
                   className="absolute inset-0"
                   style={{
@@ -68,6 +98,19 @@ export function Awards({ awards }: AwardsProps) {
           </div>
         ))}
       </div>
+
+      {/* Award Modal */}
+      {selectedAward && (
+        <ImageModal
+          isOpen={!!selectedAward}
+          onClose={() => setSelectedAward(null)}
+          image={selectedAward.image}
+          onPrev={handlePrevAward}
+          onNext={handleNextAward}
+          title={selectedAward.title}
+          showNavigation={awards.length > 1}
+        />
+      )}
     </div>
   );
 }
